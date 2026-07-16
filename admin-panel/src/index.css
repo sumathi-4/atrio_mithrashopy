@@ -10832,13 +10832,13 @@ ul {
 }
 
 .admin-re-brand-logo {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   object-fit: contain;
 }
 
 .admin-re-brand-name {
-  font-size: 1.15rem;
+  font-size: 1.45rem;
   font-weight: 800;
   letter-spacing: -0.3px;
   display: flex;
@@ -10849,7 +10849,8 @@ ul {
   color: #D4AF37; /* Green matching Mithira logo */
 }
 
-.admin-re-brand-name .brand-shoppy {
+.admin-re-brand-name .brand-shoppy,
+.admin-re-brand-name .brand-shopy {
   color: #aa7c11; /* Orange matching Shoppy brand color */
 }
 
@@ -25441,7 +25442,8 @@ body .admin-re-sidebar {
 body .admin-re-brand-name .brand-mithira {
   color: #dfb743 !important; /* Premium Gold */
 }
-body .admin-re-brand-name .brand-shoppy {
+body .admin-re-brand-name .brand-shoppy,
+body .admin-re-brand-name .brand-shopy {
   color: #ffffff !important; /* Pure White */
 }
 
@@ -26404,6 +26406,7 @@ body .admin-re-nav {
 
 body .admin-re-nav-item {
   margin: 4px 16px !important;
+  width: auto !important;
   border-radius: 8px !important;
   font-weight: 600 !important;
   font-size: 0.88rem !important;

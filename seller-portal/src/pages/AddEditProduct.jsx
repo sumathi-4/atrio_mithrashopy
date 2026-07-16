@@ -107,7 +107,7 @@ export default function AddEditProduct() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">{isEdit ? 'Edit Product' : 'Add New Product'}</h1>
-          <p className="text-slate-500 text-sm mt-1">Products require administrator approval before going live on MithraShoppy.</p>
+          <p className="text-slate-500 text-sm mt-1">Products require administrator approval before going live on MithraShopy.</p>
         </div>
       </div>
 

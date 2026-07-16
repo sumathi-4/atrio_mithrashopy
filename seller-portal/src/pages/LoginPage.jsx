@@ -78,7 +78,7 @@ const LoginPage = () => {
             M
           </div>
           <span className="text-white font-bold text-xl">
-            Mithra<span style={{ color: 'var(--gold)' }}>Shoppy</span>
+            Mithra<span style={{ color: 'var(--gold)' }}>Shopy</span>
           </span>
         </div>
 
@@ -117,7 +117,7 @@ const LoginPage = () => {
         </div>
 
         <p className="text-gray-500 text-sm">
-          © {new Date().getFullYear()} MithraShoppy. All rights reserved.
+          © {new Date().getFullYear()} MithraShopy. All rights reserved.
         </p>
       </motion.div>
 
@@ -138,7 +138,7 @@ const LoginPage = () => {
               M
             </div>
             <span className="font-bold text-xl" style={{ color: 'var(--blue-deep)' }}>
-              Mithra<span style={{ color: 'var(--gold)' }}>Shoppy</span>
+              Mithra<span style={{ color: 'var(--gold)' }}>Shopy</span>
             </span>
           </div>
 

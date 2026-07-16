@@ -29,7 +29,7 @@ const TopNav = ({ sidebarOpen, setSidebarOpen }) => {
   const getTitle = () => {
     const path = location.pathname
     if (path.startsWith('/products/edit/')) return 'Edit Product'
-    return pageTitles[path] || 'MithraShoppy'
+    return pageTitles[path] || 'MithraShopy'
   }
 
   const getInitials = (name) => {

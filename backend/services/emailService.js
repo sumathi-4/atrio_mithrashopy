@@ -55,19 +55,17 @@ async function sendMailHelper({ to, subject, text, extraMetadata = {} }) {
 	let port = parseInt(process.env.SMTP_PORT || "587", 10);
 	let user = process.env.SMTP_USER;
 	let pass = process.env.SMTP_PASS;
-	let senderName = "MithraShoppy";
+	let senderName = "MithraShopy";
 	let senderEmail = user;
 
 	try {
 		const { Settings } = require("../db/database");
 		const dbSettings = await Settings.findOne().lean();
 		if (dbSettings) {
-			// Only override SMTP configuration if the password is set in the database Settings.
-			// This prevents overriding working .env settings with default empty values.
-			if (dbSettings.smtpPassword) {
-				if (dbSettings.smtpHost) host = dbSettings.smtpHost;
-				if (dbSettings.smtpPort) port = parseInt(dbSettings.smtpPort, 10);
-				if (dbSettings.smtpUsername) user = dbSettings.smtpUsername;
+			if (dbSettings.smtpHost) host = dbSettings.smtpHost;
+			if (dbSettings.smtpPort) port = parseInt(dbSettings.smtpPort, 10);
+			if (dbSettings.smtpUsername && dbSettings.smtpPassword) {
+				user = dbSettings.smtpUsername;
 				pass = dbSettings.smtpPassword;
 			}
 			if (dbSettings.senderName) senderName = dbSettings.senderName;
@@ -108,12 +106,49 @@ async function sendMailHelper({ to, subject, text, extraMetadata = {} }) {
 
 // ─── Customer Email Flow ───────────────────────────────────────────────────────
 /**
+* Sends an order confirmation email to the customer.
+*/
+async function sendOrderConfirmationEmail(customerEmail, customerName, order) {
+	if (!customerEmail) return;
+	const cleanOrderId = order.id.startsWith('#') ? order.id : `#${order.id}`;
+	const subject = `Order Confirmed: ${cleanOrderId}`;
+	// Format item details
+	const itemsText = (order.items || []).map((item) => `- ${item.name} x ${item.quantity} (₹${item.price})`).join("\n");
+	const body = `
+Dear ${customerName},
+
+Thank you for your order! We are pleased to confirm that your order has been received and is being processed.
+
+Order ID: ${cleanOrderId}
+Order Date: ${order.date}
+Total Amount: ${order.amount}
+Payment Method: ${order.payment}
+
+Items Ordered:
+${itemsText || "None"}
+
+We will notify you when your items are shipped.
+Thank you for shopping with us!
+MithraShopy Team
+  `.trim();
+	await sendMailHelper({
+		to: customerEmail,
+		subject,
+		text: body,
+		extraMetadata: {
+			type: "customer_order_confirmation",
+			orderId: order.id
+		}
+	});
+}
+
+/**
 * Sends an order status update email to the customer.
 */
 async function sendOrderStatusEmail(customerEmail, customerName, order) {
 	if (!customerEmail) return;
-	const formattedId = String(order.id).startsWith('#') ? order.id : `#${order.id}`;
-	const subject = `Order Status Updated: ${formattedId}`;
+	const cleanOrderId = order.id.startsWith('#') ? order.id : `#${order.id}`;
+	const subject = `Order Status Updated: ${cleanOrderId}`;
 	// Format item details
 	const itemsText = (order.items || []).map((item) => `- ${item.name} x ${item.quantity} (₹${item.price})`).join("\n");
 	const body = `
@@ -121,7 +156,7 @@ Dear ${customerName},
 
 Your order status has been updated.
 
-Order ID: ${formattedId}
+Order ID: ${cleanOrderId}
 Updated Status: ${order.status}
 Order Date: ${order.date}
 Total Amount: ${order.amount}
@@ -130,7 +165,7 @@ Items Ordered:
 ${itemsText || "None"}
 
 Thank you for shopping with us!
-MithraShoppy Team
+MithraShopy Team
   `.trim();
 	await sendMailHelper({
 		to: customerEmail,
@@ -143,44 +178,6 @@ MithraShoppy Team
 		}
 	});
 }
-/**
-* Sends an order placement confirmation email to the customer.
-*/
-async function sendOrderConfirmationEmail(customerEmail, customerName, order) {
-	if (!customerEmail) return;
-	const formattedId = String(order.id).startsWith('#') ? order.id : `#${order.id}`;
-	const subject = `🎉 Order Confirmed: ${formattedId}`;
-	// Format item details
-	const itemsText = (order.items || []).map((item) => `- ${item.name} x ${item.quantity} (₹${item.price})`).join("\n");
-	const body = `
-Dear ${customerName},
-
-Thank you for your order! We have received it and are processing it.
-
-Order ID: ${formattedId}
-Order Date: ${order.date}
-Payment Method: ${order.payment}
-Total Amount: ${order.amount}
-
-Items Ordered:
-${itemsText || "None"}
-
-We will update you as soon as your order status changes.
-
-Best regards,
-MithraShoppy Team
-  `.trim();
-	await sendMailHelper({
-		to: customerEmail,
-		subject,
-		text: body,
-		extraMetadata: {
-			type: "order_confirmation",
-			orderId: order.id
-		}
-	});
-}
-
 // ─── Vendor Email Flow ─────────────────────────────────────────────────────────
 /**
 * Sends a vendor approval confirmation email.
@@ -191,12 +188,12 @@ async function sendVendorApprovalEmail(vendorEmail, businessName) {
 	const body = `
 Dear ${businessName},
 
-We are thrilled to inform you that your vendor registration on MithraShoppy has been approved!
+We are thrilled to inform you that your vendor registration on MithraShopy has been approved!
 
 You can now log in to the Seller Portal with your registered credentials and start adding products to your catalog.
 
 Welcome aboard!
-MithraShoppy Onboarding Team
+MithraShopy Onboarding Team
   `.trim();
 	await sendMailHelper({
 		to: vendorEmail,
@@ -234,7 +231,7 @@ Details:
 ${statusDetail}
 
 Best regards,
-MithraShoppy Catalog Team
+MithraShopy Catalog Team
   `.trim();
 	await sendMailHelper({
 		to: vendorEmail,
@@ -258,7 +255,7 @@ async function sendVendorRejectionEmail(vendorEmail, businessName, rejectReason 
 	const body = `
 Dear ${businessName},
 
-Thank you for your interest in registering as a vendor on MithraShoppy.
+Thank you for your interest in registering as a vendor on MithraShopy.
 
 We have processed the review of your application, and unfortunately, we are unable to approve your vendor account at this time.
 
@@ -267,7 +264,7 @@ Reason for rejection: ${rejectReason || "Not specified"}.
 Please contact our onboarding support team if you have any questions or would like to submit additional information.
 
 Best regards,
-MithraShoppy Onboarding Team
+MithraShopy Onboarding Team
   `.trim();
 	await sendMailHelper({
 		to: vendorEmail,
@@ -281,8 +278,8 @@ MithraShoppy Onboarding Team
 	});
 }
 module.exports = {
-	sendOrderStatusEmail,
 	sendOrderConfirmationEmail,
+	sendOrderStatusEmail,
 	sendVendorApprovalEmail,
 	sendVendorRejectionEmail,
 	sendVendorProductApprovalEmail

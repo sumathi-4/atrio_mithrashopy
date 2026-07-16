@@ -223,8 +223,8 @@ export const apiService = {
       return res.settings;
     } catch (err) {
       return {
-        storeName: 'MithiraShoppy Official',
-        supportEmail: 'support@mithirashoppy.com',
+        storeName: 'MithiraShopy Official',
+        supportEmail: 'support@mithirashopy.com',
         taxPercentage: 18,
         defaultCurrency: 'INR'
       };

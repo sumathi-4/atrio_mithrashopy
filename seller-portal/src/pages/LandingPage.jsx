@@ -22,7 +22,7 @@ const faqs = [
   },
   {
     q: 'Is there any fee to sell?',
-    a: 'Registration on MithraShoppy is completely free! We do not charge any setup or listing fees. We only charge a small category-specific referral fee (commission) on successful sales.',
+    a: 'Registration on MithraShopy is completely free! We do not charge any setup or listing fees. We only charge a small category-specific referral fee (commission) on successful sales.',
   },
   {
     q: 'How payments work?',
@@ -39,7 +39,7 @@ const testimonials = [
   {
     name: 'Anjali Verma',
     business: 'Verma Apparel & Fashion',
-    text: 'Switching my boutique business to MithraShoppy was the best decision. The dashboard analytics helped me double my stock efficiency and boost monthly orders by 180%!',
+    text: 'Switching my boutique business to MithraShopy was the best decision. The dashboard analytics helped me double my stock efficiency and boost monthly orders by 180%!',
     rating: 5,
     location: 'New Delhi, Delhi',
   },
@@ -134,7 +134,7 @@ export default function LandingPage() {
           </div>
           <div className="flex flex-col">
             <span className="text-[#08214D] font-extrabold text-base tracking-tight leading-none">
-              Mithra<span className="text-[#DFB743]">Shoppy</span>
+              Mithra<span className="text-[#DFB743]">Shopy</span>
             </span>
             <span className="text-slate-400 text-[9px] font-bold tracking-wider uppercase mt-0.5">
               Seller Portal
@@ -200,7 +200,7 @@ export default function LandingPage() {
               >
                 Start Selling on <br />
                 <span className="bg-gradient-to-r from-[#08214D] to-[#051838] bg-clip-text text-transparent">Mithra</span>
-                <span className="bg-gradient-to-r from-[#DFB743] via-[#F5D98B] to-[#C29B27] bg-clip-text text-transparent ml-1">Shoppy</span>
+                <span className="bg-gradient-to-r from-[#DFB743] via-[#F5D98B] to-[#C29B27] bg-clip-text text-transparent ml-1">Shopy</span>
               </motion.h1>
 
               <motion.p
@@ -328,12 +328,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Why Sell on MithraShoppy? (Benefits) Section */}
+      {/* Why Sell on MithraShopy? (Benefits) Section */}
       <section id="benefits" className="py-14 md:py-16 px-6 md:px-16 bg-[#F8FAFC]">
         <div className="max-w-7xl mx-auto text-center space-y-12">
           <div className="space-y-3">
             <h2 className="text-3xl md:text-4xl font-extrabold text-[#08214D] tracking-tight">
-              Why Sell on MithraShoppy?
+              Why Sell on MithraShopy?
             </h2>
             <div className="w-12 h-1 bg-gradient-to-r from-[#DFB743] to-[#E5C058] mx-auto rounded-full"></div>
           </div>
@@ -553,7 +553,7 @@ export default function LandingPage() {
               Start your business today
             </h2>
             <p className="text-slate-300 text-xs md:text-sm font-semibold max-w-md mx-auto leading-relaxed">
-              Register as an approved seller, verify your identity details, and scale your brand sales with MithraShoppy.
+              Register as an approved seller, verify your identity details, and scale your brand sales with MithraShopy.
             </p>
             <div className="pt-3">
               <Link

@@ -10801,7 +10801,7 @@ body .product-detail-similar-section .similar-products-grid .clothing-img-wrappe
 }
 
 .auth-user-brand {
-  font-size: 1.55rem;
+  font-size: 2.1rem;
   font-weight: 800;
   letter-spacing: -0.4px;
   line-height: 1;
@@ -10809,7 +10809,8 @@ body .product-detail-similar-section .similar-products-grid .clothing-img-wrappe
   z-index: 1;
 }
 .auth-brand-mithira { color: #fff; }
-.auth-brand-shoppy  { color: #D4AF37; }
+.auth-brand-shoppy,
+.auth-brand-shopy  { color: #ffffff; }
 
 .auth-user-tagline {
   font-size: 0.8rem;

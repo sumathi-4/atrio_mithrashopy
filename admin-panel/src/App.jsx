@@ -103,7 +103,7 @@ export default function App() {
               margin: '0 0 6px 0',
               letterSpacing: '-0.02em'
             }}>
-              Mithra<span style={{ color: '#dfb743' }}>Shoppy</span>
+              Mithra<span style={{ color: '#dfb743' }}>Shopy</span>
             </h1>
             <div style={{
               display: 'inline-flex',
@@ -153,7 +153,7 @@ export default function App() {
               </label>
               <input
                 type="email"
-                placeholder="admin@mithrashoppy.com"
+                placeholder="admin@mithrashopy.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required

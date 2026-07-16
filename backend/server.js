@@ -149,7 +149,7 @@ app.post('/api/upload', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
-    message: 'MithiraShoppy Backend is running',
+    message: 'MithiraShopy Backend is running',
     timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
@@ -228,7 +228,7 @@ process.on('SIGTERM', () => shutdown('SIGTERM'));
 server.listen(PORT, () => {
   console.log('');
   console.log('╔══════════════════════════════════════════╗');
-  console.log('║   MithiraShoppy Backend Server           ║');
+  console.log('║   MithiraShopy Backend Server           ║');
   console.log(`║   Running on http://localhost:${PORT}        ║`);
   console.log('║   Environment: ' + (process.env.NODE_ENV || 'development') + '                  ║');
   console.log('╚══════════════════════════════════════════╝');

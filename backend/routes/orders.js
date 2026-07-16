@@ -196,6 +196,8 @@ router.post('/', authenticate, async (req, res) => {
       const tempOrder = await Order.create({
         id: orderId,
         userId: req.user.id,
+        customerEmail: req.user.email,
+        customerPhone: req.user.phone || '',
         customer: req.user.name,
         product: summaryProduct,
         amount: `₹${cleanAmount}`,
@@ -262,6 +264,8 @@ router.post('/', authenticate, async (req, res) => {
     const newOrder = await Order.create({
       id: orderId,
       userId: req.user.id,
+      customerEmail: req.user.email,
+      customerPhone: req.user.phone || '',
       customer: req.user.name,
       product: summaryProduct,
       amount: `₹${cleanAmount}`,
@@ -489,10 +493,34 @@ router.put('/:id', authenticate, requireAdmin, async (req, res) => {
     // Send email notification to customer
     try {
       const { User } = require('../db/database');
-      const user = await User.findOne({ id: updated.userId }).lean();
-      if (user && user.email) {
+      let customerEmail = updated.customerEmail || '';
+      let customerName = updated.customer || '';
+
+      let user = null;
+      if (updated.userId) {
+        user = await User.findOne({ id: updated.userId }).lean();
+        if (!user && typeof updated.userId === 'string' && updated.userId.length === 24) {
+          user = await User.findOne({ _id: updated.userId }).lean();
+        }
+      }
+
+      if (user) {
+        if (user.email) customerEmail = user.email;
+        if (user.name) customerName = user.name;
+      }
+
+      if (!customerEmail && updated.customer) {
+        const fallbackUser = await User.findOne({ name: updated.customer }).lean();
+        if (fallbackUser && fallbackUser.email) {
+          customerEmail = fallbackUser.email;
+        }
+      }
+
+      if (customerEmail) {
         const { sendOrderStatusEmail } = require('../services/emailService');
-        await sendOrderStatusEmail(user.email, user.name || updated.customer, updated);
+        await sendOrderStatusEmail(customerEmail, customerName, updated);
+      } else {
+        console.warn(`⚠️ Could not find customer email for order #${updated.id}. Skipping notification.`);
       }
     } catch (mailErr) {
       console.error('Failed to send order status email:', mailErr);

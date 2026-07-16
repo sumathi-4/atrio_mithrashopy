@@ -82,7 +82,7 @@ export default function ProductsPage() {
         <div className="text-center py-20">
           <div className="text-6xl mb-4">📦</div>
           <h3 className="text-xl font-semibold text-slate-700 mb-2">No products yet</h3>
-          <p className="text-slate-500 mb-6">Add your first product to start selling on MithraShoppy</p>
+          <p className="text-slate-500 mb-6">Add your first product to start selling on MithraShopy</p>
           <Link to="/products/add" className="px-6 py-3 rounded-xl font-semibold text-white" style={{ background: '#dfb743' }}>
             Add First Product
           </Link>

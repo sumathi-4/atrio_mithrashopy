@@ -48,7 +48,7 @@ const ForgotPassword = () => {
             M
           </div>
           <span className="font-bold text-xl" style={{ color: 'var(--blue-deep)' }}>
-            Mithra<span style={{ color: 'var(--gold)' }}>Shoppy</span>
+            Mithra<span style={{ color: 'var(--gold)' }}>Shopy</span>
           </span>
         </div>
 
@@ -144,7 +144,7 @@ const ForgotPassword = () => {
               Check Your Email
             </h3>
             <p className="text-gray-500 text-sm leading-relaxed mb-6">
-              If this email is registered with MithraShoppy, you will receive a password reset
+              If this email is registered with MithraShopy, you will receive a password reset
               link shortly. Please also check your spam folder.
             </p>
             <div

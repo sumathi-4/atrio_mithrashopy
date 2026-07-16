@@ -658,10 +658,34 @@ router.put('/orders/:id/status', authenticateVendor, async (req, res) => {
     // Send email notification to customer
     try {
       const { User } = require('../db/database');
-      const user = await User.findOne({ id: order.userId }).lean();
-      if (user && user.email) {
+      let customerEmail = order.customerEmail || '';
+      let customerName = order.customer || '';
+
+      let user = null;
+      if (order.userId) {
+        user = await User.findOne({ id: order.userId }).lean();
+        if (!user && typeof order.userId === 'string' && order.userId.length === 24) {
+          user = await User.findOne({ _id: order.userId }).lean();
+        }
+      }
+
+      if (user) {
+        if (user.email) customerEmail = user.email;
+        if (user.name) customerName = user.name;
+      }
+
+      if (!customerEmail && order.customer) {
+        const fallbackUser = await User.findOne({ name: order.customer }).lean();
+        if (fallbackUser && fallbackUser.email) {
+          customerEmail = fallbackUser.email;
+        }
+      }
+
+      if (customerEmail) {
         const { sendOrderStatusEmail } = require('../services/emailService');
-        await sendOrderStatusEmail(user.email, user.name || order.customer, order);
+        await sendOrderStatusEmail(customerEmail, customerName, order);
+      } else {
+        console.warn(`⚠️ Could not find customer email for order #${order.id}. Skipping notification.`);
       }
     } catch (mailErr) {
       console.error('Failed to send order status email:', mailErr);

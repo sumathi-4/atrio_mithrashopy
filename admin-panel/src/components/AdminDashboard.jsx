@@ -307,8 +307,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
   // Settings Sub-tab States
   const [settingsSubTab, setSettingsSubTab] = useState('store');
   const [generalSettings, setGeneralSettings] = useState({
-    storeName: 'MithiraShoppy Official',
-    supportEmail: 'support@mithirashoppy.com',
+    storeName: 'MithiraShopy Official',
+    supportEmail: 'support@mithirashopy.com',
     taxPercentage: '18',
     defaultCurrency: 'INR',
   });
@@ -1043,8 +1043,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
           const settingsData = await apiService.getSettings();
           if (settingsData) {
             setGeneralSettings({
-              storeName: settingsData.storeName || 'MithiraShoppy Official',
-              supportEmail: settingsData.supportEmail || 'support@mithirashoppy.com',
+              storeName: settingsData.storeName || 'MithiraShopy Official',
+              supportEmail: settingsData.supportEmail || 'support@mithirashopy.com',
               taxPercentage: settingsData.taxPercentage !== undefined ? String(settingsData.taxPercentage) : '18',
               defaultCurrency: settingsData.defaultCurrency || 'INR',
             });
@@ -1085,7 +1085,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
   }, [prodSearchQuery, prodCatalogueFilter, prodCategoryFilter, prodStatusFilter]);
 
   useEffect(() => {
-    const channel = new BroadcastChannel('mithirashoppy_reviews');
+    const channel = new BroadcastChannel('mithirashopy_reviews');
     
     const refreshReviews = () => {
       apiService.getReviews().then((data) => {
@@ -2865,10 +2865,10 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
       {/* Sidebar - Perfectly matching the image style (White background, light borders, orange active, green brand logo text) */}
       <aside className="admin-re-sidebar">
         <div className="admin-re-brand">
-          <img src={logoImg} alt="MithiraShoppy Logo" className="admin-re-brand-logo" />
+          <img src={logoImg} alt="MithiraShopy Logo" className="admin-re-brand-logo" />
           <div className="admin-re-brand-name">
             <span className="brand-mithira">Mithira</span>
-            <span className="brand-shoppy">Shoppy</span>
+            <span className="brand-shopy">Shopy</span>
           </div>
         </div>
 
@@ -5666,7 +5666,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                                         const refreshed = await apiService.getReviews();
                                         if (refreshed) {
                                           setReviews(refreshed);
-                                          const channel = new BroadcastChannel('mithirashoppy_reviews');
+                                          const channel = new BroadcastChannel('mithirashopy_reviews');
                                           channel.postMessage({ type: 'reviews_updated' });
                                           channel.close();
                                         }
@@ -5689,7 +5689,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                                         const refreshed = await apiService.getReviews();
                                         if (refreshed) {
                                           setReviews(refreshed);
-                                          const channel = new BroadcastChannel('mithirashoppy_reviews');
+                                          const channel = new BroadcastChannel('mithirashopy_reviews');
                                           channel.postMessage({ type: 'reviews_updated' });
                                           channel.close();
                                         }
@@ -5713,7 +5713,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                                         const refreshed = await apiService.getReviews();
                                         if (refreshed) {
                                           setReviews(refreshed);
-                                          const channel = new BroadcastChannel('mithirashoppy_reviews');
+                                          const channel = new BroadcastChannel('mithirashopy_reviews');
                                           channel.postMessage({ type: 'reviews_updated' });
                                           channel.close();
                                         } else {

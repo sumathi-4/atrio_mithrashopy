@@ -156,5 +156,188 @@
     "orderId": "#ORD3111",
     "status": "Shipped",
     "timestamp": "2026-07-16T04:16:30.777Z"
+  },
+  {
+    "to": "mathi@gmail.com",
+    "subject": "Order Status Updated: ##ORD4183",
+    "body": "Dear mathi,\n\nYour order status has been updated.\n\nOrder ID: ##ORD4183\nUpdated Status: Shipped\nOrder Date: Jun 24, 2026\nTotal Amount: ₹1692\n\nItems Ordered:\n- Women Kurti x 1 (₹899)\n- antique jewll x 1 (₹535)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD4183",
+    "status": "Shipped",
+    "timestamp": "2026-07-16T04:45:47.487Z"
+  },
+  {
+    "to": "mathi@gmail.com",
+    "subject": "Order Status Updated: #ORD4183",
+    "body": "Dear mathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD4183\nUpdated Status: Processing\nOrder Date: Jun 24, 2026\nTotal Amount: ₹1692\n\nItems Ordered:\n- Women Kurti x 1 (₹899)\n- antique jewll x 1 (₹535)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD4183",
+    "status": "Processing",
+    "timestamp": "2026-07-16T04:46:44.056Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Confirmed: #ORD8411",
+    "body": "Dear sumathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD8411\nOrder Date: Jul 16, 2026\nTotal Amount: ₹503\nPayment Method: COD\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD8411",
+    "timestamp": "2026-07-16T04:48:40.644Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD8411",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD8411\nUpdated Status: Shipped\nOrder Date: Jul 16, 2026\nTotal Amount: ₹503\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD8411",
+    "status": "Shipped",
+    "timestamp": "2026-07-16T04:50:40.679Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD8411",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD8411\nUpdated Status: Shipped\nOrder Date: Jul 16, 2026\nTotal Amount: ₹503\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD8411",
+    "status": "Shipped",
+    "timestamp": "2026-07-16T04:50:41.596Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD8411",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD8411\nUpdated Status: Shipped\nOrder Date: Jul 16, 2026\nTotal Amount: ₹503\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD8411",
+    "status": "Shipped",
+    "timestamp": "2026-07-16T04:50:43.519Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD8411",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD8411\nUpdated Status: Pending\nOrder Date: Jul 16, 2026\nTotal Amount: ₹503\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD8411",
+    "status": "Pending",
+    "timestamp": "2026-07-16T04:52:56.188Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD8411",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD8411\nUpdated Status: Pending\nOrder Date: Jul 16, 2026\nTotal Amount: ₹503\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD8411",
+    "status": "Pending",
+    "timestamp": "2026-07-16T04:52:57.218Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Confirmed: #ORD8733",
+    "body": "Dear sumathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD8733\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\nPayment Method: COD\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD8733",
+    "timestamp": "2026-07-16T04:54:04.851Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Confirmed: #ORD4297",
+    "body": "Dear sumathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD4297\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\nPayment Method: COD\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD4297",
+    "timestamp": "2026-07-16T04:54:07.339Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD8733",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD8733\nUpdated Status: Shipped\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD8733",
+    "status": "Shipped",
+    "timestamp": "2026-07-16T04:54:29.326Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD8733",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD8733\nUpdated Status: Shipped\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD8733",
+    "status": "Shipped",
+    "timestamp": "2026-07-16T04:54:30.625Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD4297",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD4297\nUpdated Status: Shipped\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD4297",
+    "status": "Shipped",
+    "timestamp": "2026-07-16T04:55:11.122Z"
+  },
+  {
+    "to": "mathi@gmail.com",
+    "subject": "Order Status Updated: #ORD4183",
+    "body": "Dear mathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD4183\nUpdated Status: Shipped\nOrder Date: Jun 24, 2026\nTotal Amount: ₹1692\n\nItems Ordered:\n- Women Kurti x 1 (₹899)\n- antique jewll x 1 (₹535)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD4183",
+    "status": "Shipped",
+    "timestamp": "2026-07-16T04:57:56.830Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD4297",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD4297\nUpdated Status: Processing\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD4297",
+    "status": "Processing",
+    "timestamp": "2026-07-16T05:07:09.122Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD4297",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD4297\nUpdated Status: Processing\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD4297",
+    "status": "Processing",
+    "timestamp": "2026-07-16T05:07:11.024Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD4297",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD4297\nUpdated Status: Processing\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD4297",
+    "status": "Processing",
+    "timestamp": "2026-07-16T05:07:12.028Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD4297",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD4297\nUpdated Status: Processing\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD4297",
+    "status": "Processing",
+    "timestamp": "2026-07-16T05:07:13.197Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Confirmed: #ORD1609",
+    "body": "Dear sumathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD1609\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\nPayment Method: COD\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD1609",
+    "timestamp": "2026-07-16T05:07:36.812Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Confirmed: #ORD3760",
+    "body": "Dear sumathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD3760\nOrder Date: Jul 16, 2026\nTotal Amount: ₹334\nPayment Method: COD\n\nItems Ordered:\n- Kids Printed Cotton Set x 1 (₹199)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD3760",
+    "timestamp": "2026-07-16T05:11:17.414Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Confirmed: #ORD3303",
+    "body": "Dear sumathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD3303\nOrder Date: Jul 16, 2026\nTotal Amount: ₹334\nPayment Method: COD\n\nItems Ordered:\n- Kids Printed Cotton Set x 1 (₹199)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD3303",
+    "timestamp": "2026-07-16T05:11:21.405Z"
   }
 ]

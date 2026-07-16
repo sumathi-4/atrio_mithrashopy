@@ -103,10 +103,10 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
   }, []);
 
   const [sessionToken, setSessionToken] = useState(() => {
-    let token = localStorage.getItem('mithirashoppy_session_id');
+    let token = localStorage.getItem('mithirashopy_session_id');
     if (!token) {
       token = 'sess_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-      localStorage.setItem('mithirashoppy_session_id', token);
+      localStorage.setItem('mithirashopy_session_id', token);
     }
     return token;
   });
@@ -165,7 +165,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
   useEffect(() => {
     if (!authUser) return;
     const userId = authUser.id || authUser._id || 'guest';
-    const lastLoginKey = `mithirashoppy_last_login_${userId}`;
+    const lastLoginKey = `mithirashopy_last_login_${userId}`;
     const storedLast = localStorage.getItem(lastLoginKey);
 
     const currentDeviceName = getDeviceAndBrowser();
@@ -716,7 +716,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
   useEffect(() => {
     if (!authUser) return;
 
-    const channel = new BroadcastChannel('mithirashoppy_reviews');
+    const channel = new BroadcastChannel('mithirashopy_reviews');
     
     const refreshReviews = () => {
       apiService.getMyReviews().then(reviews => {
@@ -963,8 +963,12 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
 
   const resolvedUserOrders = userOrders.map(order => {
     const firstItem = order.items?.[0];
-    const matchedProduct = firstItem ? allProducts.find(p => p.id === firstItem.productId) : null;
-    const img = matchedProduct?.image || 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=150&q=80';
+    const matchedProduct = firstItem 
+      ? allProducts.find(p => String(p.id) === String(firstItem.productId) || String(p._id) === String(firstItem.productId)) 
+      : null;
+    const img = matchedProduct 
+      ? resolveProductImage(matchedProduct) 
+      : 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=150&q=80';
     
     let statusColorClass = 'ua-status-processing';
     if (order.status?.toLowerCase() === 'delivered') statusColorClass = 'ua-status-delivered';
@@ -1164,7 +1168,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
           apiService.getMyReviews().then(reviews => {
             if (reviews) setMyReviews(reviews);
           });
-          const channel = new BroadcastChannel('mithirashoppy_reviews');
+          const channel = new BroadcastChannel('mithirashopy_reviews');
           channel.postMessage({ type: 'reviews_updated' });
           channel.close();
           window.dispatchEvent(new CustomEvent('mithira_reviews_updated'));
@@ -1188,7 +1192,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
           apiService.getMyReviews().then(reviews => {
             if (reviews) setMyReviews(reviews);
           });
-          const channel = new BroadcastChannel('mithirashoppy_reviews');
+          const channel = new BroadcastChannel('mithirashopy_reviews');
           channel.postMessage({ type: 'reviews_updated' });
           channel.close();
           window.dispatchEvent(new CustomEvent('mithira_reviews_updated'));
@@ -1209,7 +1213,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
         apiService.getMyReviews().then(reviews => {
           if (reviews) setMyReviews(reviews);
         });
-        const channel = new BroadcastChannel('mithirashoppy_reviews');
+        const channel = new BroadcastChannel('mithirashopy_reviews');
         channel.postMessage({ type: 'reviews_updated' });
         channel.close();
         window.dispatchEvent(new CustomEvent('mithira_reviews_updated'));
@@ -1494,7 +1498,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
             <strong>Mithira Shopy Official Ltd.</strong><br/>
             12-4/A, Jubilee Hills, Metro Pillar Road<br/>
             Hyderabad, Telangana - 500033<br/>
-            Email: support@mithirashoppy.com<br/>
+            Email: support@mithirashopy.com<br/>
             GSTIN: 36AAAAA1111A1Z1
           </div>
           <div class="details-box">
@@ -1552,7 +1556,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
         </div>
 
         <div class="footer">
-          <p>Thank you for shopping with Mithira Shopy! For customer support, reach out to us at <strong>support@mithirashoppy.com</strong>.</p>
+          <p>Thank you for shopping with Mithira Shopy! For customer support, reach out to us at <strong>support@mithirashopy.com</strong>.</p>
           <p>This is a computer generated invoice and does not require a physical signature.</p>
         </div>
       </body>

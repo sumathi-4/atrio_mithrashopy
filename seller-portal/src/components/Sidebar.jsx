@@ -67,7 +67,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 <span style={{ color: 'var(--blue-deep)' }}>M</span>
               </div>
               <div>
-                <span className="text-white font-bold text-sm leading-none block">MithraShoppy</span>
+                <span className="text-white font-bold text-sm leading-none block">MithraShopy</span>
                 <span className="text-xs leading-none" style={{ color: 'var(--gold)' }}>
                   Vendor Portal
                 </span>

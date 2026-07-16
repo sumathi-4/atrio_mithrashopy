@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/mithirashoppy";
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/mithirashopy";
 mongoose.connect(MONGODB_URI).then(async () => {
 	console.log("✅ Connected to MongoDB successfully");
 	try {
@@ -512,6 +512,8 @@ const OrderSchema = new mongoose.Schema({
 		unique: true
 	},
 	userId: { type: String },
+	customerEmail: { type: String },
+	customerPhone: { type: String },
 	customer: {
 		type: String,
 		required: true
@@ -754,11 +756,11 @@ const ContactQuerySchema = new mongoose.Schema({
 const SettingsSchema = new mongoose.Schema({
 	storeName: {
 		type: String,
-		default: "MithiraShoppy Official"
+		default: "MithiraShopy Official"
 	},
 	supportEmail: {
 		type: String,
-		default: "support@mithirashoppy.com"
+		default: "support@mithirashopy.com"
 	},
 	taxPercentage: {
 		type: Number,
@@ -2044,7 +2046,7 @@ async function seedStoreData() {
 }
 async function seedAdmin() {
 	try {
-		const adminEmail = (process.env.ADMIN_EMAIL || "adminmithrashoppy@gmail.com").toLowerCase();
+		const adminEmail = (process.env.ADMIN_EMAIL || "adminmithrashopy@gmail.com").toLowerCase();
 		const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
 		// Delete legacy admin if exists to ensure security
 		await User.deleteOne({ email: "admin@mithira.com" });

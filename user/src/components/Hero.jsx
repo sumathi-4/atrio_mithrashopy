@@ -13,7 +13,7 @@ export default function Hero() {
       <div className="hero-bg-wrap">
         <img
           src={heroBanner}
-          alt="MithraShoppy – Fashion, Gifts & Accessories"
+          alt="MithraShopy – Fashion, Gifts & Accessories"
           className="hero-bg-img"
         />
         {/* Left-side fade so text stays readable */}

@@ -708,7 +708,7 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
       <Drawer
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
-        title="MithraShoppy Menu"
+        title="MithraShopy Menu"
         position="left"
         width="290px"
       >
@@ -808,7 +808,7 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
                   <img src={`${logoImg}?v=2`} alt="Logo" className="auth-user-logo" />
                   <div className="auth-user-brand">
                     <span className="auth-brand-mithira">Mithra</span>
-                    <span className="auth-brand-shoppy">Shopy</span>
+                    <span className="auth-brand-shopy">Shopy</span>
                   </div>
                   <p className="auth-user-tagline">Your style. Your story.</p>
                 </div>

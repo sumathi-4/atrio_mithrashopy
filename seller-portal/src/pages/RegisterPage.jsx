@@ -138,7 +138,7 @@ const RegisterPage = () => {
             Application Submitted!
           </h2>
           <p className="text-gray-500 leading-relaxed mb-8">
-            Thank you for registering with MithraShoppy! Our team will review your application within
+            Thank you for registering with MithraShopy! Our team will review your application within
             <strong className="text-gray-700"> 24-48 hours</strong>. You'll receive an email
             notification once your account is approved.
           </p>
@@ -185,7 +185,7 @@ const RegisterPage = () => {
               M
             </div>
             <span className="font-bold text-xl" style={{ color: 'var(--blue-deep)' }}>
-              MithraShoppy
+              MithraShopy
             </span>
           </Link>
           <h1 className="text-2xl font-bold" style={{ color: 'var(--blue-deep)' }}>
