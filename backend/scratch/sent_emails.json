@@ -1,0 +1,160 @@
+[
+  {
+    "to": "sumathisrimathi4@gmail.com",
+    "subject": "Order Status Updated: #TEST12345",
+    "body": "Dear Test Customer,\n\nYour order status has been updated.\n\nOrder ID: #TEST12345\nUpdated Status: Shipped\nOrder Date: 2026-07-15\nTotal Amount: ₹999\n\nItems Ordered:\n- Awesome T-Shirt x 1 (₹999)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "TEST12345",
+    "status": "Shipped",
+    "timestamp": "2026-07-15T16:53:53.612Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: ##ORD1356",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: ##ORD1356\nUpdated Status: Pending\nOrder Date: Jul 15, 2026\nTotal Amount: ₹737\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Printed Cotton Set x 1 (₹199)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n- Cozy Hat Design T-Shirt x 1 (₹0)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD1356",
+    "status": "Pending",
+    "timestamp": "2026-07-15T16:56:09.066Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: ##ORD1356",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: ##ORD1356\nUpdated Status: Pending\nOrder Date: Jul 15, 2026\nTotal Amount: ₹737\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Printed Cotton Set x 1 (₹199)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n- Cozy Hat Design T-Shirt x 1 (₹0)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD1356",
+    "status": "Pending",
+    "timestamp": "2026-07-15T16:56:12.396Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: ##ORD1356",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: ##ORD1356\nUpdated Status: Shipped\nOrder Date: Jul 15, 2026\nTotal Amount: ₹737\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Printed Cotton Set x 1 (₹199)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n- Cozy Hat Design T-Shirt x 1 (₹0)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD1356",
+    "status": "Shipped",
+    "timestamp": "2026-07-15T16:56:20.958Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: ##ORD1356",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: ##ORD1356\nUpdated Status: Shipped\nOrder Date: Jul 15, 2026\nTotal Amount: ₹737\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Printed Cotton Set x 1 (₹199)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n- Cozy Hat Design T-Shirt x 1 (₹0)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD1356",
+    "status": "Shipped",
+    "timestamp": "2026-07-15T16:56:24.055Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: ##ORD1356",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: ##ORD1356\nUpdated Status: Shipped\nOrder Date: Jul 15, 2026\nTotal Amount: ₹737\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Printed Cotton Set x 1 (₹199)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n- Cozy Hat Design T-Shirt x 1 (₹0)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD1356",
+    "status": "Shipped",
+    "timestamp": "2026-07-15T16:56:24.066Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: ##ORD1356",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: ##ORD1356\nUpdated Status: Delivered\nOrder Date: Jul 15, 2026\nTotal Amount: ₹737\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Printed Cotton Set x 1 (₹199)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n- Cozy Hat Design T-Shirt x 1 (₹0)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD1356",
+    "status": "Delivered",
+    "timestamp": "2026-07-15T16:58:24.388Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: ##ORD1356",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: ##ORD1356\nUpdated Status: Delivered\nOrder Date: Jul 15, 2026\nTotal Amount: ₹737\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Printed Cotton Set x 1 (₹199)\n- Kids Jacquard Classic T-Shirt x 1 (₹179)\n- Cozy Hat Design T-Shirt x 1 (₹0)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD1356",
+    "status": "Delivered",
+    "timestamp": "2026-07-15T16:58:27.630Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: ##ORD8238",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: ##ORD8238\nUpdated Status: Shipped\nOrder Date: Jul 15, 2026\nTotal Amount: ₹334\n\nItems Ordered:\n- Kids Printed Cotton Set x 1 (₹199)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD8238",
+    "status": "Shipped",
+    "timestamp": "2026-07-15T17:05:57.880Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: ##ORD8238",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: ##ORD8238\nUpdated Status: Shipped\nOrder Date: Jul 15, 2026\nTotal Amount: ₹334\n\nItems Ordered:\n- Kids Printed Cotton Set x 1 (₹199)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD8238",
+    "status": "Shipped",
+    "timestamp": "2026-07-15T17:06:01.202Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "🎉 Order Confirmed: ##ORD2617",
+    "body": "Dear SHARIKA RAJAN,\n\nThank you for your order! We have received it and are processing it.\n\nOrder ID: ##ORD2617\nOrder Date: Jul 15, 2026\nPayment Method: Razorpay\nTotal Amount: ₹844\n\nItems Ordered:\n- Cozy Hat Design T-Shirt x 1 (₹631)\n\nWe will update you as soon as your order status changes.\n\nBest regards,\nMithraShoppy Team",
+    "type": "order_confirmation",
+    "orderId": "#ORD2617",
+    "timestamp": "2026-07-15T17:23:39.428Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "🎉 Order Confirmed: ##ORD2617",
+    "body": "Dear SHARIKA RAJAN,\n\nThank you for your order! We have received it and are processing it.\n\nOrder ID: ##ORD2617\nOrder Date: Jul 15, 2026\nPayment Method: Razorpay\nTotal Amount: ₹844\n\nItems Ordered:\n- Cozy Hat Design T-Shirt x 1 (₹631)\n\nWe will update you as soon as your order status changes.\n\nBest regards,\nMithraShoppy Team",
+    "type": "order_confirmation",
+    "orderId": "#ORD2617",
+    "timestamp": "2026-07-15T17:23:43.234Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "🎉 Order Confirmed: #ORD_TEST_99",
+    "body": "Dear Sharika Rajan,\n\nThank you for your order! We have received it and are processing it.\n\nOrder ID: #ORD_TEST_99\nOrder Date: July 15, 2026\nPayment Method: COD\nTotal Amount: ₹999\n\nItems Ordered:\n- Kids Printed Set x 1 (₹737)\n\nWe will update you as soon as your order status changes.\n\nBest regards,\nMithraShoppy Team",
+    "type": "order_confirmation",
+    "orderId": "ORD_TEST_99",
+    "timestamp": "2026-07-15T17:25:18.290Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: #ORD2617",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: #ORD2617\nUpdated Status: Shipped\nOrder Date: Jul 15, 2026\nTotal Amount: ₹844\n\nItems Ordered:\n- Cozy Hat Design T-Shirt x 1 (₹631)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD2617",
+    "status": "Shipped",
+    "timestamp": "2026-07-15T17:28:50.133Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: #ORD2617",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: #ORD2617\nUpdated Status: Shipped\nOrder Date: Jul 15, 2026\nTotal Amount: ₹844\n\nItems Ordered:\n- Cozy Hat Design T-Shirt x 1 (₹631)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD2617",
+    "status": "Shipped",
+    "timestamp": "2026-07-15T17:28:53.492Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "🎉 Order Confirmed: #ORD3111",
+    "body": "Dear SHARIKA RAJAN,\n\nThank you for your order! We have received it and are processing it.\n\nOrder ID: #ORD3111\nOrder Date: Jul 16, 2026\nPayment Method: Razorpay\nTotal Amount: ₹291\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nWe will update you as soon as your order status changes.\n\nBest regards,\nMithraShoppy Team",
+    "type": "order_confirmation",
+    "orderId": "#ORD3111",
+    "timestamp": "2026-07-16T04:15:07.343Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: #ORD3111",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: #ORD3111\nUpdated Status: Shipped\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD3111",
+    "status": "Shipped",
+    "timestamp": "2026-07-16T04:16:28.786Z"
+  },
+  {
+    "to": "shaarika.rajan@gmail.com",
+    "subject": "Order Status Updated: #ORD3111",
+    "body": "Dear SHARIKA RAJAN,\n\nYour order status has been updated.\n\nOrder ID: #ORD3111\nUpdated Status: Shipped\nOrder Date: Jul 16, 2026\nTotal Amount: ₹291\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n\nThank you for shopping with us!\nMithraShoppy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD3111",
+    "status": "Shipped",
+    "timestamp": "2026-07-16T04:16:30.777Z"
+  }
+]

@@ -294,6 +294,16 @@ router.post('/', authenticate, async (req, res) => {
     // Decrease stock for items (same as existing logic)
     await decreaseProductStock(orderItems, product);
 
+    // Send order confirmation email
+    try {
+      const { sendOrderConfirmationEmail } = require('../services/emailService');
+      if (req.user && req.user.email) {
+        await sendOrderConfirmationEmail(req.user.email, req.user.name, newOrder);
+      }
+    } catch (mailErr) {
+      console.error('Failed to send order confirmation email:', mailErr);
+    }
+
     res.status(201).json({ success: true, message: 'Order placed successfully!', order: newOrder });
   } catch (err) {
     console.error('Create order error:', err);
@@ -360,6 +370,17 @@ router.post('/verify', authenticate, async (req, res) => {
 
     // Return the updated order
     const updatedOrder = await Order.findOne({ id: orderId }).lean();
+
+    // Send order confirmation email
+    try {
+      const { sendOrderConfirmationEmail } = require('../services/emailService');
+      if (req.user && req.user.email) {
+        await sendOrderConfirmationEmail(req.user.email, req.user.name || order.customer, updatedOrder);
+      }
+    } catch (mailErr) {
+      console.error('Failed to send order confirmation email:', mailErr);
+    }
+
     res.json({ success: true, message: 'Payment verified successfully!', order: updatedOrder });
   } catch (err) {
     console.error('Verify payment error:', err);
