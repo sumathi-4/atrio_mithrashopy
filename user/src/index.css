@@ -29048,6 +29048,12 @@ body { overflow-x: hidden; }
   }
 
   /* Cart Layout Mobile Polish */
+  .ua-cart-view {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
   .ua-cart-items-card, 
   .ua-cart-address-card, 
   .ua-checkout-coupon-card, 
@@ -29079,8 +29085,17 @@ body { overflow-x: hidden; }
     min-width: 20px !important;
     font-size: 0.8rem !important;
   }
+  .ua-cart-item-qty-price {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-top: 10px !important;
+  }
   .ua-cart-item-price {
-    font-size: 0.95rem !important;
+    font-size: 0.88rem !important;
+    white-space: nowrap !important;
   }
   .ua-cart-item-remove-btn {
     padding: 5px 10px !important;
