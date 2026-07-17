@@ -495,7 +495,11 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
           {/* Stacked Row 1 Right Actions */}
           <div className="nav-actions-meesho">
             <a
-              href="http://localhost:5176"
+              href={
+                window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                  ? 'http://localhost:5176'
+                  : 'https://seller.mithrashopy.com'
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="action-text-link"
