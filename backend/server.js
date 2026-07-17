@@ -54,8 +54,12 @@ app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (e.g., mobile apps, curl, Postman)
     if (!origin) return callback(null, true);
-    // Allow matching origins in allowedOrigins list or any localhost/127.0.0.1 ports
-    if (allowedOrigins.includes(origin) || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+    // Allow matching origins in allowedOrigins list, any localhost/127.0.0.1 ports, or any mithrashopy.com domains
+    if (
+      allowedOrigins.includes(origin) || 
+      /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin) ||
+      /^https?:\/\/(.*\.)?mithrashopy\.com$/.test(origin)
+    ) {
       return callback(null, true);
     }
     return callback(new Error('Not allowed by CORS'));
