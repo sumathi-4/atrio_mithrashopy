@@ -29134,3 +29134,27 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
     padding: 12px !important;
   }
 }
+
+/* Glassmorphic card overlay for mobile hero text to ensure 100% readability */
+@media (max-width: 768px) {
+  .hero-text-card {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 10px 30px rgba(5, 24, 56, 0.15) !important;
+    padding: 24px !important;
+    max-width: 90vw !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+    align-items: center !important;
+  }
+}
+@media (max-width: 480px) {
+  .hero-text-card {
+    padding: 16px !important;
+    max-width: 94vw !important;
+    border-radius: 12px !important;
+  }
+}
