@@ -790,6 +790,22 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
             <li className={`mobile-nav-item ${isOffersActive() ? 'active' : ''}`}>
               <a href="/Offers" onClick={(e) => handleLinkClick(e, '/Offers')}>Offers</a>
             </li>
+            <li className="mobile-nav-item">
+              <a 
+                href={
+                  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? 'http://localhost:5176'
+                    : 'https://seller.mithrashopy.com'
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Become a Supplier
+              </a>
+            </li>
+            <li className={`mobile-nav-item ${window.location.pathname.toLowerCase().includes('/lucky-charms') ? 'active' : ''}`}>
+              <a href="/lucky-charms" onClick={(e) => handleLinkClick(e, '/lucky-charms')}>Lucky Charms</a>
+            </li>
           </ul>
         </div>
       </Drawer>

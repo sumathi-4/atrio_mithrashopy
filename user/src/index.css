@@ -2253,7 +2253,7 @@ ul {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center center;
+  object-position: center 15%;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -2283,13 +2283,13 @@ ul {
 
 @media (max-width: 600px) {
   .celeb-content {
-    width: 100%;
-    padding: 30px;
-    background: rgba(254, 237, 233, 0.9);
+    width: 100% !important;
+    padding: 30px !important;
+    background: transparent !important;
   }
   
   .celeb-gradient-overlay {
-    background: rgba(254, 237, 233, 0.6);
+    background: linear-gradient(180deg, rgba(254, 237, 233, 0.15) 0%, rgba(254, 237, 233, 0.65) 50%, rgba(254, 237, 233, 0.94) 100%) !important;
   }
   
   .celeb-title {
@@ -28728,11 +28728,11 @@ body { overflow-x: hidden; }
 
 /* Auth modal */
 @media (max-width: 640px) {
-  .auth-overlay { padding: 10px; align-items: flex-end; }
+  .auth-overlay { padding: 15px; align-items: center !important; justify-content: center !important; }
   .auth-modal-card, .auth-modal-user, .auth-modal-admin {
-    width: 100% !important; max-width: 100% !important;
-    border-radius: 20px 20px 0 0 !important;
-    max-height: 92vh; overflow-y: auto;
+    width: 95% !important; max-width: 440px !important;
+    border-radius: 20px !important;
+    max-height: 90vh; overflow-y: auto;
   }
   .auth-reg-two-col { display: flex; flex-direction: column; gap: 12px; }
   .auth-primary-btn { min-height: 48px; font-size: 1rem; }
@@ -29104,6 +29104,121 @@ body { overflow-x: hidden; }
   .ua-cart-address-option {
     padding: 12px !important;
     gap: 10px !important;
+  }
+
+  /* Orders List Mobile Polish */
+  .ua-order-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+    padding: 16px !important;
+  }
+  .ua-order-meta {
+    width: 100% !important;
+    gap: 12px !important;
+  }
+  .ua-order-product {
+    width: 100% !important;
+    gap: 12px !important;
+    border-top: 1px solid rgba(5, 24, 56, 0.06) !important;
+    border-bottom: 1px solid rgba(5, 24, 56, 0.06) !important;
+    padding: 12px 0 !important;
+  }
+  .ua-order-status {
+    width: 100% !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+  .ua-order-actions {
+    width: 100% !important;
+  }
+  .ua-order-actions button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* My Orders Tab Details Card Mobile Polish */
+  .ua-order-detail-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+    padding: 16px !important;
+  }
+  .ua-od-left {
+    width: 100% !important;
+    gap: 16px !important;
+  }
+  .ua-od-middle {
+    width: 100% !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-top: 1px solid rgba(5, 24, 56, 0.06) !important;
+    border-bottom: 1px solid rgba(5, 24, 56, 0.06) !important;
+    padding: 12px 0 !important;
+  }
+  .ua-od-right {
+    width: 100% !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .ua-od-action-btn {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Modal & Stepper Responsiveness */
+  .ua-modal-card {
+    padding: 20px 16px !important;
+    width: 95% !important;
+  }
+  .order-tracking-section {
+    padding: 16px 12px !important;
+  }
+  .order-info-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .order-info-block {
+    padding: 14px !important;
+  }
+  .tracking-timeline {
+    padding: 0 4px !important;
+    margin: 15px 0 5px 0 !important;
+  }
+  .timeline-step {
+    width: 68px !important;
+  }
+  .timeline-circle {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 11px !important;
+    border-width: 2px !important;
+  }
+  .timeline-label {
+    font-size: 0.6rem !important;
+    margin-top: 6px !important;
+    line-height: 1.2 !important;
+  }
+  .timeline-line {
+    top: -19px !important;
+    height: 3px !important;
+    margin: 0 -20px !important;
+  }
+  .ua-modal-actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+  .ua-modal-btn {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+  .order-details-header-btn {
+    padding: 6px 12px !important;
+    font-size: 0.72rem !important;
   }
 }
 @media (max-width: 480px) {

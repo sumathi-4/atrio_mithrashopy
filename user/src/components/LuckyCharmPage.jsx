@@ -863,13 +863,12 @@ export default function LuckyCharmPage({ authUser, setAuthUser, onNavigate }) {
 
         /* ── Responsive ───────────────────────────────────────────── */
         @media (max-width: 990px) {
-          .lcp-landing-slide { background-position: center center; }
+          .lcp-slide-item {
+            overflow-y: auto !important;
+          }
+          .lcp-landing-slide { background-position: 78% center !important; }
           .lcp-overlay {
-            background: linear-gradient(
-              180deg,
-              rgba(5, 24, 56, 0.6) 0%,
-              rgba(5, 24, 56, 0.3) 100%
-            );
+            background: rgba(3, 10, 24, 0.82) !important;
           }
           .lcp-content {
             grid-template-columns: 1fr;
@@ -886,10 +885,13 @@ export default function LuckyCharmPage({ authUser, setAuthUser, onNavigate }) {
             border-radius: 12px;
           }
           .lcp-topbar { padding: 16px 20px; }
-          .lcp-content { padding: 85px 20px 50px; }
-          .lcp-title  { font-size: 2.4rem; }
+          .lcp-content { padding: 80px 20px 40px; }
+          .lcp-title  { font-size: 2.2rem; }
+          .lcp-left { gap: 18px !important; }
+          .lcp-card { padding: 14px 10px !important; }
           .lcp-cards-grid  { grid-template-columns: 1fr 1fr; }
           .lcp-skel-cards  { grid-template-columns: 1fr 1fr; }
+          .lcp-spin-btn { padding: 14px 28px !important; font-size: 1rem !important; }
         }
         @media (max-width: 420px) {
           .lcp-cards-grid { grid-template-columns: 1fr; }
@@ -1413,22 +1415,39 @@ export default function LuckyCharmPage({ authUser, setAuthUser, onNavigate }) {
 
         /* Responsive slide views */
         @media (max-width: 900px) {
+          .lcp-slide-item {
+            overflow-y: auto !important;
+          }
           .lcp-wheel-page-content {
             flex-direction: column;
             justify-content: center;
             text-align: center;
-            gap: 30px;
-            padding: 20px 20px 40px;
+            gap: 20px;
+            padding: 80px 20px 40px;
+          }
+          .lc-wheel-host {
+            max-width: 320px !important;
           }
           .lcp-wheel-right {
             align-items: center;
             text-align: center;
+            gap: 12px;
           }
           .lcp-wheel-title {
-            font-size: 2.8rem;
+            font-size: 2.4rem;
+          }
+          .lcp-wheel-subtitle {
+            font-size: 1.15rem;
+            margin-top: -4px;
+          }
+          .lcp-wheel-range-desc {
+            font-size: 0.9rem;
+            margin: 2px 0 6px;
           }
           .lcp-lucky-badge {
             align-self: center;
+            padding: 6px 20px;
+            font-size: 0.82rem;
           }
         }
 
