@@ -2373,7 +2373,7 @@ export default function ShopView({ authUser, setAuthUser }) {
     filteredProducts = filteredProducts.filter(p => {
       const isNew = p.isNewArrival || p.badge === 'NEW' || p.badge === 'NEW ARRIVAL' || String(p.id).startsWith('n');
       const isBest = p.badge === 'BEST SELLER' || p.sales > 20 || String(p.id).startsWith('t');
-      const isOffer = p.isOffer || p.badge?.toUpperCase().includes('OFFER') || p.badge?.toUpperCase().includes('DEAL') || getProductDiscount(p) > 0;
+      const isOffer = p.isOffer || p.badge?.toUpperCase()?.includes('OFFER') || p.badge?.toUpperCase()?.includes('DEAL') || getProductDiscount(p) > 0;
       
       if (filterNewArrivals && filterBestSellers && filterOffers) return isNew || isBest || isOffer;
       if (filterNewArrivals && filterBestSellers) return isNew || isBest;

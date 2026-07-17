@@ -855,7 +855,7 @@ export default function ProductsSection({ authUser, setAuthUser }) {
     displayProducts = displayProducts.filter(p => {
       const isNew = p.badge === 'NEW' || p.badge === 'NEW ARRIVAL' || String(p.id).startsWith('n');
       const isBest = p.badge === 'BEST SELLER' || String(p.id).startsWith('t');
-      const isOffer = p.isOffer || p.badge?.toUpperCase().includes('OFFER') || p.badge?.toUpperCase().includes('DEAL') || getProductDiscount(p) > 0;
+      const isOffer = p.isOffer || p.badge?.toUpperCase()?.includes('OFFER') || p.badge?.toUpperCase()?.includes('DEAL') || getProductDiscount(p) > 0;
       
       const matches = [];
       if (filterNewArrivals) matches.push(isNew);

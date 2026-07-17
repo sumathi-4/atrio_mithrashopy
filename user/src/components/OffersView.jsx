@@ -82,7 +82,7 @@ export default function OffersView() {
       if (data && data.length > 0) {
         // Filter products that have offers (isOffer is true, or badge contains 'OFFER'/'DEAL', or discount/originalPrice > price)
         let filtered = data.filter(p => {
-          const hasOfferBadge = p.badge?.toUpperCase().includes('OFFER') || p.badge?.toUpperCase().includes('DEAL');
+          const hasOfferBadge = p.badge?.toUpperCase()?.includes('OFFER') || p.badge?.toUpperCase()?.includes('DEAL');
           const hasDiscount = p.originalPrice && parseFloat(String(p.originalPrice).replace(/[^0-9.]/g, '')) > (typeof p.price === 'number' ? p.price : parseFloat(String(p.price).replace(/[^0-9.]/g, '')));
           return p.isOffer || hasOfferBadge || hasDiscount;
         });

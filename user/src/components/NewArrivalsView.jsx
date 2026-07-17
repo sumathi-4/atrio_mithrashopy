@@ -1510,7 +1510,7 @@ export default function NewArrivalsView() {
   if (filterBestSellers || filterOffers) {
     filteredProducts = filteredProducts.filter(p => {
       const isBest = p.badge === 'BEST SELLER' || p.sales > 20 || String(p.id).startsWith('t');
-      const isOffer = p.isOffer || p.badge?.toUpperCase().includes('OFFER') || p.badge?.toUpperCase().includes('DEAL') || getProductDiscount(p) > 0;
+      const isOffer = p.isOffer || p.badge?.toUpperCase()?.includes('OFFER') || p.badge?.toUpperCase()?.includes('DEAL') || getProductDiscount(p) > 0;
       
       if (filterBestSellers && filterOffers) return isBest || isOffer;
       if (filterBestSellers) return isBest;

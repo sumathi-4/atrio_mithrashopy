@@ -29110,3 +29110,27 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .navbar-header, .top-bar, footer, .trust-bar-section { display: none !important; }
   body { font-size: 12pt; color: #000; }
 }
+
+/* Mobile newsletter stack responsiveness */
+@media (max-width: 480px) {
+  .newsletter-input-group {
+    flex-direction: column !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    gap: 10px !important;
+  }
+  .newsletter-input {
+    background-color: #ffffff !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(5, 24, 56, 0.15) !important;
+    width: 100% !important;
+    padding: 12px 18px !important;
+  }
+  .newsletter-btn {
+    border-radius: 8px !important;
+    width: 100% !important;
+    padding: 12px !important;
+  }
+}
