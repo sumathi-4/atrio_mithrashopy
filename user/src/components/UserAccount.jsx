@@ -337,12 +337,47 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
     syncCartToBackend(updated);
   };
 
+  const getSelectedVariant = (prod, color, size) => {
+    if (!prod || !prod.variants || prod.variants.length === 0) return null;
+    let matched = prod.variants.find(v => 
+      (!color || (v.color && String(v.color).toLowerCase() === String(color).toLowerCase())) &&
+      (!size || (v.size && String(v.size).toLowerCase() === String(size).toLowerCase()))
+    );
+    if (!matched && color) {
+      matched = prod.variants.find(v => v.color && String(v.color).toLowerCase() === String(color).toLowerCase());
+    }
+    if (!matched && size) {
+      matched = prod.variants.find(v => v.size && String(v.size).toLowerCase() === String(size).toLowerCase());
+    }
+    return matched;
+  };
+
   const updateCartItemVariant = (productId, oldVariant, newVariant) => {
     const updated = cartItemsDetailed.map(item => {
       const sizeMatch = !oldVariant || !oldVariant.size || item.selectedVariant?.size === oldVariant.size;
       const colorMatch = !oldVariant || !oldVariant.color || item.selectedVariant?.color === oldVariant.color;
       if (item.id === productId && sizeMatch && colorMatch) {
-        return { ...item, selectedVariant: newVariant };
+        const prod = allProducts.find(p => String(p.id) === String(productId) || String(p._id) === String(productId));
+        const matchedVar = getSelectedVariant(prod, newVariant.color, newVariant.size);
+        
+        const variantPrice = (matchedVar && matchedVar.price !== null && matchedVar.price !== undefined) 
+          ? matchedVar.price 
+          : (prod ? prod.price : item.price);
+
+        const variantImage = (matchedVar && matchedVar.image) 
+          ? resolveProductImage({ ...prod, image: matchedVar.image }) 
+          : (prod ? resolveProductImage(prod) : item.image);
+
+        return { 
+          ...item, 
+          price: variantPrice,
+          image: variantImage,
+          selectedVariant: {
+            ...newVariant,
+            variantId: matchedVar ? (matchedVar._id || matchedVar.id || null) : null,
+            sku: matchedVar ? (matchedVar.sku || null) : null
+          }
+        };
       }
       return item;
     });

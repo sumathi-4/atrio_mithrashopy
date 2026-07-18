@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { apiService } from '../services/apiService';
 import { categoryConfigService } from '../services/categoryConfigService';
 import { useToast } from './ToastProvider';
@@ -124,27 +124,6 @@ const handleColorChange = (colorName, prod, setModalColor, setActiveImageIndex, 
       const colorIdx = colors.findIndex(c => c.name.toLowerCase() === colorName.toLowerCase());
       if (colorIdx !== -1) {
         setActiveImageIndex(colorIdx);
-      }
-    }
-
-    // Selection Retention
-    const isSizeAvailable = prod.variants.some(v => 
-      v.color?.toLowerCase() === colorName.toLowerCase() && 
-      v.size?.toLowerCase() === currentSize?.toLowerCase() && 
-      v.stock > 0
-    );
-
-    if (isSizeAvailable) {
-      setModalSize(currentSize);
-    } else {
-      const fallbackVar = prod.variants.find(v => 
-        v.color?.toLowerCase() === colorName.toLowerCase() && 
-        v.stock > 0
-      ) || prod.variants.find(v => 
-        v.color?.toLowerCase() === colorName.toLowerCase()
-      );
-      if (fallbackVar && fallbackVar.size) {
-        setModalSize(fallbackVar.size);
       }
     }
   }
@@ -462,7 +441,7 @@ const renderCategorySelectors = (
             <span className="modal-section-title" style={{ fontWeight: 600, display: 'block', marginBottom: '8px' }}>Select Size</span>
             <div className="modal-size-pills" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {sizes.map((sz) => {
-                const isSzAvail = isCombAvailable(activeColor, sz);
+                const isSzAvail = prod.variants.some(v => v.size?.toLowerCase() === sz.toLowerCase() && v.stock > 0);
                 return (
                   <button 
                     key={sz}
@@ -955,6 +934,14 @@ const getSelectedVariant = (prod, color, size) => {
     // Fallback to color match
     matched = prod.variants.find(v => v.color && String(v.color).toLowerCase() === String(color).toLowerCase());
   }
+  if (!matched && size) {
+    // Fallback to size match
+    matched = prod.variants.find(v => v.size && String(v.size).toLowerCase() === String(size).toLowerCase());
+  }
+  if (!matched) {
+    // Ultimate fallback
+    matched = prod.variants[0];
+  }
   return matched;
 };
 
@@ -1018,6 +1005,8 @@ export default function ShopView({ authUser, setAuthUser }) {
   const [modalSize, setModalSize] = useState('M');
   const [modalColor, setModalColor] = useState('Red');
   const [modalQty, setModalQty] = useState(1);
+  const prevFullProductIdRef = useRef(null);
+  const prevQuickProductIdRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('DEFAULT');
 
@@ -1589,9 +1578,23 @@ export default function ShopView({ authUser, setAuthUser }) {
   // Reset active selectors when product selection changes
   useEffect(() => {
     const activeProd = quickViewProduct || fullDetailProduct;
-    setModalQty(1);
-    setActiveImageIndex(0);
-    if (activeProd) {
+    if (!activeProd) {
+      prevQuickProductIdRef.current = null;
+      setModalSize('M');
+      setModalColor('Red');
+      setModalQty(1);
+      setActiveImageIndex(0);
+      return;
+    }
+
+    const prodId = String(activeProd.id || activeProd._id);
+    const prevId = prevQuickProductIdRef.current;
+    
+    if (prodId !== prevId) {
+      prevQuickProductIdRef.current = prodId;
+      setModalQty(1);
+      setActiveImageIndex(0);
+      
       const colors = getProductThemedColors(activeProd);
       let initialColor = '';
       if (colors && colors.length > 0) {
@@ -1622,9 +1625,6 @@ export default function ShopView({ authUser, setAuthUser }) {
           setModalSize('Default');
         }
       }
-    } else {
-      setModalSize('M');
-      setModalColor('Red');
     }
   }, [quickViewProduct, fullDetailProduct]);
 
@@ -1848,7 +1848,7 @@ export default function ShopView({ authUser, setAuthUser }) {
       addToast({ message: `Removed from wishlist`, type: 'wishlist' });
     } else {
       updated = [...wishlist, id];
-      addToast({ message: `❤️ Added to wishlist!`, type: 'wishlist' });
+      addToast({ message: `Added to wishlist!`, type: 'wishlist' });
     }
     setWishlist(updated);
     if (authUser) {
@@ -2165,18 +2165,26 @@ export default function ShopView({ authUser, setAuthUser }) {
 
   useEffect(() => {
     if (fullDetailProduct) {
-      if (fullDetailProduct.variants && fullDetailProduct.variants.length > 0) {
-        const defaultVar = fullDetailProduct.variants.find(v => v.stock > 0) || fullDetailProduct.variants[0];
-        if (defaultVar) {
-          setModalColor(defaultVar.color || 'Red');
-          setModalSize(defaultVar.size || 'M');
+      const prodId = String(fullDetailProduct.id || fullDetailProduct._id);
+      const prevId = prevFullProductIdRef.current;
+      
+      if (prodId !== prevId) {
+        prevFullProductIdRef.current = prodId;
+        if (fullDetailProduct.variants && fullDetailProduct.variants.length > 0) {
+          const defaultVar = fullDetailProduct.variants.find(v => v.stock > 0) || fullDetailProduct.variants[0];
+          if (defaultVar) {
+            setModalColor(defaultVar.color || 'Red');
+            setModalSize(defaultVar.size || 'M');
+          }
+        } else {
+          setModalColor(fullDetailProduct.color || 'Red');
+          setModalSize(fullDetailProduct.size || 'M');
         }
-      } else {
-        setModalColor(fullDetailProduct.color || 'Red');
-        setModalSize(fullDetailProduct.size || 'M');
       }
       setPersonalizationText('');
       setPersonalizationError(false);
+    } else {
+      prevFullProductIdRef.current = null;
     }
   }, [fullDetailProduct]);
 
@@ -2701,7 +2709,17 @@ export default function ShopView({ authUser, setAuthUser }) {
             </div>
 
             {/* Right: Info Section */}
-            <div className="product-detail-info-col">
+            <div className="product-detail-info-col" style={{ position: 'relative' }}>
+              {/* Floating Wishlist Heart — top right corner of info panel */}
+              <button
+                className={`detail-floating-wishlist-btn ${wishlist.includes(fullDetailProduct.id) ? 'active' : ''}`}
+                onClick={() => toggleWishlist(fullDetailProduct.id)}
+                aria-label={wishlist.includes(fullDetailProduct.id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                title={wishlist.includes(fullDetailProduct.id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+              >
+                <Heart size={20} fill={wishlist.includes(fullDetailProduct.id) ? 'currentColor' : 'none'} />
+              </button>
+
               <div className="product-detail-category-tag">
                 {fullDetailProduct.category} {fullDetailProduct.subCategory ? `| ${fullDetailProduct.subCategory}` : ''}
               </div>
@@ -2775,10 +2793,10 @@ export default function ShopView({ authUser, setAuthUser }) {
               {/* Quantity */}
               <div className="product-detail-section-block qty-block">
                 <span className="product-detail-section-title">Quantity</span>
-                <div className="product-detail-qty-control">
-                  <button onClick={() => setModalQty(prev => Math.max(1, prev - 1))}>-</button>
-                  <span>{modalQty}</span>
-                  <button onClick={() => setModalQty(prev => prev + 1)}>+</button>
+                <div className="modal-quantity-selector">
+                  <button className="qty-btn" onClick={() => setModalQty(prev => Math.max(1, prev - 1))}>-</button>
+                  <span className="qty-value">{modalQty}</span>
+                  <button className="qty-btn" onClick={() => setModalQty(prev => prev + 1)}>+</button>
                 </div>
               </div>
 
@@ -2828,6 +2846,8 @@ export default function ShopView({ authUser, setAuthUser }) {
                   BUY NOW
                 </button>
               </div>
+
+
 
               {/* Trust Badges */}
               <div className="product-detail-trust-badges">
@@ -3731,7 +3751,7 @@ export default function ShopView({ authUser, setAuthUser }) {
                     {isSectionOpen && (
                       <div className="section-content" style={{ marginTop: '10px' }}>
                         {/* Special case: Color circle bubbles */}
-                        {(filterName.toLowerCase() === 'color' || filterName.toLowerCase() === 'colors') ? (
+                        {(filterName.toLowerCase().includes('color')) ? (
                           <div className="color-circles-list">
                             {options.map(colorName => {
                               const isChecked = selectedVals.includes(colorName);
@@ -3748,8 +3768,8 @@ export default function ShopView({ authUser, setAuthUser }) {
                               );
                             })}
                           </div>
-                        ) : /* Special case: Size button grid */
-                        (filterName.toLowerCase() === 'size' || filterName.toLowerCase() === 'sizes') ? (
+                        ) : /* Special case: Size/Age button grid */
+                        (filterName.toLowerCase().includes('size') || filterName.toLowerCase().includes('age')) ? (
                           <div className="size-buttons-grid">
                             {options.map(sizeName => {
                               const isChecked = selectedVals.includes(sizeName);
@@ -4258,15 +4278,42 @@ export default function ShopView({ authUser, setAuthUser }) {
                     </button>
                   </div>
                   
-                  {/* Bottom Wishlist Link (Compare & Specifications removed) */}
+                  {/* Bottom Wishlist Link */}
                   <div className="modal-extra-links-row">
-                    <button 
-                      className={`modal-extra-link-btn ${wishlist.includes(quickViewProduct.id) ? 'active' : ''}`}
-                      onClick={() => toggleWishlist(quickViewProduct.id)}
-                    >
-                      <Heart size={16} fill={wishlist.includes(quickViewProduct.id) ? "currentColor" : "none"} style={{ marginRight: '6px' }} />
-                      <span>{wishlist.includes(quickViewProduct.id) ? "Added to Wishlist" : "Add to Wishlist"}</span>
-                    </button>
+                    {(() => {
+                      const isWishlisted = wishlist.includes(quickViewProduct.id);
+                      return (
+                        <button
+                          className="modal-extra-link-btn"
+                          onClick={() => toggleWishlist(quickViewProduct.id)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '9px 20px',
+                            borderRadius: '24px',
+                            border: `1.5px solid ${isWishlisted ? '#dfb743' : '#dfb743'}`,
+                            background: isWishlisted ? '#051838' : 'transparent',
+                            color: isWishlisted ? '#ffffff' : '#051838',
+                            fontWeight: 700,
+                            fontSize: '0.95rem',
+                            cursor: 'pointer',
+                            transition: 'all 0.25s ease',
+                            boxShadow: isWishlisted ? '0 4px 14px rgba(5,24,56,0.25)' : 'none',
+                          }}
+                        >
+                          <Heart
+                            size={17}
+                            fill={isWishlisted ? '#e81c1c' : 'none'}
+                            stroke={isWishlisted ? '#e81c1c' : '#051838'}
+                            style={{ flexShrink: 0 }}
+                          />
+                          <span style={{ color: isWishlisted ? '#ffffff' : '#051838', fontWeight: 700 }}>
+                            {isWishlisted ? 'Added to Wishlist' : 'Add to Wishlist'}
+                          </span>
+                        </button>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>

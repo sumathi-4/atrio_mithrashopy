@@ -29413,3 +29413,189 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
     border-radius: 0 !important;
   }
 }
+
+/* ===================================================================
+   PRODUCT DETAIL PAGE — QUANTITY SELECTOR  (match Quick View golden style)
+=================================================================== */
+body .shop-product-detail-page-view .modal-quantity-selector {
+  border: 1.5px solid #dfb743 !important;
+  background: transparent !important;
+  border-radius: 20px !important;
+  padding: 2px 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+body .shop-product-detail-page-view .modal-quantity-selector button.qty-btn {
+  color: #dfb743 !important;
+  background: transparent !important;
+  border: none !important;
+  font-weight: 800 !important;
+  font-size: 1.1rem !important;
+  cursor: pointer !important;
+  padding: 2px 8px !important;
+  border-radius: 50% !important;
+  transition: background 0.2s ease !important;
+}
+body .shop-product-detail-page-view .modal-quantity-selector button.qty-btn:hover {
+  background: #dfb743 !important;
+  color: #ffffff !important;
+}
+body .shop-product-detail-page-view .modal-quantity-selector .qty-value {
+  color: #051838 !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  min-width: 28px !important;
+  text-align: center !important;
+}
+
+/* ===================================================================
+   PRODUCT CARD — FLOATING WISHLIST HEART (red when active)
+=================================================================== */
+/* Default: neutral color */
+body .clothing-product-card .clothing-wishlist-float-btn,
+body .clothing-product-card.theme-clothing .clothing-wishlist-float-btn,
+body .clothing-product-card.cat-card-clothing .clothing-wishlist-float-btn,
+body .clothing-product-card.cat-card-stationery .clothing-wishlist-float-btn,
+body .clothing-product-card.cat-card-gifts .clothing-wishlist-float-btn,
+body .clothing-product-card.cat-card-accessories .clothing-wishlist-float-btn,
+body .clothing-product-card.cat-card-kids .clothing-wishlist-float-btn {
+  color: #888 !important;
+  background: rgba(255,255,255,0.92) !important;
+  border: 1px solid rgba(255,255,255,0.6) !important;
+}
+/* Active/wishlisted: bright red heart */
+body .clothing-product-card .clothing-wishlist-float-btn.active,
+body .clothing-product-card.theme-clothing .clothing-wishlist-float-btn.active,
+body .clothing-product-card.cat-card-clothing .clothing-wishlist-float-btn.active,
+body .clothing-product-card.cat-card-stationery .clothing-wishlist-float-btn.active,
+body .clothing-product-card.cat-card-gifts .clothing-wishlist-float-btn.active,
+body .clothing-product-card.cat-card-accessories .clothing-wishlist-float-btn.active,
+body .clothing-product-card.cat-card-kids .clothing-wishlist-float-btn.active {
+  color: #e81c1c !important;
+  background: #ffffff !important;
+  border-color: #e81c1c !important;
+}
+/* Hover always shows red */
+body .clothing-product-card .clothing-wishlist-float-btn:hover {
+  color: #e81c1c !important;
+  background: #ffffff !important;
+  transform: scale(1.12) !important;
+}
+
+/* Hover overlay heart button (the 3-button overlay on card hover) */
+body .clothing-hover-action-btn.hover-wishlist-btn {
+  color: #888 !important;
+}
+body .clothing-hover-action-btn.hover-wishlist-btn.active {
+  color: #e81c1c !important;
+  background: rgba(232,28,28,0.15) !important;
+}
+body .clothing-hover-action-btn.hover-wishlist-btn:hover {
+  color: #e81c1c !important;
+}
+
+/* ===================================================================
+   QUICK VIEW — WISHLIST BUTTON (clear text, white when active)
+=================================================================== */
+body .quickview-split-overlay .modal-extra-link-btn {
+  color: #051838 !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  background: transparent !important;
+  border: 1.5px solid #dfb743 !important;
+  border-radius: 20px !important;
+  padding: 8px 20px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+body .quickview-split-overlay .modal-extra-link-btn:hover {
+  background: rgba(223, 183, 67, 0.12) !important;
+  color: #051838 !important;
+  text-decoration: none !important;
+}
+/* Added state → navy background, WHITE text */
+body .quickview-split-overlay .modal-extra-link-btn.active {
+  background: #051838 !important;
+  border-color: #dfb743 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(5, 24, 56, 0.25) !important;
+}
+body .quickview-split-overlay .modal-extra-link-btn.active svg {
+  color: #e81c1c !important;
+}
+
+/* ===================================================================
+   PRODUCT DETAIL PAGE — FLOATING HEART ICON (top-right of info col)
+=================================================================== */
+.detail-floating-wishlist-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid #dfb743;
+  background: rgba(255, 255, 255, 0.95);
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+.detail-floating-wishlist-btn:hover {
+  background: #ffffff;
+  color: #e81c1c;
+  border-color: #e81c1c;
+  transform: scale(1.1);
+}
+.detail-floating-wishlist-btn.active {
+  background: #ffffff;
+  color: #e81c1c;
+  border-color: #e81c1c;
+  box-shadow: 0 0 0 3px rgba(232,28,28,0.15), 0 2px 8px rgba(0,0,0,0.10);
+}
+
+/* ===================================================================
+   SIZE PILL ACTIVE — Dark navy bg, white text (Quick View & Details)
+=================================================================== */
+body .quickview-split-overlay .modal-size-btn.active,
+body .shop-product-detail-page-view .modal-size-btn.active {
+  background: #051838 !important;
+  color: #ffffff !important;
+  border-color: #051838 !important;
+  box-shadow: 0 2px 8px rgba(5,24,56,0.25) !important;
+  font-weight: 700 !important;
+}
+
+/* ===================================================================
+   WISHLIST BUTTON ACTIVE — FORCE WHITE TEXT (ALL THEMES, max specificity)
+   Targets every theme variant to ensure the span/text is always white
+   when the wishlist button is in "Added to Wishlist" active state.
+=================================================================== */
+.quickview-split-overlay .modal-extra-link-btn.active span,
+.quickview-split-overlay.theme-clothing .modal-extra-link-btn.active span,
+.quickview-split-overlay.theme-accessories .modal-extra-link-btn.active span,
+.quickview-split-overlay.theme-gifts .modal-extra-link-btn.active span,
+.quickview-split-overlay.theme-stationery .modal-extra-link-btn.active span,
+.quickview-split-overlay.theme-kids .modal-extra-link-btn.active span,
+.stationery-lavender-theme .quickview-split-overlay .modal-extra-link-btn.active span,
+body .quickview-split-overlay .modal-extra-link-btn.active span {
+  color: #ffffff !important;
+}
+/* Heart icon stays red */
+.quickview-split-overlay .modal-extra-link-btn.active svg,
+.quickview-split-overlay.theme-clothing .modal-extra-link-btn.active svg,
+.quickview-split-overlay.theme-accessories .modal-extra-link-btn.active svg,
+.quickview-split-overlay.theme-gifts .modal-extra-link-btn.active svg,
+.quickview-split-overlay.theme-stationery .modal-extra-link-btn.active svg,
+.quickview-split-overlay.theme-kids .modal-extra-link-btn.active svg,
+.stationery-lavender-theme .quickview-split-overlay .modal-extra-link-btn.active svg {
+  color: #e81c1c !important;
+}

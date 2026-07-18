@@ -26728,3 +26728,1643 @@ body .admin-app-layout .table-act-btn:disabled {
   transform: none !important;
 }
 
+
+
+/* ===== ADMIN PANEL IMPROVEMENTS ===== */
+
+/* ==========================================================================
+   ADMIN PANEL IMPROVEMENTS — Product View Full Page Modal + Font Size Boost
+   ========================================================================== */
+
+/* ── GLOBAL FONT SIZE INCREASE for admin panel ── */
+body .admin-app-layout {
+  font-size: 0.95rem !important;
+}
+body .admin-app-layout p,
+body .admin-app-layout span:not(.status-badge-re):not(.badge),
+body .admin-app-layout td,
+body .admin-app-layout li {
+  font-size: 0.93rem !important;
+}
+body .admin-app-layout th {
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+}
+body .admin-app-layout label {
+  font-size: 0.85rem !important;
+}
+body .admin-app-layout input,
+body .admin-app-layout select,
+body .admin-app-layout textarea {
+  font-size: 0.9rem !important;
+}
+body .admin-app-layout h1 { font-size: 1.8rem !important; }
+body .admin-app-layout h2 { font-size: 1.5rem !important; }
+body .admin-app-layout h3 { font-size: 1.25rem !important; }
+body .admin-app-layout h4 { font-size: 1.1rem !important; }
+body .admin-app-layout h5 { font-size: 1rem !important; }
+
+/* Sidebar nav item text */
+body .admin-app-layout .admin-re-nav-item {
+  font-size: 0.93rem !important;
+}
+body .admin-app-layout .admin-re-nav-item span {
+  font-size: 0.93rem !important;
+}
+
+/* Stats cards */
+body .admin-app-layout .stat-card-value {
+  font-size: 1.6rem !important;
+}
+body .admin-app-layout .stat-card-label {
+  font-size: 0.88rem !important;
+}
+
+/* Table cells */
+body .admin-app-layout .admin-re-table td,
+body .admin-app-layout .products-table-re td {
+  font-size: 0.92rem !important;
+}
+
+/* ── PRODUCT VIEW FULL PAGE MODAL ── */
+.prod-view-fullpage-overlay {
+  padding: 16px !important;
+  align-items: flex-start !important;
+  overflow-y: auto;
+}
+
+.prod-view-fullpage-box {
+  width: 92vw !important;
+  max-width: 1100px !important;
+  max-height: calc(100vh - 32px) !important;
+  border-radius: 18px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  margin: auto !important;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.2) !important;
+}
+
+/* Header */
+.prod-view-hdr {
+  padding: 20px 28px !important;
+  background: #ffffff;
+  border-bottom: 2px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.prod-view-hdr .close-btn {
+  background: #f1f5f9;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s;
+}
+.prod-view-hdr .close-btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+/* Scrollable body */
+.prod-view-body {
+  overflow-y: auto;
+  padding: 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Top hero row: image + info side by side */
+.prod-view-hero-row {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.prod-view-main-img-wrap {
+  flex-shrink: 0;
+  width: 260px;
+  height: 280px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid #e2e8f0;
+  background: #f8fafc;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.prod-view-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.prod-view-info-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.prod-view-product-name {
+  font-size: 1.6rem !important;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+  line-height: 1.3;
+  letter-spacing: -0.3px;
+}
+
+.prod-view-price-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.prod-view-price {
+  font-size: 1.8rem !important;
+  font-weight: 800;
+  color: #aa7c11;
+}
+
+.prod-view-orig-price {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+/* Stats grid: 3 columns */
+.prod-view-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.prod-view-stat-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.prod-view-stat-label {
+  font-size: 0.78rem !important;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prod-view-stat-value {
+  font-size: 0.95rem !important;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Section blocks */
+.prod-view-section {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px 24px;
+}
+
+.prod-view-section-title {
+  font-size: 1rem !important;
+  font-weight: 700;
+  color: #051838;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Gallery */
+.prod-view-gallery-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.prod-view-gallery-thumb {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #e2e8f0;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.prod-view-gallery-thumb:hover {
+  border-color: #aa7c11;
+  transform: scale(1.04);
+}
+
+.prod-view-gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Attributes grid */
+.prod-view-attrs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.prod-view-attr-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.prod-view-attr-key {
+  font-size: 0.83rem !important;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: capitalize;
+}
+
+.prod-view-attr-val {
+  font-size: 0.88rem !important;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* btn-secondary/primary inside modal */
+.prod-view-body ~ * .btn-secondary,
+.prod-view-fullpage-box .btn-secondary {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  color: #475569;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.prod-view-fullpage-box .btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+.prod-view-fullpage-box .btn-primary {
+  background: #051838;
+  border: none;
+  color: #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.prod-view-fullpage-box .btn-primary:hover {
+  background: #0c2d5e;
+}
+
+/* Responsive: stack on tablet */
+@media (max-width: 768px) {
+  .prod-view-hero-row { flex-direction: column; gap: 20px; }
+  .prod-view-main-img-wrap { width: 100%; height: 220px; }
+  .prod-view-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .prod-view-fullpage-box { width: 98vw !important; }
+}
+
+/* ── ProductForm image improvements ── */
+.product-form-media-preview-box img {
+  width: 100% !important;
+  height: 200px !important;
+  object-fit: contain !important;
+  background: #f8fafc;
+}
+
+/* Make label font sizes a bit bigger in ProductForm */
+.product-form-field label {
+  font-size: 0.82rem !important;
+}
+.product-form-table th {
+  font-size: 0.82rem !important;
+}
+.product-form-table td {
+  font-size: 0.88rem !important;
+}
+.product-form-card-header h3 {
+  font-size: 1.1rem !important;
+}
+.product-form-tab-btn .tab-label {
+  font-size: 0.9rem !important;
+}
+.product-form-tab-btn .tab-desc {
+  font-size: 0.76rem !important;
+}
+
+/* ── Admin table font fixes ── */
+.admin-re-table th,
+.products-table-re th {
+  font-size: 0.88rem !important;
+  letter-spacing: 0.02em;
+}
+.admin-re-table td,
+.products-table-re td {
+  font-size: 0.9rem !important;
+}
+.admin-re-table .bold,
+.products-table-re .bold {
+  font-weight: 700;
+}
+
+/* Fix variant table column header sizes in ProductForm */
+.product-form-table-input,
+.product-form-table-select {
+  font-size: 0.85rem !important;
+}
+
+/* ── Prevent the old small admin-modal-box from capping the view modal ── */
+.admin-modal-box.prod-view-fullpage-box {
+  width: 92vw !important;
+  max-width: 1100px !important;
+}
+
+/* =====================================================================
+   PRODUCT VIEW MODAL — Complete UI Redesign (colorful, aligned, visible)
+   ===================================================================== */
+
+/* ── Overlay ── */
+.prod-view-fullpage-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(5, 24, 56, 0.65) !important;
+  backdrop-filter: blur(4px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 9999 !important;
+  padding: 20px !important;
+  overflow-y: auto !important;
+}
+
+/* ── Modal Box ── */
+.prod-view-fullpage-box {
+  width: 94vw !important;
+  max-width: 1060px !important;
+  max-height: calc(100vh - 40px) !important;
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  box-shadow: 0 40px 100px rgba(5, 24, 56, 0.3), 0 8px 32px rgba(0,0,0,0.15) !important;
+  animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  margin: auto !important;
+}
+
+/* ── Header ── */
+.prod-view-hdr {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 18px 28px !important;
+  background: linear-gradient(135deg, #051838 0%, #0c2d5e 100%) !important;
+  flex-shrink: 0 !important;
+}
+
+.prod-view-hdr-thumb {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  border: 2.5px solid rgba(212,175,55,0.7) !important;
+  flex-shrink: 0 !important;
+}
+.prod-view-hdr-thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.prod-view-hdr-sub {
+  margin: 0 0 2px 0 !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  color: #D4AF37 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+
+.prod-view-hdr-title {
+  margin: 0 !important;
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  letter-spacing: -0.2px !important;
+}
+
+.prod-view-close-btn {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.12) !important;
+  border: 1.5px solid rgba(255,255,255,0.2) !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s !important;
+  flex-shrink: 0 !important;
+}
+.prod-view-close-btn:hover {
+  background: rgba(239, 68, 68, 0.8) !important;
+  border-color: transparent !important;
+}
+
+/* ── Scrollable Body ── */
+.prod-view-body {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 24px 28px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  background: #f8fafc !important;
+}
+
+/* ── Hero Row ── */
+.prod-view-hero-row {
+  display: flex !important;
+  gap: 28px !important;
+  align-items: flex-start !important;
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+}
+
+.prod-view-main-img-wrap {
+  flex-shrink: 0 !important;
+  width: 240px !important;
+  height: 260px !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  border: 2px solid #e2e8f0 !important;
+  background: #f1f5f9 !important;
+  position: relative !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important;
+}
+
+.prod-view-main-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.prod-view-img-badge {
+  position: absolute !important;
+  bottom: 10px !important;
+  left: 10px !important;
+}
+
+.prod-view-info-panel {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.prod-view-product-name {
+  font-size: 1.55rem !important;
+  font-weight: 900 !important;
+  color: #051838 !important;
+  margin: 0 0 4px 0 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.5px !important;
+}
+
+.prod-view-brand {
+  font-size: 0.9rem !important;
+  color: #64748b !important;
+  margin: 0 0 14px 0 !important;
+  font-style: italic !important;
+}
+
+.prod-view-price-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 20px !important;
+  flex-wrap: wrap !important;
+}
+
+.prod-view-price {
+  font-size: 2rem !important;
+  font-weight: 900 !important;
+  color: #D4AF37 !important;
+  letter-spacing: -0.5px !important;
+}
+
+.prod-view-orig-price {
+  font-size: 1.1rem !important;
+  color: #94a3b8 !important;
+  text-decoration: line-through !important;
+}
+
+/* ── Stat Cards ── */
+.prod-view-stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 10px !important;
+}
+
+.prod-view-stat-card {
+  padding: 12px 14px !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  border: 1.5px solid transparent !important;
+}
+
+.prod-view-stat-card.blue   { background: #eff6ff !important; border-color: #bfdbfe !important; }
+.prod-view-stat-card.teal   { background: #f0fdfa !important; border-color: #99f6e4 !important; }
+.prod-view-stat-card.purple { background: #faf5ff !important; border-color: #e9d5ff !important; }
+.prod-view-stat-card.green  { background: #f0fdf4 !important; border-color: #bbf7d0 !important; }
+.prod-view-stat-card.red    { background: #fff1f2 !important; border-color: #fecdd3 !important; }
+.prod-view-stat-card.gold   { background: #fffbeb !important; border-color: #fde68a !important; }
+.prod-view-stat-card.indigo { background: #eef2ff !important; border-color: #c7d2fe !important; }
+
+.prod-view-stat-label {
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.07em !important;
+  text-transform: uppercase !important;
+  color: #64748b !important;
+}
+
+.prod-view-stat-card.blue   .prod-view-stat-label { color: #1d4ed8 !important; }
+.prod-view-stat-card.teal   .prod-view-stat-label { color: #0f766e !important; }
+.prod-view-stat-card.purple .prod-view-stat-label { color: #7c3aed !important; }
+.prod-view-stat-card.green  .prod-view-stat-label { color: #166534 !important; }
+.prod-view-stat-card.red    .prod-view-stat-label { color: #be123c !important; }
+.prod-view-stat-card.gold   .prod-view-stat-label { color: #92400e !important; }
+.prod-view-stat-card.indigo .prod-view-stat-label { color: #4338ca !important; }
+
+.prod-view-stat-value {
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+  color: #1e293b !important;
+}
+
+/* ── Section Wrapper ── */
+.prod-view-section {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04) !important;
+}
+
+/* ── Section Header ── */
+.prod-view-section-hdr {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 14px 20px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.prod-view-section-hdr.gallery-hdr  { background: linear-gradient(90deg, #eff6ff, #f0fdfa) !important; border-bottom-color: #bfdbfe !important; }
+.prod-view-section-hdr.specs-hdr    { background: linear-gradient(90deg, #fffbeb, #fdf4ff) !important; border-bottom-color: #fde68a !important; }
+.prod-view-section-hdr.variants-hdr { background: linear-gradient(90deg, #faf5ff, #eff6ff) !important; border-bottom-color: #e9d5ff !important; }
+.prod-view-section-hdr.desc-hdr     { background: linear-gradient(90deg, #f0fdf4, #fefce8) !important; border-bottom-color: #bbf7d0 !important; }
+
+.prod-view-section-icon {
+  font-size: 1.1rem !important;
+  flex-shrink: 0 !important;
+}
+
+.prod-view-section-title {
+  font-size: 0.98rem !important;
+  font-weight: 800 !important;
+  color: #051838 !important;
+  margin: 0 !important;
+  letter-spacing: -0.1px !important;
+  flex: 1 !important;
+}
+
+.prod-view-section-count {
+  background: rgba(5,24,56,0.08) !important;
+  color: #475569 !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 3px 10px !important;
+  border-radius: 20px !important;
+}
+
+/* ── Gallery ── */
+.prod-view-gallery-row {
+  display: flex !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  padding: 16px 20px !important;
+}
+
+.prod-view-gallery-thumb {
+  width: 86px !important;
+  height: 86px !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  border: 2px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  position: relative !important;
+}
+.prod-view-gallery-thumb:hover {
+  border-color: #D4AF37 !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 4px 12px rgba(212,175,55,0.3) !important;
+}
+.prod-view-gallery-thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+.prod-view-gallery-primary-tag {
+  position: absolute !important;
+  bottom: 4px !important;
+  left: 4px !important;
+  background: #D4AF37 !important;
+  color: #051838 !important;
+  font-size: 0.62rem !important;
+  font-weight: 800 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  text-transform: uppercase !important;
+}
+
+/* ── Category Specs: short attrs table ── */
+.prod-view-attrs-table {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)) !important;
+  gap: 0 !important;
+  margin: 16px 20px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+.prod-view-attr-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 10px 16px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  border-right: 1px solid #f1f5f9 !important;
+  gap: 12px !important;
+  background: #ffffff !important;
+  transition: background 0.15s !important;
+}
+.prod-view-attr-row:hover {
+  background: #fafbff !important;
+}
+
+.prod-view-attr-key {
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  color: #64748b !important;
+  text-transform: capitalize !important;
+  flex-shrink: 0 !important;
+}
+
+.prod-view-attr-val {
+  font-size: 0.88rem !important;
+  font-weight: 800 !important;
+  color: #051838 !important;
+  text-align: right !important;
+  word-break: break-word !important;
+}
+
+/* ── SEO / Long text fields ── */
+.prod-view-seo-fields {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  margin: 0 20px 16px 20px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+.prod-view-seo-row {
+  padding: 12px 16px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  background: #fafbff !important;
+}
+.prod-view-seo-row:last-child { border-bottom: none !important; }
+
+.prod-view-seo-key {
+  display: block !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  color: #7c3aed !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 6px !important;
+}
+
+.prod-view-seo-val {
+  margin: 0 !important;
+  font-size: 0.9rem !important;
+  color: #334155 !important;
+  line-height: 1.6 !important;
+  word-break: break-word !important;
+}
+
+/* ── Variants Table ── */
+.prod-view-variants-wrap {
+  overflow-x: auto !important;
+  padding: 0 0 4px 0 !important;
+}
+
+.prod-view-variants-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+
+.prod-view-variants-table thead tr {
+  background: linear-gradient(90deg, #faf5ff, #eff6ff) !important;
+}
+
+.prod-view-variants-table th {
+  padding: 12px 16px !important;
+  font-size: 0.8rem !important;
+  font-weight: 800 !important;
+  color: #051838 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+}
+
+.prod-view-variants-table tbody tr.even { background: #ffffff !important; }
+.prod-view-variants-table tbody tr.odd  { background: #f8fafc !important; }
+
+.prod-view-variants-table td {
+  padding: 12px 16px !important;
+  font-size: 0.9rem !important;
+  color: #1e293b !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  vertical-align: middle !important;
+}
+
+.prod-view-variants-table td.price-cell {
+  font-weight: 900 !important;
+  color: #D4AF37 !important;
+  font-size: 1rem !important;
+}
+
+.prod-view-variants-table td.stock-low {
+  color: #dc2626 !important;
+  font-weight: 800 !important;
+}
+.prod-view-variants-table td.stock-ok {
+  color: #16a34a !important;
+  font-weight: 700 !important;
+}
+
+/* Color & Size chips */
+.prod-view-color-chip {
+  display: inline-block !important;
+  padding: 4px 12px !important;
+  background: linear-gradient(135deg, #e0e7ff, #eff6ff) !important;
+  color: #3730a3 !important;
+  border-radius: 20px !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  border: 1px solid #c7d2fe !important;
+  white-space: nowrap !important;
+  text-transform: capitalize !important;
+}
+
+.prod-view-size-chip {
+  display: inline-block !important;
+  padding: 4px 12px !important;
+  background: linear-gradient(135deg, #dcfce7, #d1fae5) !important;
+  color: #166534 !important;
+  border-radius: 20px !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  border: 1px solid #bbf7d0 !important;
+  white-space: nowrap !important;
+}
+
+.prod-view-variant-img {
+  width: 52px !important;
+  height: 52px !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+  border: 2px solid #e2e8f0 !important;
+  display: block !important;
+  transition: transform 0.2s !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
+}
+.prod-view-variant-img:hover {
+  transform: scale(1.15) !important;
+  border-color: #D4AF37 !important;
+}
+
+.prod-view-no-img {
+  font-size: 0.78rem !important;
+  color: #94a3b8 !important;
+  font-style: italic !important;
+  background: #f8fafc !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  border: 1px dashed #cbd5e1 !important;
+}
+
+/* ── Description ── */
+.prod-view-description {
+  margin: 0 !important;
+  padding: 16px 20px !important;
+  font-size: 0.95rem !important;
+  color: #374151 !important;
+  line-height: 1.75 !important;
+  font-weight: 400 !important;
+}
+
+/* ── Footer Action Buttons ── */
+.prod-view-footer-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+  padding-top: 16px !important;
+  border-top: 2px solid #f1f5f9 !important;
+  flex-shrink: 0 !important;
+}
+
+.prod-view-edit-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 11px 22px !important;
+  background: #ffffff !important;
+  border: 2px solid #051838 !important;
+  color: #051838 !important;
+  border-radius: 10px !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  font-family: inherit !important;
+}
+.prod-view-edit-btn:hover {
+  background: #051838 !important;
+  color: #ffffff !important;
+}
+
+.prod-view-close-action-btn {
+  padding: 11px 28px !important;
+  background: linear-gradient(135deg, #D4AF37, #c59f2e) !important;
+  border: none !important;
+  color: #ffffff !important;
+  border-radius: 10px !important;
+  font-size: 0.9rem !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  font-family: inherit !important;
+  letter-spacing: 0.02em !important;
+  box-shadow: 0 4px 12px rgba(212,175,55,0.4) !important;
+}
+.prod-view-close-action-btn:hover {
+  background: linear-gradient(135deg, #c59f2e, #a8860f) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 16px rgba(212,175,55,0.5) !important;
+}
+
+/* ======================================================
+   GLOBAL ADMIN FONT SIZE BOOST (stronger overrides)
+   ====================================================== */
+body .admin-app-layout * {
+  letter-spacing: normal !important;
+}
+
+/* Sidebar labels */
+body .admin-app-layout .admin-re-nav-item {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+}
+
+/* Top bar */
+body .admin-app-layout .admin-re-topbar-title,
+body .admin-app-layout .admin-re-topbar h1,
+body .admin-app-layout .admin-re-topbar h2 {
+  font-size: 1.4rem !important;
+  color: #051838 !important;
+}
+
+/* Dashboard section headings */
+body .admin-app-layout .admin-re-section-card h2,
+body .admin-app-layout .admin-re-section-card h3 {
+  font-size: 1.15rem !important;
+  color: #051838 !important;
+  font-weight: 800 !important;
+}
+
+/* Table headers everywhere */
+body .admin-app-layout table th {
+  font-size: 0.88rem !important;
+  color: #374151 !important;
+  font-weight: 800 !important;
+}
+
+/* Table cells everywhere */
+body .admin-app-layout table td {
+  font-size: 0.92rem !important;
+  color: #1e293b !important;
+}
+
+/* All body text / labels */
+body .admin-app-layout label {
+  font-size: 0.88rem !important;
+  color: #374151 !important;
+  font-weight: 700 !important;
+}
+
+/* All inputs / selects */
+body .admin-app-layout input:not([type=checkbox]):not([type=radio]),
+body .admin-app-layout select,
+body .admin-app-layout textarea {
+  font-size: 0.93rem !important;
+  color: #1e293b !important;
+}
+
+/* All plain text */
+body .admin-app-layout p,
+body .admin-app-layout li {
+  font-size: 0.93rem !important;
+  color: #374151 !important;
+}
+
+/* Stat card values */
+body .admin-app-layout .stat-card-value {
+  font-size: 1.7rem !important;
+  font-weight: 900 !important;
+  color: #051838 !important;
+}
+body .admin-app-layout .stat-card-label {
+  font-size: 0.85rem !important;
+  color: #64748b !important;
+}
+
+/* Section titles */
+body .admin-app-layout .admin-section-title,
+body .admin-app-layout .products-re-main-title {
+  font-size: 1.5rem !important;
+  color: #051838 !important;
+  font-weight: 900 !important;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .prod-view-hero-row { flex-direction: column !important; }
+  .prod-view-main-img-wrap { width: 100% !important; height: 200px !important; }
+  .prod-view-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .prod-view-fullpage-box { width: 99vw !important; max-height: 100vh !important; border-radius: 12px !important; }
+  .prod-view-body { padding: 16px !important; }
+  .prod-view-attrs-table { grid-template-columns: 1fr !important; }
+}
+
+
+/* ===== ADMIN VISIBILITY OVERRIDES ===== */
+
+/* ==========================================================================
+   ADMIN PANEL TEXT VISIBILITY & THEME HIGHLIGHT OVERRIDES
+   ========================================================================== */
+
+/* 1. Global typography enlargement */
+body .admin-app-layout {
+  font-size: 0.95rem !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+}
+
+/* 2. Side navigation enlargement & color */
+body .admin-re-sidebar .nav-item-link,
+body .admin-re-sidebar .sidebar-nav-btn {
+  font-size: 1.05rem !important;
+  padding: 14px 18px !important;
+  font-weight: 600 !important;
+}
+body .admin-re-sidebar .nav-item-link.active {
+  color: #051838 !important;
+  background-color: rgba(5, 24, 56, 0.08) !important;
+}
+body .admin-re-sidebar .nav-item-link svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* 3. Headers and titles (Royal Blue) */
+body .admin-app-layout .panel-title,
+body .admin-app-layout .widget-title,
+body .admin-app-layout .card-title,
+body .admin-app-layout .admin-section-title,
+body .admin-app-layout .products-re-main-title,
+body .admin-app-layout h2,
+body .admin-app-layout h3 {
+  color: #051838 !important;
+  font-size: 1.65rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px !important;
+}
+
+/* Subtext colors (Muted grey / Slate grey) */
+body .admin-app-layout .panel-sub-title,
+body .admin-app-layout .widget-sub-title,
+body .admin-app-layout .card-sub-title,
+body .admin-app-layout .text-gray,
+body .admin-app-layout p {
+  color: #4b5563 !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+}
+
+/* 4. Stats cards values and labels */
+body .admin-app-layout .re-stat-card .stat-val,
+body .admin-app-layout .stat-card-value {
+  font-size: 2.1rem !important;
+  font-weight: 900 !important;
+  color: #051838 !important;
+}
+body .admin-app-layout .re-stat-card .stat-lbl,
+body .admin-app-layout .stat-card-label {
+  font-size: 0.95rem !important;
+  color: #4b5563 !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* 5. Table visibility improvements */
+body .admin-app-layout table th {
+  font-size: 0.95rem !important;
+  padding: 16px 20px !important;
+  font-weight: 800 !important;
+  color: #051838 !important;
+  background-color: #faf6ee !important;
+  border-bottom: 2px solid rgba(5, 24, 56, 0.1) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+body .admin-app-layout table td {
+  font-size: 0.95rem !important;
+  padding: 16px 20px !important;
+  color: #1e293b !important;
+}
+body .admin-app-layout table td.bold,
+body .admin-app-layout table td.text-black {
+  font-weight: 700 !important;
+  color: #051838 !important;
+}
+
+/* 6. Form label and inputs readability */
+body .admin-app-layout label,
+body .product-form-card label,
+body .admin-modal-box label {
+  font-size: 0.95rem !important;
+  color: #051838 !important;
+  font-weight: 700 !important;
+  margin-bottom: 8px !important;
+  display: block;
+}
+body .admin-app-layout input,
+body .admin-app-layout select,
+body .admin-app-layout textarea,
+body .product-form-card input,
+body .product-form-card select,
+body .product-form-card textarea,
+body .admin-modal-box input,
+body .admin-modal-box select,
+body .admin-modal-box textarea {
+  font-size: 1rem !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #1e293b !important;
+  background-color: #ffffff !important;
+}
+body .admin-app-layout input:focus,
+body .admin-app-layout select:focus,
+body .admin-app-layout textarea:focus,
+body .product-form-card input:focus,
+body .product-form-card select:focus,
+body .product-form-card textarea:focus {
+  border-color: #dfb743 !important;
+  box-shadow: 0 0 0 3px rgba(223, 183, 67, 0.15) !important;
+  outline: none !important;
+}
+
+/* 7. Modal detail typography */
+body .admin-modal-box .modal-hdr h3 {
+  font-size: 1.35rem !important;
+  color: #051838 !important;
+  font-weight: 800 !important;
+}
+body .admin-modal-box .spec-lbl {
+  font-size: 0.95rem !important;
+  color: #4b5563 !important;
+  font-weight: 600 !important;
+}
+body .admin-modal-box .spec-val {
+  font-size: 0.95rem !important;
+  color: #051838 !important;
+  font-weight: 700 !important;
+}
+
+/* Sub-tabs pills navigation */
+body .admin-app-layout .settings-sub-nav-item,
+body .admin-app-layout .sub-tab-btn-re {
+  font-size: 0.95rem !important;
+  padding: 12px 20px !important;
+  font-weight: 600 !important;
+}
+body .admin-app-layout .settings-sub-nav-item.active {
+  color: #051838 !important;
+  background-color: rgba(5, 24, 56, 0.08) !important;
+}
+
+/* Helper spacing utility classes */
+.mt-4 { margin-top: 1rem !important; }
+.mb-4 { margin-bottom: 1rem !important; }
+.p-4 { padding: 1rem !important; }
+
+
+/* ==========================================================================
+   COLORFUL & ANIMATED CATEGORIES SECTION UI OVERRIDES
+   ========================================================================== */
+
+/* Add category button hover micro-interactions */
+body .admin-app-layout .categories-re-add-btn {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  box-shadow: 0 4px 10px rgba(5, 24, 56, 0.05) !important;
+}
+body .admin-app-layout .categories-re-add-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 15px rgba(223, 183, 67, 0.2) !important;
+}
+body .admin-app-layout .categories-re-add-btn svg {
+  transition: transform 0.25s ease !important;
+}
+body .admin-app-layout .categories-re-add-btn:hover svg {
+  transform: scale(1.15) rotate(90deg) !important;
+}
+
+/* Category row style differences based on nesting depth */
+body .admin-app-layout .category-row {
+  transition: background-color 0.2s ease !important;
+}
+body .admin-app-layout .category-row.depth-0 {
+  background-color: #ffffff !important;
+  font-weight: 700 !important;
+}
+body .admin-app-layout .category-row.depth-1 {
+  background-color: #fcfbfa !important;
+}
+body .admin-app-layout .category-row.depth-2 {
+  background-color: #f9f8f6 !important;
+}
+body .admin-app-layout .category-row:hover {
+  background-color: #faf6ee !important; /* Elegant gold highlight on hover */
+}
+
+/* Interactive Folder Icons */
+body .admin-app-layout .category-row svg[class*="Folder"] {
+  transition: transform 0.2s ease, color 0.2s ease !important;
+  color: #dfb743 !important; /* Theme gold */
+}
+body .admin-app-layout .category-row:hover svg[class*="Folder"] {
+  transform: scale(1.15) !important;
+  color: #051838 !important; /* Theme navy */
+}
+
+/* Connectors Style */
+body .admin-app-layout .cat-branch-connector {
+  color: #dfb743 !important;
+  font-weight: 800 !important;
+  margin-right: 6px !important;
+}
+
+/* Color-coded Theme Visibility Badges */
+body .admin-app-layout .visibility-pill {
+  border-radius: 20px !important;
+  padding: 6px 12px !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border: 1.5px solid transparent !important;
+  display: inline-block !important;
+  transition: all 0.25s ease !important;
+}
+
+/* Active visibility pills follow website theme: Navy Blue (#051838) with Gold border (#dfb743) */
+body .admin-app-layout .visibility-pills-row span.active {
+  background-color: #051838 !important;
+  color: #ffffff !important;
+  border-color: #dfb743 !important;
+  box-shadow: 0 2px 6px rgba(5, 24, 56, 0.15) !important;
+}
+body .admin-app-layout .visibility-pills-row span.active:hover {
+  background-color: #dfb743 !important;
+  color: #051838 !important;
+  border-color: #051838 !important;
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 0 4px 10px rgba(223, 183, 67, 0.3) !important;
+}
+
+/* Inactive visibility pills (Gray) */
+body .admin-app-layout .visibility-pill.inactive {
+  background-color: #faf6ee !important;
+  color: #8893a7 !important;
+  border-color: #cbd5e1 !important;
+  opacity: 0.65 !important;
+}
+
+/* Action buttons gap - spacing between buttons */
+body .admin-app-layout .categories-table-re .action-buttons-wrap {
+  gap: 10px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/* Category-specific action button styling is handled by the
+   universal .table-act-btn rules below (vibrant theme) */
+
+body .admin-app-layout .admin-re-search-wrapper {
+  box-shadow: 0 4px 10px rgba(5, 24, 56, 0.04) !important;
+  border-radius: 30px !important;
+}
+body .admin-app-layout .admin-re-search-input {
+  border-radius: 30px !important;
+  border: 1.5px solid rgba(5, 24, 56, 0.15) !important;
+  background-color: #faf6ee !important;
+  color: #051838 !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  padding: 10px 16px 10px 42px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+body .admin-app-layout .admin-re-search-input::placeholder {
+  color: #8893a7 !important;
+  font-weight: 500 !important;
+}
+body .admin-app-layout .admin-re-search-input:focus {
+  border-color: #dfb743 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(223, 183, 67, 0.18) !important;
+}
+body .admin-app-layout .admin-re-search-wrapper .search-icon {
+  color: #dfb743 !important;
+  transition: transform 0.25s ease !important;
+}
+body .admin-app-layout .admin-re-search-wrapper:focus-within .search-icon {
+  transform: translateY(-50%) scale(1.15) !important;
+}
+
+/* Local Category search focus layout */
+body .admin-app-layout .categories-search-field-re:focus {
+  border-color: #dfb743 !important;
+  box-shadow: 0 0 0 4px rgba(223, 183, 67, 0.18) !important;
+  background-color: #ffffff !important;
+}
+
+/* Force padding on all search inputs to prevent overlapping the search icon */
+body .admin-app-layout .admin-re-search-input,
+body .admin-app-layout .categories-search-field-re,
+body .admin-app-layout .products-re-search-field,
+body .admin-app-layout .customers-re-search-field {
+  padding-left: 42px !important;
+}
+
+/* Theme-Aligned Premium Sidebar Overrides */
+body .admin-app-layout .admin-re-sidebar {
+  background-color: #051838 !important;
+  border-right: 1px solid rgba(223, 183, 67, 0.15) !important;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.3s ease !important;
+}
+body .admin-app-layout .admin-re-brand-name .brand-mithira {
+  color: #ffffff !important; /* Elegant white */
+  font-weight: 800 !important;
+}
+body .admin-app-layout .brand-shoppy,
+body .admin-app-layout .brand-shopy {
+  color: #dfb743 !important; /* Premium gold */
+  font-weight: 800 !important;
+}
+body .admin-app-layout .admin-re-nav-item {
+  color: rgba(255, 255, 255, 0.75) !important; /* Standard legible white */
+  font-size: 0.98rem !important; /* Legible size */
+  font-weight: 600 !important;
+  padding: 13px 18px !important; /* Generous spacing */
+  border-radius: 8px !important;
+  margin-bottom: 3px !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+body .admin-app-layout .admin-re-nav-item svg {
+  color: rgba(255, 255, 255, 0.65) !important;
+  width: 19px !important;
+  height: 19px !important;
+  transition: all 0.25s ease !important;
+}
+body .admin-app-layout .admin-re-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #dfb743 !important; /* Gold on hover */
+  transform: translateX(4px) !important;
+}
+body .admin-app-layout .admin-re-nav-item:hover svg {
+  color: #dfb743 !important;
+}
+body .admin-app-layout .admin-re-nav-item.active {
+  background-color: #dfb743 !important; /* Gold active tab background */
+  color: #051838 !important; /* Dark Navy active text */
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(223, 183, 67, 0.2) !important;
+}
+body .admin-app-layout .admin-re-nav-item.active svg {
+  color: #051838 !important;
+}
+
+/* Category Product Behavior Configuration - Layout Improvements */
+body .admin-app-layout .category-config-card {
+  background-color: #ffffff !important;
+  border: 1px solid #eae6df !important;
+  border-radius: 16px !important;
+  padding: 26px !important;
+  box-shadow: 0 6px 16px rgba(5, 24, 56, 0.02) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+body .admin-app-layout .category-config-card:hover {
+  box-shadow: 0 10px 28px rgba(5, 24, 56, 0.05) !important;
+  transform: translateY(-2px) !important;
+}
+body .admin-app-layout .category-config-card .form-field label {
+  color: #051838 !important;
+  font-weight: 700 !important;
+  font-size: 0.98rem !important;
+}
+/* Themed Add buttons next to inputs */
+body .admin-app-layout .category-config-card .add-field-btn {
+  background-color: #051838 !important;
+  border: 1.5px solid #dfb743 !important;
+  color: #dfb743 !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+body .admin-app-layout .category-config-card .add-field-btn:hover {
+  background-color: #dfb743 !important;
+  color: #051838 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 10px rgba(223, 183, 67, 0.15) !important;
+}
+/* Dynamic Tags styling */
+body .admin-app-layout .category-config-card .attribute-tag {
+  background-color: #051838 !important;
+  border: 1px solid #dfb743 !important;
+  color: #dfb743 !important;
+  font-weight: 600 !important;
+  padding: 5px 12px !important;
+  font-size: 0.8rem !important;
+  transition: all 0.2s ease !important;
+}
+body .admin-app-layout .category-config-card .filter-tag {
+  background-color: #faf6ee !important;
+  border: 1px solid #dfb743 !important;
+  color: #aa7c11 !important;
+  font-weight: 600 !important;
+  padding: 5px 12px !important;
+  font-size: 0.8rem !important;
+  transition: all 0.2s ease !important;
+}
+body .admin-app-layout .category-config-card .spec-tag {
+  background-color: #051838 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  padding: 5px 12px !important;
+  font-size: 0.8rem !important;
+  transition: all 0.2s ease !important;
+}
+body .admin-app-layout .category-config-card .shipping-tag {
+  background-color: #dfb743 !important;
+  border: 1px solid #051838 !important;
+  color: #051838 !important;
+  font-weight: 700 !important;
+  padding: 5px 12px !important;
+  font-size: 0.8rem !important;
+  transition: all 0.2s ease !important;
+}
+/* Interactive table action buttons gap and layout */
+body .admin-app-layout .action-buttons-wrap {
+  display: flex !important;
+  gap: 10px !important; /* Space between buttons */
+  align-items: center !important;
+}
+/* ============================================================
+   UNIVERSAL VIBRANT ACTION BUTTONS — ALL ADMIN TABLES
+   Navy & Gold theme with vivid accent colours per action type
+   ============================================================ */
+body .admin-app-layout .table-act-btn {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 9px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  cursor: pointer !important;
+  outline: none !important;
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10) !important;
+}
+
+/* VIEW — Royal Navy Blue */
+body .admin-app-layout .table-act-btn.view {
+  background: linear-gradient(135deg, #051838 0%, #0a2a5e 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(223, 183, 67, 0.35) !important;
+}
+body .admin-app-layout .table-act-btn.view:hover {
+  background: linear-gradient(135deg, #dfb743 0%, #c9a030 100%) !important;
+  color: #051838 !important;
+  border-color: #dfb743 !important;
+  transform: scale(1.12) translateY(-2px) !important;
+  box-shadow: 0 6px 14px rgba(223, 183, 67, 0.35) !important;
+}
+
+/* EDIT — Warm Gold */
+body .admin-app-layout .table-act-btn.edit {
+  background: linear-gradient(135deg, #dfb743 0%, #c9a030 100%) !important;
+  color: #051838 !important;
+  border: 1px solid rgba(5, 24, 56, 0.12) !important;
+}
+body .admin-app-layout .table-act-btn.edit:hover {
+  background: linear-gradient(135deg, #051838 0%, #0a2a5e 100%) !important;
+  color: #dfb743 !important;
+  border-color: #dfb743 !important;
+  transform: scale(1.12) translateY(-2px) !important;
+  box-shadow: 0 6px 14px rgba(223, 183, 67, 0.3) !important;
+}
+
+/* ADD CHILD — Emerald Green */
+body .admin-app-layout .table-act-btn.add-child {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(5, 150, 105, 0.2) !important;
+}
+body .admin-app-layout .table-act-btn.add-child:hover {
+  background: linear-gradient(135deg, #051838 0%, #0a2a5e 100%) !important;
+  color: #10b981 !important;
+  border-color: #10b981 !important;
+  transform: scale(1.12) translateY(-2px) rotate(90deg) !important;
+  box-shadow: 0 6px 14px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* MOVE — Sky Indigo Blue */
+body .admin-app-layout .table-act-btn.move {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(37, 99, 235, 0.2) !important;
+}
+body .admin-app-layout .table-act-btn.move:hover {
+  background: linear-gradient(135deg, #051838 0%, #0a2a5e 100%) !important;
+  color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  transform: scale(1.12) translateY(-2px) !important;
+  box-shadow: 0 6px 14px rgba(59, 130, 246, 0.3) !important;
+}
+
+/* STATUS TOGGLE (active/enabled) — Vibrant Purple */
+body .admin-app-layout .table-act-btn.status-toggle,
+body .admin-app-layout .table-act-btn.status-toggle.active {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(124, 58, 237, 0.2) !important;
+}
+body .admin-app-layout .table-act-btn.status-toggle:hover,
+body .admin-app-layout .table-act-btn.status-toggle.active:hover {
+  background: linear-gradient(135deg, #051838 0%, #0a2a5e 100%) !important;
+  color: #a78bfa !important;
+  border-color: #8b5cf6 !important;
+  transform: scale(1.12) translateY(-2px) !important;
+  box-shadow: 0 6px 14px rgba(139, 92, 246, 0.3) !important;
+}
+
+/* STATUS TOGGLE (inactive/disabled) — Muted Slate */
+body .admin-app-layout .table-act-btn.status-toggle.inactive,
+body .admin-app-layout .table-act-btn.status-toggle.disabled {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(100, 116, 139, 0.2) !important;
+}
+body .admin-app-layout .table-act-btn.status-toggle.inactive:hover,
+body .admin-app-layout .table-act-btn.status-toggle.disabled:hover {
+  background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+  color: #e2e8f0 !important;
+  transform: scale(1.12) translateY(-2px) !important;
+  box-shadow: 0 6px 14px rgba(100, 116, 139, 0.25) !important;
+}
+
+/* DELETE — Vivid Crimson Red */
+body .admin-app-layout .table-act-btn.delete {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(220, 38, 38, 0.2) !important;
+}
+body .admin-app-layout .table-act-btn.delete:hover {
+  background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%) !important;
+  color: #fca5a5 !important;
+  border-color: #ef4444 !important;
+  transform: scale(1.12) translateY(-2px) rotate(4deg) !important;
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.35) !important;
+}
+
+/* Footer action buttons design */
+body .admin-app-layout .btn-secondary,
+body .admin-app-layout .modal-actions-row button:first-child {
+  border: 1.5px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+body .admin-app-layout .btn-secondary:hover,
+body .admin-app-layout .modal-actions-row button:first-child:hover {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+  transform: translateY(-2px) !important;
+}
+body .admin-app-layout .modal-actions-row button[style*="color: rgb(231, 76, 60)"],
+body .admin-app-layout .modal-actions-row button[style*="color: #e74c3c"] {
+  border: 1.5px solid rgba(220, 38, 38, 0.2) !important;
+  background-color: #fff5f5 !important;
+  color: #e53e3e !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+body .admin-app-layout .modal-actions-row button[style*="color: rgb(231, 76, 60)"]:hover,
+body .admin-app-layout .modal-actions-row button[style*="color: #e74c3c"]:hover {
+  background-color: #e53e3e !important;
+  color: #ffffff !important;
+  border-color: #e53e3e !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2) !important;
+}
+body .admin-app-layout .modal-actions-row button.btn-primary,
+body .admin-app-layout .modal-actions-row button[onClick*="handleSaveCategoryConfig"] {
+  background-color: #051838 !important;
+  border: 1.5px solid #dfb743 !important;
+  color: #dfb743 !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+body .admin-app-layout .modal-actions-row button.btn-primary:hover,
+body .admin-app-layout .modal-actions-row button[onClick*="handleSaveCategoryConfig"]:hover {
+  background-color: #dfb743 !important;
+  color: #051838 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(223, 183, 67, 0.3) !important;
+}
+
+

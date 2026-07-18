@@ -14,13 +14,7 @@
     "affectsPrice": true,
     "affectsStock": true,
     "requireImages": true,
-    "filters": [
-      "Price",
-      "Size",
-      "Color",
-      "pattern",
-      "brand"
-    ],
+    "filters": [],
     "specs": [
       "Fabric care instructions",
       "Style Code",
@@ -64,8 +58,8 @@
     "filters": [
       "Price",
       "Color",
-      "Age",
-      "Brand"
+      "Brand",
+      "age"
     ],
     "specs": [
       "Material",
@@ -247,12 +241,11 @@
     "affectsStock": true,
     "requireImages": true,
     "filters": [
-      "Price",
-      "Color",
-      "Size",
-      "Age Group",
+      "brand",
+      "gender",
       "fabric",
-      "gender"
+      "age",
+      "price"
     ],
     "specs": [
       "Fabric",
