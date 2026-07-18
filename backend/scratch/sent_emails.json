@@ -115,5 +115,119 @@
     "orderId": "#ORD1218",
     "status": "Shipped",
     "timestamp": "2026-07-16T04:28:46.477Z"
+  },
+  {
+    "to": "mathi@example.com",
+    "subject": "Order Confirmed: #ORD9648",
+    "body": "Dear mathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD9648\nOrder Date: Jul 18, 2026\nTotal Amount: ₹9459\nPayment Method: COD\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Printed Cotton Set x 1 (₹199)\n- gcj x 1 (₹7654)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD9648",
+    "timestamp": "2026-07-18T16:57:13.288Z"
+  },
+  {
+    "to": "mathi@example.com",
+    "subject": "Order Confirmed: #ORD7194",
+    "body": "Dear mathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD7194\nOrder Date: Jul 18, 2026\nTotal Amount: ₹9459\nPayment Method: COD\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- Kids Printed Cotton Set x 1 (₹199)\n- gcj x 1 (₹7654)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD7194",
+    "timestamp": "2026-07-18T16:57:15.294Z"
+  },
+  {
+    "to": "mathi@example.com",
+    "subject": "Order Confirmed: #ORD3150",
+    "body": "Dear mathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD3150\nOrder Date: Jul 18, 2026\nTotal Amount: ₹9224\nPayment Method: COD\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- gcj x 1 (₹7654)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD3150",
+    "timestamp": "2026-07-18T16:57:56.602Z"
+  },
+  {
+    "to": "mathi@example.com",
+    "subject": "Order Confirmed: #ORD7387",
+    "body": "Dear mathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD7387\nOrder Date: Jul 18, 2026\nTotal Amount: ₹9224\nPayment Method: COD\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- gcj x 1 (₹7654)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD7387",
+    "timestamp": "2026-07-18T16:57:58.991Z"
+  },
+  {
+    "to": "mathi@example.com",
+    "subject": "Order Confirmed: #ORD4812",
+    "body": "Dear mathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD4812\nOrder Date: Jul 18, 2026\nTotal Amount: ₹9224\nPayment Method: COD\n\nItems Ordered:\n- Kids Printed Set x 1 (₹163)\n- gcj x 1 (₹7654)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD4812",
+    "timestamp": "2026-07-18T16:58:00.021Z"
+  },
+  {
+    "to": "mathi@example.com",
+    "subject": "Order Confirmed: #ORD8458",
+    "body": "Dear mathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD8458\nOrder Date: Jul 18, 2026\nTotal Amount: ₹381\nPayment Method: COD\n\nItems Ordered:\n- Kids Everyday Cotton Set x 1 (₹239)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD8458",
+    "timestamp": "2026-07-18T16:59:10.390Z"
+  },
+  {
+    "to": "mathi@example.com",
+    "subject": "Order Confirmed: #ORD3425",
+    "body": "Dear mathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD3425\nOrder Date: Jul 18, 2026\nTotal Amount: ₹381\nPayment Method: COD\n\nItems Ordered:\n- Kids Everyday Cotton Set x 1 (₹239)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD3425",
+    "timestamp": "2026-07-18T16:59:11.673Z"
+  },
+  {
+    "to": "mathi@example.com",
+    "subject": "Order Confirmed: #ORD3412",
+    "body": "Dear mathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD3412\nOrder Date: Jul 18, 2026\nTotal Amount: ₹334\nPayment Method: COD\n\nItems Ordered:\n- Elegant Party Dress x 1 (₹199)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD3412",
+    "timestamp": "2026-07-18T16:59:43.576Z"
+  },
+  {
+    "to": "mathi@example.com",
+    "subject": "Order Confirmed: #ORD2937",
+    "body": "Dear mathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD2937\nOrder Date: Jul 18, 2026\nTotal Amount: ₹511\nPayment Method: COD\n\nItems Ordered:\n- Summer Kids Long Sleeve T-Shirt x 1 (₹349)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD2937",
+    "timestamp": "2026-07-18T17:00:33.630Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Confirmed: #ORD8287",
+    "body": "Dear sumathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD8287\nOrder Date: Jul 18, 2026\nTotal Amount: ₹840\nPayment Method: COD\n\nItems Ordered:\n- BOYS FULLSLEVE PATCHWORK SET x 1 (₹279)\n- Summer Kids Long Sleeve T-Shirt x 1 (₹349)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD8287",
+    "timestamp": "2026-07-18T17:07:20.457Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Confirmed: #ORD4908",
+    "body": "Dear sumathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD4908\nOrder Date: Jul 18, 2026\nTotal Amount: ₹381\nPayment Method: COD\n\nItems Ordered:\n- Tom and Jerry T-Shirt x 1 (₹239)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD4908",
+    "timestamp": "2026-07-18T17:08:16.318Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Confirmed: #ORD7398",
+    "body": "Dear sumathi,\n\nThank you for your order! We are pleased to confirm that your order has been received and is being processed.\n\nOrder ID: #ORD7398\nOrder Date: Jul 18, 2026\nTotal Amount: ₹334\nPayment Method: COD\n\nItems Ordered:\n- Snowfall T-Shirt x 1 (₹199)\n\nWe will notify you when your items are shipped.\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_confirmation",
+    "orderId": "#ORD7398",
+    "timestamp": "2026-07-18T17:19:29.026Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD7398",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD7398\nUpdated Status: Delivered\nOrder Date: Jul 18, 2026\nTotal Amount: ₹334\n\nItems Ordered:\n- Snowfall T-Shirt x 1 (₹199)\n\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD7398",
+    "status": "Delivered",
+    "timestamp": "2026-07-18T17:21:08.564Z"
+  },
+  {
+    "to": "sumathisaraswathi4@gmail.com",
+    "subject": "Order Status Updated: #ORD7398",
+    "body": "Dear sumathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD7398\nUpdated Status: Delivered\nOrder Date: Jul 18, 2026\nTotal Amount: ₹334\n\nItems Ordered:\n- Snowfall T-Shirt x 1 (₹199)\n\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD7398",
+    "status": "Delivered",
+    "timestamp": "2026-07-18T17:21:12.248Z"
   }
 ]

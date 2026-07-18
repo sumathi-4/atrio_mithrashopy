@@ -39,6 +39,9 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
   const [paymentMethod, setPaymentMethod] = useState('Razorpay');
   const [userOrders, setUserOrders] = useState([]);
 
+  // States for double click prevention
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+
   // Dynamic States for Claims & Reviews
   const [myClaims, setMyClaims] = useState([]);
   const [myReviews, setMyReviews] = useState([]);
@@ -451,6 +454,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
   };
 
   const handlePlaceOrder = () => {
+    if (isPlacingOrder) return;
     if (cartItemsDetailed.length === 0) return;
     if (!authUser) {
       addToast({ message: 'Please log in to place your order.', type: 'info' });
@@ -461,6 +465,8 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
       addToast({ message: 'Please select a delivery address.', type: 'error' });
       return;
     }
+
+    setIsPlacingOrder(true);
 
     const selectedAddr = addresses.find(a => a.id === selectedAddressId);
     const orderItems = cartItemsDetailed.map(item => ({
@@ -498,6 +504,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
     apiService.createOrder(orderPayload).then(async (res) => {
       if (!res || !res.success) {
         addToast({ message: 'Failed to place order. Please try again.', type: 'error' });
+        setIsPlacingOrder(false);
         return;
       }
 
@@ -505,6 +512,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
       if (!res.requiresRazorpay) {
         addToast({ message: 'Order placed successfully! Thank you for shopping with us.', type: 'success' });
         completeOrderCheckout(res.order);
+        setIsPlacingOrder(false);
         return;
       }
 
@@ -527,9 +535,13 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
             } else {
               addToast({ message: 'Mock payment verification failed.', type: 'error' });
             }
+            setIsPlacingOrder(false);
+          }).catch(() => {
+            setIsPlacingOrder(false);
           });
         } else {
           addToast({ message: 'Payment cancelled.', type: 'info' });
+          setIsPlacingOrder(false);
         }
         return;
       }
@@ -552,6 +564,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
       const loaded = await loadRazorpayScript();
       if (!loaded) {
         addToast({ message: 'Failed to load Razorpay SDK. Please check your internet connection.', type: 'error' });
+        setIsPlacingOrder(false);
         return;
       }
 
@@ -562,6 +575,11 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
         name: 'Mithira Shopy',
         description: orderPayload.product,
         order_id: res.razorpayOrderId,
+        modal: {
+          ondismiss: function () {
+            setIsPlacingOrder(false);
+          }
+        },
         handler: async function (paymentRes) {
           try {
             const verifyPayload = {
@@ -580,6 +598,8 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
           } catch (err) {
             console.error(err);
             addToast({ message: 'Error verifying payment.', type: 'error' });
+          } finally {
+            setIsPlacingOrder(false);
           }
         },
         prefill: {
@@ -594,6 +614,8 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
 
       const rzp = new window.Razorpay(options);
       rzp.open();
+    }).catch(() => {
+      setIsPlacingOrder(false);
     });
   };
 
@@ -2087,9 +2109,9 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                       <button 
                         className="ua-cart-btn-primary ua-btn-checkout" 
                         onClick={handlePlaceOrder}
-                        disabled={cartItemsDetailed.length === 0 || !selectedAddressId}
+                        disabled={cartItemsDetailed.length === 0 || !selectedAddressId || isPlacingOrder}
                       >
-                        Place Order (₹{calculateTotal()})
+                        {isPlacingOrder ? 'Placing Order...' : `Place Order (₹${calculateTotal()})`}
                       </button>
                     </div>
                   </div>
@@ -3365,7 +3387,6 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
           </div>
         </div>
       )}
-
       {/* Premium styles migrated to global index.css */}
     </div>
   );

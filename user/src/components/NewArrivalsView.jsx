@@ -10,7 +10,7 @@ import { apiService } from '../services/apiService';
 import { resolveProductImage, resolveProductGallery, isRealImg } from '../utils/imageHelper';
 import { useToast } from './ToastProvider';
 import { categoryConfigService } from '../services/categoryConfigService';
-import { COLOR_MAP, getColorHex, getValuesForFilter, getFilterOptions, applyDynamicFilters, getProductBadge, getMergedFiltersForPath } from '../utils/filterUtils';
+import { COLOR_MAP, getColorHex, getValuesForFilter, getFilterOptions, applyDynamicFilters, getProductBadge, getMergedFiltersForPath, setCategoryConfigsCache } from '../utils/filterUtils';
 import { loadPersistentFilters, savePersistentFilters, clearPersistentFilters } from '../utils/filterPersistence';
 
 import imgClothing from '../assets/hero_clothing_banner.jpg';
@@ -867,6 +867,7 @@ export default function NewArrivalsView() {
     categoryConfigService.getCategoryConfigurations().then(confs => {
       if (confs) {
         setCategoryConfigs(confs);
+        setCategoryConfigsCache(confs);
       }
     }).catch(console.error);
 
@@ -1389,7 +1390,7 @@ export default function NewArrivalsView() {
   const newArrivalsDbOnly = allProducts.filter(p => p.isNewArrival === true);
   const finalNewArrivals = newArrivalsDbOnly;
 
-  const categoryProducts = finalNewArrivals.filter(p => {
+  const categoryProducts = allProducts.filter(p => {
     // 1. Root Category filter
     if (activeTab !== 'ALL') {
       const rootCat = String(p.category || '').split('>')[0].trim().toUpperCase();
@@ -1469,7 +1470,7 @@ export default function NewArrivalsView() {
   filteredProducts = applyDynamicFilters(filteredProducts, activeFilters);
 
   // 6. Price Filter
-  const hasPriceFilter = categoryFilters.some(f => f && typeof f === 'string' && f.toLowerCase() === 'price') || activeTab === 'ALL';
+  const hasPriceFilter = categoryFilters.some(f => f && typeof f === 'string' && f.toLowerCase() === 'price');
   if (hasPriceFilter) {
     filteredProducts = filteredProducts.filter(p => {
       const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price).replace(/[^0-9.]/g, '')) || 0;
@@ -1904,9 +1905,6 @@ export default function NewArrivalsView() {
         
         {/* Header Section */}
         <div className="arrivals-header-section">
-          <div className="arrivals-crown-icon">
-            <img src={logoImg} className="arrivals-crown-svg" alt="Logo" style={{ objectFit: 'contain' }} />
-          </div>
           <h1 className="arrivals-main-title">The Fresh Edit</h1>
           <p className="arrivals-subtitle">Explore our newly launched, premium additions crafted for this season</p>
         </div>

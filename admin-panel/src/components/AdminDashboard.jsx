@@ -148,6 +148,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
   const [vendorProducts, setVendorProducts] = useState([]);
   const [vendorProductsLoading, setVendorProductsLoading] = useState(false);
   const [vpStatusFilter, setVpStatusFilter] = useState('Pending');
+  const [pendingProductsCount, setPendingProductsCount] = useState(0);
   const [showRejectProductModal, setShowRejectProductModal] = useState(false);
   const [rejectProductTarget, setRejectProductTarget] = useState(null);
   const [rejectProductReason, setRejectProductReason] = useState('');
@@ -705,12 +706,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
         return JSON.parse(local);
       } catch (e) {}
     }
-    return [
-      { id: 1, productName: 'Kids Party Dress', productImage: kidsDressImg, customerName: 'Sumathi R', rating: 5, comment: 'Excellent quality!', date: 'Jun 28, 2025', status: 'Approved', reply: '' },
-      { id: 2, productName: 'Women Kurti', productImage: kidsDressImg, customerName: 'Priya M', rating: 4, comment: 'Good product', date: 'Jun 27, 2025', status: 'Approved', reply: '' },
-      { id: 3, productName: 'Stylish Handbag', productImage: handbagImg, customerName: 'Nandhini S', rating: 5, comment: 'Very nice handbag', date: 'Jun 26, 2025', status: 'Pending', reply: '' },
-      { id: 4, productName: 'Premium Pen Set', productImage: kidsDressImg, customerName: 'Arjun K', rating: 3, comment: 'Average', date: 'Jun 24, 2025', status: 'Rejected', reply: '' }
-    ];
+    return [];
   });
 
   const [activeReviewsSubTab, setActiveReviewsSubTab] = useState('All Reviews');
@@ -724,7 +720,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
 
 
   // Form states & Modals states
-  const [newProduct, setNewProduct] = useState({ name: '', category: 'Clothing > Kids', subCategory: '', catalogue: 'Catalogue A', price: '', stock: '', status: 'Active', description: '', images: '', variants: [], brand: '', rating: '4.8', reviews: '120', discount: '0', originalPrice: '', badge: '', isNewArrival: false, isOffer: false, includeInLuckyCharm: false, luckyStock: 0 });
+  const [newProduct, setNewProduct] = useState({ name: '', category: 'Clothing > Kids', subCategory: '', catalogue: 'Catalogue A', price: '', stock: '', status: 'Active', description: '', images: '', variants: [], brand: '', rating: '0', reviews: '0', discount: '0', originalPrice: '', badge: '', isNewArrival: false, isOffer: false, includeInLuckyCharm: false, luckyStock: 0 });
   
   // Admin Cropping States
   const [adminCropOpen, setAdminCropOpen] = useState(false);
@@ -1034,6 +1030,25 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
         const queriesData = await apiService.getContactQueries();
         if (queriesData && queriesData.length > 0) setContactQueries(queriesData);
 
+        const customersData = await apiService.getCustomers();
+        if (customersData && customersData.length > 0) setCustomers(customersData);
+
+        // Load vendors and pending products count for navigation badges
+        try {
+          const vendorsData = await apiService.getVendors();
+          if (vendorsData) setVendors(vendorsData);
+        } catch (vErr) {
+          console.error('Error fetching vendors on mount:', vErr);
+        }
+
+        try {
+          const pendingProds = await apiService.getAdminVendorProducts('Pending');
+          if (pendingProds) setPendingProductsCount(pendingProds.length);
+        } catch (pErr) {
+          console.error('Error fetching pending products count on mount:', pErr);
+        }
+
+
         try {
           const featuresData = await apiService.getFeatures();
           if (featuresData && featuresData.length > 0) setFeaturesList(featuresData);
@@ -1085,6 +1100,13 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
   useEffect(() => {
     setProdCurrentPage(1);
   }, [prodSearchQuery, prodCatalogueFilter, prodCategoryFilter, prodStatusFilter]);
+
+  // Reload vendor products when status filter changes or tab switches
+  useEffect(() => {
+    if (activeTab === 'Product Approvals') {
+      loadVendorProducts();
+    }
+  }, [vpStatusFilter, activeTab]);
 
   useEffect(() => {
     const channel = new BroadcastChannel('mithirashopy_reviews');
@@ -2397,8 +2419,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
       shippingOptions: newProduct.shippingOptions || [],
       variants: newProduct.variants || [],
       brand: newProduct.brand || '',
-      rating: newProduct.rating ? parseFloat(newProduct.rating) : 4.8,
-      reviews: newProduct.reviews ? parseInt(newProduct.reviews, 10) : 120,
+      rating: newProduct.rating ? parseFloat(newProduct.rating) : 0,
+      reviews: newProduct.reviews ? parseInt(newProduct.reviews, 10) : 0,
       discount: newProduct.discount ? parseInt(newProduct.discount, 10) : 0,
       originalPrice: newProduct.originalPrice ? parseFloat(newProduct.originalPrice) : null,
       badge: newProduct.badge || '',
@@ -2415,7 +2437,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
       setProducts([{ ...productToAdd, id: Date.now() }, ...products]);
     }
     setShowAddProductModal(false);
-    setNewProduct({ name: '', category: 'Clothing > Kids', subCategory: '', catalogue: 'Catalogue A', price: '', stock: '', status: 'Active', description: '', images: '', attributes: {}, specifications: {}, filters: [], shippingOptions: [], variants: [], brand: '', rating: '4.8', reviews: '120', discount: '0', originalPrice: '', badge: '', isNewArrival: false, isOffer: false });
+    setNewProduct({ name: '', category: 'Clothing > Kids', subCategory: '', catalogue: 'Catalogue A', price: '', stock: '', status: 'Active', description: '', images: '', attributes: {}, specifications: {}, filters: [], shippingOptions: [], variants: [], brand: '', rating: '0', reviews: '0', discount: '0', originalPrice: '', badge: '', isNewArrival: false, isOffer: false });
   };
 
   const handleEditProductSubmit = async (e) => {
@@ -2497,8 +2519,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
       shippingOptions: editProductItem.shippingOptions || [],
       variants: editProductItem.variants || [],
       brand: editProductItem.brand || '',
-      rating: editProductItem.rating ? parseFloat(editProductItem.rating) : 4.8,
-      reviews: editProductItem.reviews ? parseInt(editProductItem.reviews, 10) : 120,
+      rating: editProductItem.rating ? parseFloat(editProductItem.rating) : 0,
+      reviews: editProductItem.reviews ? parseInt(editProductItem.reviews, 10) : 0,
       discount: editProductItem.discount ? parseInt(editProductItem.discount, 10) : 0,
       originalPrice: editProductItem.originalPrice ? parseFloat(editProductItem.originalPrice) : null,
       badge: editProductItem.badge || '',
@@ -2633,35 +2655,59 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     }
   };
 
-  const handleEditCustomerSubmit = (e) => {
+  const handleEditCustomerSubmit = async (e) => {
     e.preventDefault();
     if (!editCustomerItem.name || !editCustomerItem.email || !editCustomerItem.phone) return;
     
-    setCustomers(customers.map(c => c.id === editCustomerItem.id ? {
-      ...c,
-      name: editCustomerItem.name.trim(),
-      email: editCustomerItem.email.trim(),
-      phone: editCustomerItem.phone.trim(),
-      ordersCount: parseInt(editCustomerItem.ordersCount, 10) || 0,
-      joinedDate: editCustomerItem.joinedDate,
-      status: editCustomerItem.status
-    } : c));
+    try {
+      await apiService.updateCustomer(editCustomerItem.id, {
+        name: editCustomerItem.name.trim(),
+        email: editCustomerItem.email.trim(),
+        phone: editCustomerItem.phone.trim(),
+        status: editCustomerItem.status
+      });
+      
+      setCustomers(customers.map(c => c.id === editCustomerItem.id ? {
+        ...c,
+        name: editCustomerItem.name.trim(),
+        email: editCustomerItem.email.trim(),
+        phone: editCustomerItem.phone.trim(),
+        status: editCustomerItem.status
+      } : c));
+    } catch (err) {
+      alert(err.message || 'Failed to update customer.');
+    }
     
     setShowEditCustomerModal(false);
     setEditCustomerItem(null);
   };
   
-  const deleteCustomer = (id) => {
+  const deleteCustomer = async (id) => {
     if (confirm('Are you sure you want to delete this customer record?')) {
-      setCustomers(customers.filter(c => c.id !== id));
+      try {
+        await apiService.deleteCustomer(id);
+        setCustomers(customers.filter(c => c.id !== id));
+      } catch (err) {
+        alert(err.message || 'Failed to delete customer.');
+      }
     }
   };
 
-  const getCustomerAvatar = (avatarType) => {
-    if (avatarType === 'celebKid') return celebKidImg;
-    if (avatarType === 'celebKeerthy') return celebKeerthyImg;
-    if (avatarType === 'celebDulquer') return celebDulquerImg;
-    if (avatarType === 'celebCouple') return celebCoupleImg;
+  const getCustomerAvatar = (cOrType) => {
+    if (!cOrType) return null;
+    if (typeof cOrType === 'object') {
+      if (cOrType.profileImage) {
+        const base = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        return cOrType.profileImage.startsWith('http') || cOrType.profileImage.startsWith('data:')
+          ? cOrType.profileImage 
+          : `${base}${cOrType.profileImage}`;
+      }
+      return null;
+    }
+    if (cOrType === 'celebKid') return celebKidImg;
+    if (cOrType === 'celebKeerthy') return celebKeerthyImg;
+    if (cOrType === 'celebDulquer') return celebDulquerImg;
+    if (cOrType === 'celebCouple') return celebCoupleImg;
     return null;
   };
 
@@ -2701,6 +2747,13 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     try {
       const data = await apiService.getAdminVendorProducts(vpStatusFilter);
       setVendorProducts(data || []);
+      if (vpStatusFilter === 'Pending') {
+        setPendingProductsCount(data ? data.filter(x => x.status === 'Pending').length : 0);
+      } else {
+        apiService.getAdminVendorProducts('Pending').then(pendingData => {
+          if (pendingData) setPendingProductsCount(pendingData.length);
+        });
+      }
     } catch (err) {
       console.error('Failed to load vendor products:', err);
     } finally {
@@ -2852,6 +2905,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     try {
       await apiService.updateVendorProductStatus(productId, { status: 'Active' });
       setVendorProducts(p => p.map(x => x.id === productId ? { ...x, status: 'Active' } : x));
+      setPendingProductsCount(prev => Math.max(0, prev - 1));
     } catch (err) {
       alert('Failed to approve product.');
     }
@@ -2866,6 +2920,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
         adminNotes: rejectProductNotes.trim()
       });
       setVendorProducts(p => p.map(x => x.id === rejectProductTarget.id ? { ...x, status: 'Rejected', rejectReason: rejectProductReason.trim() } : x));
+      setPendingProductsCount(prev => Math.max(0, prev - 1));
       setShowRejectProductModal(false);
       setRejectProductTarget(null);
       setRejectProductReason('');
@@ -2889,7 +2944,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     { label: 'Reviews', icon: <Star size={18} /> },
     { label: 'Vendor Requests', icon: <Store size={18} />, badge: vendors.filter(v => v.status === 'Pending').length || null },
     { label: 'Vendor Management', icon: <Store size={18} /> },
-    { label: 'Product Approvals', icon: <ClipboardCheck size={18} />, badge: vendorProducts.filter(p => p.status === 'Pending').length || null },
+    { label: 'Product Approvals', icon: <ClipboardCheck size={18} />, badge: pendingProductsCount || null },
     { label: 'Manage Features', icon: <Globe size={18} /> },
     { label: 'Settings', icon: <Settings size={18} /> },
     { label: 'Profile', icon: <User size={18} /> }
@@ -4801,8 +4856,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                             <td className="cust-profile-cell">
                               <div className="cust-profile-wrap">
                                 <div className="cust-avatar-circle">
-                                  {getCustomerAvatar(c.avatarType) ? (
-                                    <img src={getCustomerAvatar(c.avatarType)} alt={c.name} className="cust-avatar-img" />
+                                  {getCustomerAvatar(c) ? (
+                                    <img src={getCustomerAvatar(c)} alt={c.name} className="cust-avatar-img" />
                                   ) : (
                                     <span className="cust-avatar-fallback">
                                       {c.name.slice(0, 2).toUpperCase()}
@@ -7396,8 +7451,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                       {vendorProducts.map(p => (
                         <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                           <td style={{ padding: '12px 16px' }}>
-                            {p.images?.[0] || p.image ? (
-                              <img src={p.images?.[0] || p.image} alt={p.name}
+                            {resolveProductImage(p) ? (
+                              <img src={resolveProductImage(p)} alt={p.name}
                                 style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
                             ) : (
                               <div style={{ width: '50px', height: '50px', borderRadius: '8px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

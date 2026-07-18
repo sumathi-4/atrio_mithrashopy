@@ -525,12 +525,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
         return JSON.parse(local);
       } catch (e) {}
     }
-    return [
-      { id: 1, productName: 'Kids Party Dress', productImage: kidsDressImg, customerName: 'Sumathi R', rating: 5, comment: 'Excellent quality!', date: 'Jun 28, 2025', status: 'Approved', reply: '' },
-      { id: 2, productName: 'Women Kurti', productImage: kidsDressImg, customerName: 'Priya M', rating: 4, comment: 'Good product', date: 'Jun 27, 2025', status: 'Approved', reply: '' },
-      { id: 3, productName: 'Stylish Handbag', productImage: handbagImg, customerName: 'Nandhini S', rating: 5, comment: 'Very nice handbag', date: 'Jun 26, 2025', status: 'Pending', reply: '' },
-      { id: 4, productName: 'Premium Pen Set', productImage: kidsDressImg, customerName: 'Arjun K', rating: 3, comment: 'Average', date: 'Jun 24, 2025', status: 'Rejected', reply: '' }
-    ];
+    return [];
   });
 
   const [activeReviewsSubTab, setActiveReviewsSubTab] = useState('All Reviews');
@@ -1830,11 +1825,21 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     }
   };
 
-  const getCustomerAvatar = (avatarType) => {
-    if (avatarType === 'celebKid') return celebKidImg;
-    if (avatarType === 'celebKeerthy') return celebKeerthyImg;
-    if (avatarType === 'celebDulquer') return celebDulquerImg;
-    if (avatarType === 'celebCouple') return celebCoupleImg;
+  const getCustomerAvatar = (cOrType) => {
+    if (!cOrType) return null;
+    if (typeof cOrType === 'object') {
+      if (cOrType.profileImage) {
+        const base = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        return cOrType.profileImage.startsWith('http') || cOrType.profileImage.startsWith('data:')
+          ? cOrType.profileImage 
+          : `${base}${cOrType.profileImage}`;
+      }
+      return null;
+    }
+    if (cOrType === 'celebKid') return celebKidImg;
+    if (cOrType === 'celebKeerthy') return celebKeerthyImg;
+    if (cOrType === 'celebDulquer') return celebDulquerImg;
+    if (cOrType === 'celebCouple') return celebCoupleImg;
     return null;
   };
 
@@ -2906,8 +2911,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                             <td className="cust-profile-cell">
                               <div className="cust-profile-wrap">
                                 <div className="cust-avatar-circle">
-                                  {getCustomerAvatar(c.avatarType) ? (
-                                    <img src={getCustomerAvatar(c.avatarType)} alt={c.name} className="cust-avatar-img" />
+                                  {getCustomerAvatar(c) ? (
+                                    <img src={getCustomerAvatar(c)} alt={c.name} className="cust-avatar-img" />
                                   ) : (
                                     <span className="cust-avatar-fallback">
                                       {c.name.slice(0, 2).toUpperCase()}

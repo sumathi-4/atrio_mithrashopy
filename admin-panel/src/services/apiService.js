@@ -746,6 +746,26 @@ export const apiService = {
     } catch (err) {
       return {};
     }
+  },
+
+  // ─── Customer Management Endpoints ───────────────────────────────────────────
+  async getCustomers() {
+    try {
+      const res = await apiRequest('/api/admin/customers');
+      return res.customers || [];
+    } catch (err) {
+      console.error('Failed to fetch customers:', err);
+      return [];
+    }
+  },
+
+  async updateCustomer(id, payload) {
+    const res = await apiRequest(`/api/admin/customers/${id}`, 'PUT', payload);
+    return res.user;
+  },
+
+  async deleteCustomer(id) {
+    return await apiRequest(`/api/admin/customers/${id}`, 'DELETE');
   }
 };
 

@@ -58,8 +58,7 @@
     "filters": [
       "Price",
       "Color",
-      "Brand",
-      "age"
+      "Brand"
     ],
     "specs": [
       "Material",
@@ -244,8 +243,9 @@
       "brand",
       "gender",
       "fabric",
+      "price",
       "age",
-      "price"
+      "size"
     ],
     "specs": [
       "Fabric",

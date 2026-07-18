@@ -7,7 +7,7 @@ import Breadcrumbs from './ui/Breadcrumbs';
 import Skeleton, { ProductCardSkeleton } from './ui/Skeleton';
 import { Heart, Star, ShoppingCart, Search, Eye, X, ChevronDown, ChevronUp, ArrowLeft, Filter, Crown, Menu, Shirt, BookOpen, Gift, Shield, Globe, Award, Sparkles, RotateCcw, ThumbsUp, ImageOff, ChevronLeft, ChevronRight } from 'lucide-react';
 import { resolveProductImage, resolveProductGallery, isRealImg } from '../utils/imageHelper';
-import { COLOR_MAP, getColorHex, getValuesForFilter, getFilterOptions, applyDynamicFilters, getProductBadge, getMergedFiltersForPath } from '../utils/filterUtils';
+import { COLOR_MAP, getColorHex, getValuesForFilter, getFilterOptions, applyDynamicFilters, getProductBadge, getMergedFiltersForPath, setCategoryConfigsCache } from '../utils/filterUtils';
 import { loadPersistentFilters, savePersistentFilters, clearPersistentFilters } from '../utils/filterPersistence';
 import bannerVideo from '../assets/banner_video.mp4';
 import logoImg from '../assets/logo.png';
@@ -1089,6 +1089,7 @@ export default function ShopView({ authUser, setAuthUser }) {
     categoryConfigService.getCategoryConfigurations().then(confs => {
       if (confs) {
         setCategoryConfigs(confs);
+        setCategoryConfigsCache(confs);
       }
     }).catch(console.error);
 
@@ -2354,7 +2355,7 @@ export default function ShopView({ authUser, setAuthUser }) {
   filteredProducts = applyDynamicFilters(filteredProducts, activeFilters);
 
   // 6. Price Filter
-  const hasPriceFilter = categoryFilters.some(f => f && typeof f === 'string' && f.toLowerCase() === 'price') || activeTab === 'ALL';
+  const hasPriceFilter = categoryFilters.some(f => f && typeof f === 'string' && f.toLowerCase() === 'price');
   if (hasPriceFilter) {
     filteredProducts = filteredProducts.filter(p => {
       const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price).replace(/[^0-9.]/g, '')) || 0;

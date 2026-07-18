@@ -248,6 +248,17 @@ export const normalizeSize = (size, isAge = false) => {
   return clean;
 };
 
+let categoryConfigsCache = {};
+
+export const setCategoryConfigsCache = (configs) => {
+  if (configs && typeof configs === 'object') {
+    categoryConfigsCache = configs;
+    try {
+      localStorage.setItem('mithra_category_configurations', JSON.stringify(configs));
+    } catch (_) {}
+  }
+};
+
 export const getValuesForFilter = (product, filterName) => {
   if (!product || !filterName) return [];
   const nameNorm = normalizeFilterName(filterName).toLowerCase().trim();
@@ -311,7 +322,6 @@ export const getValuesForFilter = (product, filterName) => {
       }
     }
   }
-
   // 4. Variant check
   if (Array.isArray(product.variants) && product.variants.length > 0) {
     const values = new Set();
@@ -321,26 +331,44 @@ export const getValuesForFilter = (product, filterName) => {
     let extraVarNames = [];
     
     try {
-      const cached = localStorage.getItem('mithra_category_configurations');
-      if (cached) {
-        const configs = JSON.parse(cached);
-        const prodCat = String(product.category || '').toUpperCase().trim();
+      let configs = categoryConfigsCache;
+      if (!configs || Object.keys(configs).length === 0) {
+        const cached = localStorage.getItem('mithra_category_configurations');
+        if (cached) {
+          configs = JSON.parse(cached);
+          categoryConfigsCache = configs;
+        }
+      }
+      if (configs && Object.keys(configs).length > 0) {
+        const prodCat = String(product.rawCategory || product.category || '').toUpperCase().trim();
         const prodSub = String(product.subCategory || '').toUpperCase().trim();
         
         let activeCfg = null;
+        
+        const segmentsToCheck = [];
         if (prodSub) {
-          activeCfg = Object.values(configs).find(cfg => {
-            if (!cfg || !cfg.categoryName) return false;
-            const nameNormVal = cfg.categoryName.toUpperCase().trim();
-            return nameNormVal === prodSub || prodSub.includes(nameNormVal);
-          });
+          segmentsToCheck.push(prodSub);
         }
-        if (!activeCfg && prodCat) {
-          activeCfg = Object.values(configs).find(cfg => {
-            if (!cfg || !cfg.categoryName) return false;
-            const nameNormVal = cfg.categoryName.toUpperCase().trim();
-            return nameNormVal === prodCat || prodCat.includes(nameNormVal);
+        if (prodCat) {
+          if (prodCat.includes('>')) {
+            const parts = prodCat.split('>').map(s => s.trim());
+            segmentsToCheck.push(...[...parts].reverse());
+          } else {
+            segmentsToCheck.push(prodCat);
+          }
+        }
+        
+        for (const segment of segmentsToCheck) {
+          if (!segment) continue;
+          const foundEntry = Object.entries(configs).find(([key, cfg]) => {
+            if (!key) return false;
+            const nameNormVal = key.toUpperCase().trim();
+            return nameNormVal === segment || segment.includes(nameNormVal);
           });
+          if (foundEntry) {
+            activeCfg = foundEntry[1];
+            break;
+          }
         }
         
         if (activeCfg && Array.isArray(activeCfg.variants)) {
@@ -550,7 +578,6 @@ export const getMergedFiltersForPath = (configs, activeTab, activeSubTab, select
         cfg.filters.forEach(f => {
           if (f && typeof f === 'string') {
             const norm = normalizeFilterName(f);
-            if (norm.toLowerCase() === 'price') return;
             const normLower = norm.toLowerCase();
             if (!seen.has(normLower)) {
               seen.add(normLower);
@@ -588,7 +615,6 @@ export const getMergedFiltersForPath = (configs, activeTab, activeSubTab, select
     filterList.forEach(f => {
       if (f && typeof f === 'string') {
         const norm = normalizeFilterName(f);
-        if (norm.toLowerCase() === 'price') return;
         const normLower = norm.toLowerCase();
         if (!seen.has(normLower)) {
           seen.add(normLower);

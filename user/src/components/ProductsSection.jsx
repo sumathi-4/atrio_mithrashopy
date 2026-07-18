@@ -7,7 +7,7 @@ import clothingUser1 from '../assets/clothing_user_1.jpg';
 import clothingUser2 from '../assets/clothing_user_2.jpg';
 import { useToast } from './ToastProvider';
 import { resolveProductImage, resolveProductGallery, isRealImg } from '../utils/imageHelper';
-import { COLOR_MAP, getColorHex, getValuesForFilter, getFilterOptions, applyDynamicFilters, getProductBadge, getMergedFiltersForPath } from '../utils/filterUtils';
+import { COLOR_MAP, getColorHex, getValuesForFilter, getFilterOptions, applyDynamicFilters, getProductBadge, getMergedFiltersForPath, setCategoryConfigsCache } from '../utils/filterUtils';
 import { loadPersistentFilters, savePersistentFilters, clearPersistentFilters } from '../utils/filterPersistence';
 
 export default function ProductsSection({ authUser, setAuthUser }) {
@@ -79,6 +79,7 @@ export default function ProductsSection({ authUser, setAuthUser }) {
     categoryConfigService.getCategoryConfigurations().then(confs => {
       if (confs) {
         setCategoryConfigs(confs);
+        setCategoryConfigsCache(confs);
       }
     }).catch(console.error);
   }, []);
@@ -830,7 +831,7 @@ export default function ProductsSection({ authUser, setAuthUser }) {
   displayProducts = applyDynamicFilters(displayProducts, activeFilters);
 
   // 4. Price Filter
-  const hasPriceFilter = categoryFilters.some(f => f && typeof f === 'string' && f.toLowerCase() === 'price') || selectedSubcategories.length === 0;
+  const hasPriceFilter = categoryFilters.some(f => f && typeof f === 'string' && f.toLowerCase() === 'price');
   if (hasPriceFilter) {
     displayProducts = displayProducts.filter(p => {
       const priceNum = parseFloat(String(p.price).replace(/[^0-9.]/g, '')) || 0;
