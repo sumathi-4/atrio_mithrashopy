@@ -1306,6 +1306,15 @@ async function seedStoreData() {
 			});
 			console.log("✅ Coupon MITHRA100 seeded successfully");
 		}
+		// Seed default catalogues if not exist
+		const catCount = await Catalogue.countDocuments();
+		if (catCount === 0) {
+			await Catalogue.insertMany([
+				{ name: 'Catalogue A', subtitle: 'Kids Collection', count: 12, status: 'Active', revenue: '₹85,000', image: 'Kids' },
+				{ name: 'Catalogue B', subtitle: 'Lifestyle Collection', count: 0, status: 'Active', revenue: '₹1,60,000', image: 'Lifestyle' }
+			]);
+			console.log("✅ Default catalogues seeded successfully");
+		}
 		const defaultFeatures = [
 			{
 				id: 1,
