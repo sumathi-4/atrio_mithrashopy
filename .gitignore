@@ -27,3 +27,5 @@ dist-ssr
 .env
 .env.*
 
+# Scratch logs
+backend/scratch/
