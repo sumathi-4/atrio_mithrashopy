@@ -10,7 +10,7 @@ import { apiService } from '../services/apiService';
 import { resolveProductImage, resolveProductGallery, isRealImg } from '../utils/imageHelper';
 import { useToast } from './ToastProvider';
 import { categoryConfigService } from '../services/categoryConfigService';
-import { COLOR_MAP, getColorHex, getValuesForFilter, getFilterOptions, applyDynamicFilters, getProductBadge, getMergedFiltersForPath } from '../utils/filterUtils';
+import { COLOR_MAP, getColorHex, getValuesForFilter, getFilterOptions, applyDynamicFilters, getProductBadge, getMergedFiltersForPath, setCategoryConfigsCache } from '../utils/filterUtils';
 import { loadPersistentFilters, savePersistentFilters, clearPersistentFilters } from '../utils/filterPersistence';
 
 import imgClothing from '../assets/hero_clothing_banner.jpg';
@@ -98,6 +98,12 @@ const getSelectedVariant = (prod, color, size) => {
   if (!matched && color) {
     matched = prod.variants.find(v => v.color && String(v.color).toLowerCase() === String(color).toLowerCase());
   }
+  if (!matched && size) {
+    matched = prod.variants.find(v => v.size && String(v.size).toLowerCase() === String(size).toLowerCase());
+  }
+  if (!matched) {
+    matched = prod.variants[0];
+  }
   return matched;
 };
 
@@ -153,27 +159,6 @@ const handleColorChange = (colorName, prod, setModalColor, setActiveImageIndex, 
       const colorIdx = colors.findIndex(c => c.name.toLowerCase() === colorName.toLowerCase());
       if (colorIdx !== -1) {
         setActiveImageIndex(colorIdx);
-      }
-    }
-
-    // Selection Retention
-    const isSizeAvailable = prod.variants.some(v => 
-      v.color?.toLowerCase() === colorName.toLowerCase() && 
-      v.size?.toLowerCase() === currentSize?.toLowerCase() && 
-      v.stock > 0
-    );
-
-    if (isSizeAvailable) {
-      setModalSize(currentSize);
-    } else {
-      const fallbackVar = prod.variants.find(v => 
-        v.color?.toLowerCase() === colorName.toLowerCase() && 
-        v.stock > 0
-      ) || prod.variants.find(v => 
-        v.color?.toLowerCase() === colorName.toLowerCase()
-      );
-      if (fallbackVar && fallbackVar.size) {
-        setModalSize(fallbackVar.size);
       }
     }
   }
@@ -266,7 +251,7 @@ const renderCategorySelectors = (
             <span className="modal-section-title" style={{ fontWeight: 600, display: 'block', marginBottom: '8px' }}>Select Size</span>
             <div className="modal-size-pills" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {sizes.map((sz) => {
-                const isSzAvail = isCombAvailable(activeColor, sz);
+                const isSzAvail = prod.variants.some(v => v.size?.toLowerCase() === sz.toLowerCase() && v.stock > 0);
                 return (
                   <button 
                     key={sz}
@@ -882,6 +867,7 @@ export default function NewArrivalsView() {
     categoryConfigService.getCategoryConfigurations().then(confs => {
       if (confs) {
         setCategoryConfigs(confs);
+        setCategoryConfigsCache(confs);
       }
     }).catch(console.error);
 
@@ -1404,7 +1390,7 @@ export default function NewArrivalsView() {
   const newArrivalsDbOnly = allProducts.filter(p => p.isNewArrival === true);
   const finalNewArrivals = newArrivalsDbOnly;
 
-  const categoryProducts = finalNewArrivals.filter(p => {
+  const categoryProducts = allProducts.filter(p => {
     // 1. Root Category filter
     if (activeTab !== 'ALL') {
       const rootCat = String(p.category || '').split('>')[0].trim().toUpperCase();
@@ -1484,7 +1470,7 @@ export default function NewArrivalsView() {
   filteredProducts = applyDynamicFilters(filteredProducts, activeFilters);
 
   // 6. Price Filter
-  const hasPriceFilter = categoryFilters.some(f => f && typeof f === 'string' && f.toLowerCase() === 'price') || activeTab === 'ALL';
+  const hasPriceFilter = categoryFilters.some(f => f && typeof f === 'string' && f.toLowerCase() === 'price');
   if (hasPriceFilter) {
     filteredProducts = filteredProducts.filter(p => {
       const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price).replace(/[^0-9.]/g, '')) || 0;
@@ -1919,9 +1905,6 @@ export default function NewArrivalsView() {
         
         {/* Header Section */}
         <div className="arrivals-header-section">
-          <div className="arrivals-crown-icon">
-            <img src={logoImg} className="arrivals-crown-svg" alt="Logo" style={{ objectFit: 'contain' }} />
-          </div>
           <h1 className="arrivals-main-title">The Fresh Edit</h1>
           <p className="arrivals-subtitle">Explore our newly launched, premium additions crafted for this season</p>
         </div>
@@ -2076,11 +2059,11 @@ export default function NewArrivalsView() {
                       {isSectionOpen && (
                         <div className="section-content" style={{ marginTop: '10px' }}>
                           {/* Special case: Color circle bubbles */}
-                          {(filterName.toLowerCase() === 'color' || filterName.toLowerCase() === 'colors') ? (
+                          {(filterName.toLowerCase().includes('color')) ? (
                             <div className="color-circles-list">
                               {options.map(colorName => {
                                 const isChecked = selectedVals.includes(colorName);
-                                const colorVal = COLOR_MAP[colorName.toLowerCase()] || colorName;
+                                const colorVal = getColorHex(colorName);
                                 const borderStyle = colorName.toLowerCase() === 'white' ? '1px solid #ddd' : 'none';
                                 return (
                                   <button 
@@ -2093,8 +2076,8 @@ export default function NewArrivalsView() {
                                 );
                               })}
                             </div>
-                          ) : /* Special case: Size button grid */
-                          (filterName.toLowerCase() === 'size' || filterName.toLowerCase() === 'sizes') ? (
+                          ) : /* Special case: Size/Age button grid */
+                          (filterName.toLowerCase().includes('size') || filterName.toLowerCase().includes('age')) ? (
                             <div className="size-buttons-grid">
                               {options.map(sizeName => {
                                 const isChecked = selectedVals.includes(sizeName);

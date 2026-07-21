@@ -15,6 +15,7 @@ import {
   Star 
 } from 'lucide-react';
 import './ProductForm.css';
+import { resolveProductImage } from '../utils/imageHelper';
 
 // ─── Pure Utility Helpers ──────────────────────────────────────────────────
 const fileToBase64 = (file) =>
@@ -92,8 +93,8 @@ export default function ProductForm({
     badge: '',
     isNewArrival: false,
     isOffer: false,
-    rating: '4.8',
-    reviews: '120',
+    rating: '0',
+    reviews: '0',
     includeInLuckyCharm: false,
     luckyStock: 0,
     status: 'Active',
@@ -194,13 +195,17 @@ export default function ProductForm({
   // ─── Load category config on category change ─────────────────────────────
   useEffect(() => {
     const fetchConfig = async () => {
-      if (product.category) {
-        const config = await categoryConfigService.getCategoryConfig(product.category);
-        setCategoryConfig(config);
+      let config = null;
+      if (product.subCategory) {
+        config = await categoryConfigService.getCategoryConfig(product.subCategory);
       }
+      if (!config && product.category) {
+        config = await categoryConfigService.getCategoryConfig(product.category);
+      }
+      setCategoryConfig(config);
     };
     fetchConfig();
-  }, [product.category, categoryConfigService]);
+  }, [product.category, product.subCategory, categoryConfigService]);
 
   // ─── Decode product variants when categoryConfig is loaded ──────────────────
   useEffect(() => {
@@ -210,6 +215,7 @@ export default function ProductForm({
       } else {
         setVariants([]);
       }
+      setProductLoaded(true);
     }
   }, [categoryConfig, productLoaded, initialData]);
 
@@ -217,8 +223,9 @@ export default function ProductForm({
   useEffect(() => {
     if (!categoryConfig) return;
 
-    const isCategorySwitch = prevCategoryRef.current !== null && prevCategoryRef.current !== product.category;
-    prevCategoryRef.current = product.category;
+    const currentPath = `${product.category || ''} > ${product.subCategory || ''}`;
+    const isCategorySwitch = prevCategoryRef.current !== null && prevCategoryRef.current !== currentPath;
+    prevCategoryRef.current = currentPath;
 
     const existingAttrsArray = ensureArrayAttributes(product.attributes || {});
 
@@ -298,6 +305,7 @@ export default function ProductForm({
       setSelectedFilters(filtObj);
 
       setCustomAttrs({});
+      setVariants([]);
     } else {
       // Add mode or default initialization
       setDynamicAttributes(prev => {
@@ -330,7 +338,7 @@ export default function ProductForm({
         setSelectedFilters(filtObj);
       }
     }
-  }, [categoryConfig, product.category]);
+  }, [categoryConfig, product.category, product.subCategory]);
 
   // ─── Calculate Original Price Automatically ──────────────────────────────
   useEffect(() => {
@@ -949,7 +957,7 @@ export default function ProductForm({
                 <label>Main Product Image *</label>
                 {mainImage ? (
                   <div className="product-form-media-preview-box" style={{ maxWidth: '320px' }}>
-                    <img src={mainImage} alt="Main Preview" />
+                    <img src={resolveProductImage({ image: mainImage })} alt="Main Preview" />
                     <button
                       type="button"
                       onClick={() => setMainImage('')}
@@ -1000,7 +1008,7 @@ export default function ProductForm({
                           setDraggedIndex(null);
                         }}
                       >
-                        <img src={img} alt={`Gallery ${idx}`} />
+                        <img src={resolveProductImage({ image: img })} alt={`Gallery ${idx}`} />
                         <button
                           type="button"
                           onClick={() => makeImagePrimary(idx)}
@@ -1265,7 +1273,7 @@ export default function ProductForm({
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             {v.image && (
-                              <img src={v.image} alt="Variant" style={{ width: '24px', height: '24px', objectFit: 'cover', borderRadius: '4px' }} />
+                              <img src={resolveProductImage({ image: v.image })} alt="Variant" style={{ width: '24px', height: '24px', objectFit: 'cover', borderRadius: '4px' }} />
                             )}
                             <label className="cursor-pointer" style={{ padding: '4px', background: '#e2e8f0', borderRadius: '4px', display: 'inline-flex' }}>
                               <Upload size={12} />

@@ -3,6 +3,8 @@
 // DEFAULT_CONFIGS are used ONLY as a seed on first startup if the backend has no data.
 // No component should access localStorage directly for category configuration data.
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const DEFAULT_CATEGORIES = [
   { name: 'Clothing', parent: '—', status: 'Active' },
   { name: 'Women', parent: 'Clothing', status: 'Active' },
@@ -94,6 +96,21 @@ const DEFAULT_CONFIGS = {
       price: { required: true, min: 50 },
       stock: { required: true, min: 0 }
     }
+  },
+  'Kids': {
+    attributes: ['brand', 'Fabric', 'Material', 'Sleeve Type', 'Neck Type', 'Pattern', 'Fit', 'gender'],
+    variants: ['color', 'age'],
+    affectsPrice: true,
+    affectsStock: true,
+    requireImages: true,
+    filters: ['brand', 'gender', 'fabric', 'age', 'price', 'size'],
+    specs: ['Fabric', 'Material', 'Country of Origin', 'Pattern', 'Wash Care'],
+    shippingOptions: ['Standard Delivery'],
+    validationRules: {
+      name: { required: true, minLength: 3 },
+      price: { required: true, min: 100 },
+      stock: { required: true, min: 0 }
+    }
   }
 };
 
@@ -105,7 +122,7 @@ export const categoryConfigService = {
 
   async getCategories() {
     try {
-      const response = await fetch('/api/categories');
+      const response = await fetch(`${BASE_URL}/api/categories`);
       if (response.ok) {
         const data = await response.json();
         const cats = data.categories || data;
@@ -147,7 +164,7 @@ export const categoryConfigService = {
    */
   async getCategoryConfigurations() {
     try {
-      const response = await fetch('/api/categories/configurations');
+      const response = await fetch(`${BASE_URL}/api/categories/configurations`);
       if (response.ok) {
         const data = await response.json();
         const confs = data.configurations;
@@ -212,7 +229,7 @@ export const categoryConfigService = {
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
-      const response = await fetch('/api/categories/configurations', {
+      const response = await fetch(`${BASE_URL}/api/categories/configurations`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ configurations: configs })
@@ -255,7 +272,7 @@ export const categoryConfigService = {
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
       const encodedName = encodeURIComponent(categoryName);
-      const response = await fetch(`/api/categories/configurations/${encodedName}`, {
+      const response = await fetch(`${BASE_URL}/api/categories/configurations/${encodedName}`, {
         method: 'PUT',
         headers,
         body: JSON.stringify(config)
@@ -306,7 +323,7 @@ export const categoryConfigService = {
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
       const encodedName = encodeURIComponent(categoryName);
-      const response = await fetch(`/api/categories/configurations/${encodedName}`, {
+      const response = await fetch(`${BASE_URL}/api/categories/configurations/${encodedName}`, {
         method: 'DELETE',
         headers
       });

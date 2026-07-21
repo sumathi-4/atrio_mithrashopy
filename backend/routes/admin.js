@@ -311,4 +311,76 @@ router.get('/stats', async (req, res) => {
   }
 });
 
+// GET /api/admin/customers — list all users
+router.get('/customers', async (req, res) => {
+  try {
+    const users = await User.find({ role: 'user' }).sort({ created_at: -1 }).lean();
+    
+    const customers = await Promise.all(users.map(async (u) => {
+      // count real orders
+      const ordersCount = await Order.countDocuments({ userId: u.id });
+      
+      // Format joinedDate to "MMM DD, YYYY" format, e.g., "May 20, 2025"
+      const formattedDate = u.created_at ? new Date(u.created_at).toLocaleDateString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric'
+      }) : '—';
+
+      return {
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        phone: u.phone || '—',
+        ordersCount,
+        joinedDate: formattedDate,
+        status: u.is_active !== false ? 'Active' : 'Inactive',
+        avatarType: u.gender && u.gender.toLowerCase() === 'male' ? 'celebDulquer' : 'celebKeerthy',
+        profileImage: u.profileImage
+      };
+    }));
+
+    return res.json({ success: true, customers });
+  } catch (err) {
+    console.error('Admin get customers error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to fetch customers.' });
+  }
+});
+
+// PUT /api/admin/customers/:id — update user details
+router.put('/customers/:id', async (req, res) => {
+  try {
+    const { name, email, phone, status } = req.body;
+    const user = await User.findOne({ id: req.params.id });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Customer not found.' });
+    }
+
+    user.name = name;
+    user.email = email;
+    user.phone = phone;
+    user.is_active = status === 'Active';
+
+    await user.save();
+    return res.json({ success: true, message: 'Customer updated successfully.', user });
+  } catch (err) {
+    console.error('Admin update customer error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to update customer.' });
+  }
+});
+
+// DELETE /api/admin/customers/:id — delete user
+router.delete('/customers/:id', async (req, res) => {
+  try {
+    const user = await User.findOneAndDelete({ id: req.params.id });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Customer not found.' });
+    }
+    return res.json({ success: true, message: 'Customer deleted successfully.' });
+  } catch (err) {
+    console.error('Admin delete customer error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to delete customer.' });
+  }
+});
+
 module.exports = router;

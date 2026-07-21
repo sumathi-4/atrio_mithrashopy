@@ -30,6 +30,7 @@ import {
   ArrowRight,
   Filter,
   Eye,
+  EyeOff,
   Mail,
   Megaphone,
   Image as ImageIcon,
@@ -147,6 +148,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
   const [vendorProducts, setVendorProducts] = useState([]);
   const [vendorProductsLoading, setVendorProductsLoading] = useState(false);
   const [vpStatusFilter, setVpStatusFilter] = useState('Pending');
+  const [pendingProductsCount, setPendingProductsCount] = useState(0);
   const [showRejectProductModal, setShowRejectProductModal] = useState(false);
   const [rejectProductTarget, setRejectProductTarget] = useState(null);
   const [rejectProductReason, setRejectProductReason] = useState('');
@@ -425,23 +427,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
 
   const stats = getDynamicStats();
 
-  const [coupons, setCoupons] = useState(() => {
-    const local = localStorage.getItem('mithra_admin_coupons');
-    if (local) {
-      try {
-        return JSON.parse(local);
-      } catch (e) {
-        // Fallback
-      }
-    }
-    return [
-      { code: 'WELCOME10', discount: '10% OFF', type: 'Percentage', minCart: '₹499', expiry: 'Jun 30, 2025', usage: '120/500', status: 'Active' },
-      { code: 'SUMMER30', discount: '20% OFF', type: 'Percentage', minCart: '₹999', expiry: 'Jul 15, 2025', usage: '85/300', status: 'Active' },
-      { code: 'FESTIVE50', discount: '50% OFF', type: 'Percentage', minCart: '₹1499', expiry: 'Aug 10, 2025', usage: '25/200', status: 'Active' },
-      { code: 'FREESHIP', discount: 'Free Shipping', type: 'Free Shipping', minCart: '₹0', expiry: 'Jun 30, 2025', usage: '230/500', status: 'Active' },
-      { code: 'NEWUSERS', discount: '5% OFF', type: 'Percentage', minCart: '₹299', expiry: 'Jul 05, 2025', usage: '60/200', status: 'Inactive' }
-    ];
-  });
+  const [coupons, setCoupons] = useState([]);
 
   const [activeCouponSubTab, setActiveCouponSubTab] = useState('Coupons');
   const [showEditCouponModal, setShowEditCouponModal] = useState(false);
@@ -583,6 +569,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
   const [configFilters, setConfigFilters] = useState([]);
   const [configSpecs, setConfigSpecs] = useState([]);
   const [configShippingOptions, setConfigShippingOptions] = useState([]);
+  const [showLivePreview, setShowLivePreview] = useState(false);
 
   const [attrInput, setAttrInput] = useState('');
   const [variantInput, setVariantInput] = useState('');
@@ -681,20 +668,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     return local ? JSON.parse(local) : { Clothing: true, Women: true };
   });
 
-  const [catalogues, setCatalogues] = useState(() => {
-    const local = localStorage.getItem('mithra_admin_catalogues');
-    if (local) {
-      try {
-        return JSON.parse(local);
-      } catch (e) {
-        // Fallback
-      }
-    }
-    return [
-      { name: 'Catalogue A', subtitle: 'Kids Collection', count: 45, status: 'Active', revenue: '₹85,000', image: 'Kids' },
-      { name: 'Catalogue B', subtitle: 'Lifestyle Collection', count: 63, status: 'Active', revenue: '₹1,60,000', image: 'Lifestyle' }
-    ];
-  });
+  const [catalogues, setCatalogues] = useState([]);
+
 
   const [reviews, setReviews] = useState(() => {
     const local = localStorage.getItem('mithra_admin_reviews');
@@ -703,12 +678,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
         return JSON.parse(local);
       } catch (e) {}
     }
-    return [
-      { id: 1, productName: 'Kids Party Dress', productImage: kidsDressImg, customerName: 'Sumathi R', rating: 5, comment: 'Excellent quality!', date: 'Jun 28, 2025', status: 'Approved', reply: '' },
-      { id: 2, productName: 'Women Kurti', productImage: kidsDressImg, customerName: 'Priya M', rating: 4, comment: 'Good product', date: 'Jun 27, 2025', status: 'Approved', reply: '' },
-      { id: 3, productName: 'Stylish Handbag', productImage: handbagImg, customerName: 'Nandhini S', rating: 5, comment: 'Very nice handbag', date: 'Jun 26, 2025', status: 'Pending', reply: '' },
-      { id: 4, productName: 'Premium Pen Set', productImage: kidsDressImg, customerName: 'Arjun K', rating: 3, comment: 'Average', date: 'Jun 24, 2025', status: 'Rejected', reply: '' }
-    ];
+    return [];
   });
 
   const [activeReviewsSubTab, setActiveReviewsSubTab] = useState('All Reviews');
@@ -722,7 +692,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
 
 
   // Form states & Modals states
-  const [newProduct, setNewProduct] = useState({ name: '', category: 'Clothing > Kids', subCategory: '', catalogue: 'Catalogue A', price: '', stock: '', status: 'Active', description: '', images: '', variants: [], brand: '', rating: '4.8', reviews: '120', discount: '0', originalPrice: '', badge: '', isNewArrival: false, isOffer: false, includeInLuckyCharm: false, luckyStock: 0 });
+  const [newProduct, setNewProduct] = useState({ name: '', category: 'Clothing > Kids', subCategory: '', catalogue: 'Catalogue A', price: '', stock: '', status: 'Active', description: '', images: '', variants: [], brand: '', rating: '0', reviews: '0', discount: '0', originalPrice: '', badge: '', isNewArrival: false, isOffer: false, includeInLuckyCharm: false, luckyStock: 0 });
   
   // Admin Cropping States
   const [adminCropOpen, setAdminCropOpen] = useState(false);
@@ -771,7 +741,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
   const [showAddCatalogueModal, setShowAddCatalogueModal] = useState(false);
   const [editCatalogueItem, setEditCatalogueItem] = useState(null);
   const [viewCatalogueItem, setViewCatalogueItem] = useState(null);
-  const [newCatalogue, setNewCatalogue] = useState({ name: '', subtitle: '', count: 0, status: 'Active', revenue: '₹0', image: 'Kids' });
+  const [newCatalogue, setNewCatalogue] = useState({ name: '', subtitle: '', count: 0, status: 'Active', revenue: '₹0', image: '' });
+
 
   const [showEditOrderModal, setShowEditOrderModal] = useState(false);
   const [editOrderItem, setEditOrderItem] = useState(null);
@@ -931,10 +902,6 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
   }, [customers]);
 
   useEffect(() => {
-    safeSetLocalStorage('mithra_admin_coupons', JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
     if (categories && categories.length > 0) {
       categoryConfigService.saveCategories(categories);
     }
@@ -1012,13 +979,14 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
         }
         
         const catalogueData = await apiService.getCatalogues();
-        if (catalogueData && catalogueData.length > 0) setCatalogues(catalogueData);
+        setCatalogues(catalogueData || []);
+
         
         const ordersData = await apiService.getOrders();
         if (ordersData && ordersData.length > 0) setOrders(ordersData);
         
         const couponsData = await apiService.getCoupons();
-        if (couponsData && couponsData.length > 0) setCoupons(couponsData);
+        if (couponsData) setCoupons(couponsData);
         
         const reviewsData = await apiService.getReviews();
         if (reviewsData) setReviews(reviewsData);
@@ -1031,6 +999,25 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
         
         const queriesData = await apiService.getContactQueries();
         if (queriesData && queriesData.length > 0) setContactQueries(queriesData);
+
+        const customersData = await apiService.getCustomers();
+        if (customersData && customersData.length > 0) setCustomers(customersData);
+
+        // Load vendors and pending products count for navigation badges
+        try {
+          const vendorsData = await apiService.getVendors();
+          if (vendorsData) setVendors(vendorsData);
+        } catch (vErr) {
+          console.error('Error fetching vendors on mount:', vErr);
+        }
+
+        try {
+          const pendingProds = await apiService.getAdminVendorProducts('Pending');
+          if (pendingProds) setPendingProductsCount(pendingProds.length);
+        } catch (pErr) {
+          console.error('Error fetching pending products count on mount:', pErr);
+        }
+
 
         try {
           const featuresData = await apiService.getFeatures();
@@ -1083,6 +1070,13 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
   useEffect(() => {
     setProdCurrentPage(1);
   }, [prodSearchQuery, prodCatalogueFilter, prodCategoryFilter, prodStatusFilter]);
+
+  // Reload vendor products when status filter changes or tab switches
+  useEffect(() => {
+    if (activeTab === 'Product Approvals') {
+      loadVendorProducts();
+    }
+  }, [vpStatusFilter, activeTab]);
 
   useEffect(() => {
     const channel = new BroadcastChannel('mithirashopy_reviews');
@@ -1190,11 +1184,44 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     return result;
   };
 
+  const getFilteredHierarchicalCategories = () => {
+    const allList = getHierarchicalCategories();
+    if (!searchQuery || !searchQuery.trim()) {
+      return allList;
+    }
+    const query = searchQuery.toLowerCase().trim();
+    
+    // Check if category or any descendant matches query
+    const matchesOrHasDescendantMatch = (catName) => {
+      if (catName.toLowerCase().includes(query)) return true;
+      const children = categories.filter(c => c.parent === catName);
+      return children.some(child => matchesOrHasDescendantMatch(child.name));
+    };
+
+    // Check if any ancestor matches query
+    const hasAncestorMatch = (cat) => {
+      let current = cat;
+      while (current.parent && current.parent !== '—') {
+        const parentName = current.parent;
+        if (parentName.toLowerCase().includes(query)) return true;
+        const parentObj = categories.find(c => c.name === parentName);
+        if (!parentObj) break;
+        current = parentObj;
+      }
+      return false;
+    };
+
+    return allList.filter(cat => matchesOrHasDescendantMatch(cat.name) || hasAncestorMatch(cat));
+  };
+
   const getCategoryPathsList = () => {
     return getHierarchicalCategories().map(cat => getCategoryPath(cat.name));
   };
 
   const isCategoryVisible = (cat) => {
+    if (searchQuery && searchQuery.trim()) {
+      return true; // Expand all elements that match the search query to show nested paths
+    }
     let current = cat;
     while (current.parent && current.parent !== '—') {
       const parentName = current.parent;
@@ -1396,6 +1423,10 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
 
   // --- Catalogue Helpers ---
   const getCatalogueImage = (imgName) => {
+    if (!imgName) return handbagImg;
+    // If it's an uploaded data URL or a full URL, use it directly
+    if (imgName.startsWith('data:') || imgName.startsWith('http') || imgName.startsWith('blob:') || imgName.startsWith('/')) return imgName;
+    // Legacy keyword mappings
     if (imgName === 'Kids') return heroKidsImg;
     if (imgName === 'Lifestyle') return heroGiftsImg;
     if (imgName === 'Clothing') return heroClothingImg;
@@ -1403,6 +1434,22 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     if (imgName === 'Stationery') return heroStationeryImg;
     return handbagImg;
   };
+
+  // --- Catalogue Image Upload Handler ---
+  const handleCatalogueImageUpload = (e, target) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      if (target === 'new') {
+        setNewCatalogue(prev => ({ ...prev, image: ev.target.result }));
+      } else {
+        setEditCatalogueItem(prev => ({ ...prev, image: ev.target.result }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
 
   // --- Catalogue CRUD Handlers ---
   const handleAddCatalogueSubmit = async (e) => {
@@ -1430,7 +1477,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
       setCatalogues([...catalogues, catToAdd]);
     }
     setShowAddCatalogueModal(false);
-    setNewCatalogue({ name: '', subtitle: '', count: 0, status: 'Active', revenue: '₹0', image: 'Kids' });
+    setNewCatalogue({ name: '', subtitle: '', count: 0, status: 'Active', revenue: '₹0', image: '' });
+
   };
 
   const handleEditCatalogueSubmit = async (e) => {
@@ -2362,8 +2410,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
       shippingOptions: newProduct.shippingOptions || [],
       variants: newProduct.variants || [],
       brand: newProduct.brand || '',
-      rating: newProduct.rating ? parseFloat(newProduct.rating) : 4.8,
-      reviews: newProduct.reviews ? parseInt(newProduct.reviews, 10) : 120,
+      rating: newProduct.rating ? parseFloat(newProduct.rating) : 0,
+      reviews: newProduct.reviews ? parseInt(newProduct.reviews, 10) : 0,
       discount: newProduct.discount ? parseInt(newProduct.discount, 10) : 0,
       originalPrice: newProduct.originalPrice ? parseFloat(newProduct.originalPrice) : null,
       badge: newProduct.badge || '',
@@ -2380,7 +2428,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
       setProducts([{ ...productToAdd, id: Date.now() }, ...products]);
     }
     setShowAddProductModal(false);
-    setNewProduct({ name: '', category: 'Clothing > Kids', subCategory: '', catalogue: 'Catalogue A', price: '', stock: '', status: 'Active', description: '', images: '', attributes: {}, specifications: {}, filters: [], shippingOptions: [], variants: [], brand: '', rating: '4.8', reviews: '120', discount: '0', originalPrice: '', badge: '', isNewArrival: false, isOffer: false });
+    setNewProduct({ name: '', category: 'Clothing > Kids', subCategory: '', catalogue: 'Catalogue A', price: '', stock: '', status: 'Active', description: '', images: '', attributes: {}, specifications: {}, filters: [], shippingOptions: [], variants: [], brand: '', rating: '0', reviews: '0', discount: '0', originalPrice: '', badge: '', isNewArrival: false, isOffer: false });
   };
 
   const handleEditProductSubmit = async (e) => {
@@ -2462,8 +2510,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
       shippingOptions: editProductItem.shippingOptions || [],
       variants: editProductItem.variants || [],
       brand: editProductItem.brand || '',
-      rating: editProductItem.rating ? parseFloat(editProductItem.rating) : 4.8,
-      reviews: editProductItem.reviews ? parseInt(editProductItem.reviews, 10) : 120,
+      rating: editProductItem.rating ? parseFloat(editProductItem.rating) : 0,
+      reviews: editProductItem.reviews ? parseInt(editProductItem.reviews, 10) : 0,
       discount: editProductItem.discount ? parseInt(editProductItem.discount, 10) : 0,
       originalPrice: editProductItem.originalPrice ? parseFloat(editProductItem.originalPrice) : null,
       badge: editProductItem.badge || '',
@@ -2598,35 +2646,59 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     }
   };
 
-  const handleEditCustomerSubmit = (e) => {
+  const handleEditCustomerSubmit = async (e) => {
     e.preventDefault();
     if (!editCustomerItem.name || !editCustomerItem.email || !editCustomerItem.phone) return;
     
-    setCustomers(customers.map(c => c.id === editCustomerItem.id ? {
-      ...c,
-      name: editCustomerItem.name.trim(),
-      email: editCustomerItem.email.trim(),
-      phone: editCustomerItem.phone.trim(),
-      ordersCount: parseInt(editCustomerItem.ordersCount, 10) || 0,
-      joinedDate: editCustomerItem.joinedDate,
-      status: editCustomerItem.status
-    } : c));
+    try {
+      await apiService.updateCustomer(editCustomerItem.id, {
+        name: editCustomerItem.name.trim(),
+        email: editCustomerItem.email.trim(),
+        phone: editCustomerItem.phone.trim(),
+        status: editCustomerItem.status
+      });
+      
+      setCustomers(customers.map(c => c.id === editCustomerItem.id ? {
+        ...c,
+        name: editCustomerItem.name.trim(),
+        email: editCustomerItem.email.trim(),
+        phone: editCustomerItem.phone.trim(),
+        status: editCustomerItem.status
+      } : c));
+    } catch (err) {
+      alert(err.message || 'Failed to update customer.');
+    }
     
     setShowEditCustomerModal(false);
     setEditCustomerItem(null);
   };
   
-  const deleteCustomer = (id) => {
+  const deleteCustomer = async (id) => {
     if (confirm('Are you sure you want to delete this customer record?')) {
-      setCustomers(customers.filter(c => c.id !== id));
+      try {
+        await apiService.deleteCustomer(id);
+        setCustomers(customers.filter(c => c.id !== id));
+      } catch (err) {
+        alert(err.message || 'Failed to delete customer.');
+      }
     }
   };
 
-  const getCustomerAvatar = (avatarType) => {
-    if (avatarType === 'celebKid') return celebKidImg;
-    if (avatarType === 'celebKeerthy') return celebKeerthyImg;
-    if (avatarType === 'celebDulquer') return celebDulquerImg;
-    if (avatarType === 'celebCouple') return celebCoupleImg;
+  const getCustomerAvatar = (cOrType) => {
+    if (!cOrType) return null;
+    if (typeof cOrType === 'object') {
+      if (cOrType.profileImage) {
+        const base = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        return cOrType.profileImage.startsWith('http') || cOrType.profileImage.startsWith('data:')
+          ? cOrType.profileImage 
+          : `${base}${cOrType.profileImage}`;
+      }
+      return null;
+    }
+    if (cOrType === 'celebKid') return celebKidImg;
+    if (cOrType === 'celebKeerthy') return celebKeerthyImg;
+    if (cOrType === 'celebDulquer') return celebDulquerImg;
+    if (cOrType === 'celebCouple') return celebCoupleImg;
     return null;
   };
 
@@ -2666,6 +2738,13 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     try {
       const data = await apiService.getAdminVendorProducts(vpStatusFilter);
       setVendorProducts(data || []);
+      if (vpStatusFilter === 'Pending') {
+        setPendingProductsCount(data ? data.filter(x => x.status === 'Pending').length : 0);
+      } else {
+        apiService.getAdminVendorProducts('Pending').then(pendingData => {
+          if (pendingData) setPendingProductsCount(pendingData.length);
+        });
+      }
     } catch (err) {
       console.error('Failed to load vendor products:', err);
     } finally {
@@ -2817,6 +2896,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     try {
       await apiService.updateVendorProductStatus(productId, { status: 'Active' });
       setVendorProducts(p => p.map(x => x.id === productId ? { ...x, status: 'Active' } : x));
+      setPendingProductsCount(prev => Math.max(0, prev - 1));
     } catch (err) {
       alert('Failed to approve product.');
     }
@@ -2831,6 +2911,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
         adminNotes: rejectProductNotes.trim()
       });
       setVendorProducts(p => p.map(x => x.id === rejectProductTarget.id ? { ...x, status: 'Rejected', rejectReason: rejectProductReason.trim() } : x));
+      setPendingProductsCount(prev => Math.max(0, prev - 1));
       setShowRejectProductModal(false);
       setRejectProductTarget(null);
       setRejectProductReason('');
@@ -2854,7 +2935,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     { label: 'Reviews', icon: <Star size={18} /> },
     { label: 'Vendor Requests', icon: <Store size={18} />, badge: vendors.filter(v => v.status === 'Pending').length || null },
     { label: 'Vendor Management', icon: <Store size={18} /> },
-    { label: 'Product Approvals', icon: <ClipboardCheck size={18} />, badge: vendorProducts.filter(p => p.status === 'Pending').length || null },
+    { label: 'Product Approvals', icon: <ClipboardCheck size={18} />, badge: pendingProductsCount || null },
     { label: 'Manage Features', icon: <Globe size={18} /> },
     { label: 'Settings', icon: <Settings size={18} /> },
     { label: 'Profile', icon: <User size={18} /> }
@@ -3441,7 +3522,6 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                       <tr>
                         <th>Image</th>
                         <th>Product Name</th>
-                        <th>SKU</th>
                         <th>Catalogue</th>
                         <th>Category</th>
                         <th>Price</th>
@@ -3458,7 +3538,6 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                               <img src={resolveProductImage(product)} alt={product.name} className="table-prod-img" />
                             </td>
                             <td className="bold text-black">{product.name}</td>
-                            <td style={{ fontFamily: 'monospace', fontWeight: 600, color: '#555', fontSize: '0.85rem' }}>{getProductSKU(product)}</td>
                             <td className="text-gray">{product.catalogue}</td>
                             <td className="text-gray">{product.category}</td>
                             <td className="bold text-black">₹{product.price.toLocaleString()}</td>
@@ -3485,7 +3564,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="9" className="empty-table-cell">No products found matching filters.</td>
+                          <td colSpan="8" className="empty-table-cell">No products found matching filters.</td>
                         </tr>
                       )}
                     </tbody>
@@ -3552,6 +3631,47 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                 </div>
               </div>
 
+              {/* Filters row: Search Input */}
+              <div className="categories-re-filters-row" style={{ 
+                marginBottom: '20px', 
+                display: 'flex', 
+                justifyContent: 'flex-start',
+                alignItems: 'center'
+              }}>
+                <div className="categories-re-search-input-wrap" style={{
+                  position: 'relative',
+                  width: '340px'
+                }}>
+                  <Search size={16} className="search-icon" style={{
+                    position: 'absolute',
+                    left: '14px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#dfb743',
+                    pointerEvents: 'none'
+                  }} />
+                  <input
+                    type="text"
+                    placeholder="Search categories..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 16px 10px 42px',
+                      borderRadius: '30px',
+                      border: '1.5px solid rgba(5, 24, 56, 0.15)',
+                      backgroundColor: '#faf6ee',
+                      color: '#051838',
+                      fontSize: '0.95rem',
+                      fontWeight: '600',
+                      outline: 'none',
+                      transition: 'all 0.3s ease'
+                    }}
+                    className="categories-search-field-re"
+                  />
+                </div>
+              </div>
+
               {/* Tree Grid Card Container */}
               <div className="admin-re-section-card categories-table-section">
                 <div className="admin-re-table-wrapper">
@@ -3566,7 +3686,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {getHierarchicalCategories().map((cat) => {
+                      {getFilteredHierarchicalCategories().map((cat) => {
                         const isVisible = isCategoryVisible(cat);
                         if (!isVisible) return null;
 
@@ -3693,11 +3813,11 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                                   <Move size={15} />
                                 </button>
                                 <button 
-                                  className="table-act-btn status-toggle" 
+                                  className={`table-act-btn status-toggle ${cat.status.toLowerCase()}`} 
                                   title={cat.status === 'Active' ? 'Disable Category' : 'Enable Category'} 
                                   onClick={() => toggleCategoryStatus(cat)}
                                 >
-                                  {cat.status === 'Active' ? <ToggleRight size={20} style={{ color: '#2ecc71', cursor: 'pointer' }} /> : <ToggleLeft size={20} style={{ color: '#95a5a6', cursor: 'pointer' }} />}
+                                  {cat.status === 'Active' ? <ToggleRight size={17} /> : <ToggleLeft size={17} />}
                                 </button>
                                 <button 
                                   className="table-act-btn delete" 
@@ -3768,7 +3888,6 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                           <th>Category Name</th>
                           <th>Product Attributes</th>
                           <th>Variant Types</th>
-                          <th>Toggles</th>
                           <th>Filter Fields</th>
                           <th>Specifications</th>
                           <th className="text-center">Actions</th>
@@ -3777,7 +3896,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                       <tbody>
                         {Object.keys(categoryConfigs).length === 0 ? (
                           <tr>
-                            <td colSpan="7" style={{ textAlign: 'center', padding: '24px', color: '#888' }}>
+                            <td colSpan="6" style={{ textAlign: 'center', padding: '24px', color: '#888' }}>
                               No categories configured yet. Select a category above to start configuring!
                             </td>
                           </tr>
@@ -3802,13 +3921,6 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                                       {conf.variants.map(v => <span key={v} style={{ background: 'rgba(170, 124, 17, 0.08)', color: '#aa7c11', padding: '2px 6px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 600 }}>{v}</span>)}
                                     </div>
                                   ) : <em style={{ color: '#999', fontSize: '0.8rem' }}>None</em>}
-                                </td>
-                                <td>
-                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '0.75rem' }}>
-                                    <span>Price impact: <strong>{conf.affectsPrice ? 'Yes' : 'No'}</strong></span>
-                                    <span>Stock impact: <strong>{conf.affectsStock ? 'Yes' : 'No'}</strong></span>
-                                    <span>Sep. images: <strong>{conf.requireImages ? 'Yes' : 'No'}</strong></span>
-                                  </div>
                                 </td>
                                 <td>
                                   {conf.filters && conf.filters.length > 0 ? (
@@ -3858,14 +3970,44 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
               ) : (
                 /* Configuration Editor Form */
                 <div className="admin-re-card" style={{ padding: '28px' }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#051838', marginBottom: '20px', borderBottom: '1px solid #eee', paddingBottom: '12px' }}>
-                    Behavior Details for category: <span style={{ color: '#aa7c11' }}>{selectedConfigCategory}</span>
-                  </h3>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #eee', paddingBottom: '12px', flexWrap: 'wrap', gap: '12px' }}>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#051838', margin: 0 }}>
+                      Behavior Details for category: <span style={{ color: '#aa7c11' }}>{selectedConfigCategory}</span>
+                    </h3>
+                    <button 
+                      type="button" 
+                      onClick={() => setShowLivePreview(!showLivePreview)}
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        padding: '10px 18px', 
+                        borderRadius: '8px', 
+                        fontSize: '0.9rem',
+                        fontWeight: 700,
+                        background: showLivePreview ? '#051838' : '#faf6ee',
+                        color: showLivePreview ? '#dfb743' : '#051838',
+                        border: '1.5px solid #dfb743',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        boxShadow: '0 4px 10px rgba(5, 24, 56, 0.05)'
+                      }}
+                      className="preview-toggle-btn-re"
+                    >
+                      {showLivePreview ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showLivePreview ? "Hide Live Form Preview" : "Show Live Form Preview"}
+                    </button>
+                  </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px', marginBottom: '28px' }}>
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: showLivePreview ? 'repeat(auto-fit, minmax(320px, 1fr))' : '1fr 1fr', 
+                    gap: '28px', 
+                    marginBottom: '28px' 
+                  }}>
                     
                     {/* COLUMN 1: Attributes, Variants & Behavior */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <div className="category-config-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                       
                       {/* Product Attributes config */}
                       <div className="form-field">
@@ -3894,7 +4036,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                           />
                           <button 
                             type="button" 
-                            className="btn-primary" 
+                            className="btn-primary add-field-btn" 
                             style={{ background: '#051838', color: '#fff', padding: '0 16px', borderRadius: '8px', border: '1px solid #051838' }}
                             onClick={() => {
                               if (attrInput.trim() && !configAttributes.includes(attrInput.trim())) {
@@ -3912,7 +4054,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                             <span style={{ fontSize: '0.8rem', color: '#999', fontStyle: 'italic' }}>No attributes added yet.</span>
                           ) : (
                             configAttributes.map(tag => (
-                              <span key={tag} style={{ background: '#051838', color: '#fff', padding: '4px 10px', borderRadius: '999px', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                              <span key={tag} className="attribute-tag" style={{ background: '#051838', color: '#fff', padding: '4px 10px', borderRadius: '999px', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                 {tag}
                                 <X size={12} style={{ cursor: 'pointer' }} onClick={() => setConfigAttributes(configAttributes.filter(x => x !== tag))} />
                               </span>
@@ -3948,7 +4090,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                           />
                           <button 
                             type="button" 
-                            className="btn-primary" 
+                            className="btn-primary add-field-btn" 
                             style={{ background: '#051838', color: '#fff', padding: '0 16px', borderRadius: '8px', border: '1px solid #051838' }}
                             onClick={() => {
                               if (variantInput.trim() && !configVariants.includes(variantInput.trim())) {
@@ -3966,7 +4108,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                             <span style={{ fontSize: '0.8rem', color: '#999', fontStyle: 'italic' }}>No variants added yet.</span>
                           ) : (
                             configVariants.map(tag => (
-                              <span key={tag} style={{ background: '#aa7c11', color: '#fff', padding: '4px 10px', borderRadius: '999px', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
+                              <span key={tag} className="filter-tag" style={{ background: '#aa7c11', color: '#fff', padding: '4px 10px', borderRadius: '999px', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
                                 {tag}
                                 <X size={12} style={{ cursor: 'pointer' }} onClick={() => setConfigVariants(configVariants.filter(x => x !== tag))} />
                               </span>
@@ -4013,7 +4155,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                     </div>
 
                     {/* COLUMN 2: Filters and Specs */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <div className="category-config-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                       
                       {/* Filter Fields shown in Customer Website */}
                       <div className="form-field">
@@ -4150,7 +4292,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                           />
                           <button 
                             type="button" 
-                            className="btn-primary" 
+                            className="btn-primary add-field-btn" 
                             style={{ background: '#051838', color: '#fff', padding: '0 16px', borderRadius: '8px', border: '1px solid #051838' }}
                             onClick={() => {
                               if (shippingOptionInput.trim() && !configShippingOptions.includes(shippingOptionInput.trim())) {
@@ -4168,7 +4310,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                             <span style={{ fontSize: '0.8rem', color: '#999', fontStyle: 'italic' }}>No shipping options added yet.</span>
                           ) : (
                             configShippingOptions.map(tag => (
-                              <span key={tag} style={{ background: '#3b82f6', color: '#fff', padding: '4px 10px', borderRadius: '999px', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
+                              <span key={tag} className="shipping-tag" style={{ background: '#3b82f6', color: '#fff', padding: '4px 10px', borderRadius: '999px', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
                                 {tag}
                                 <X size={12} style={{ cursor: 'pointer' }} onClick={() => setConfigShippingOptions(configShippingOptions.filter(x => x !== tag))} />
                               </span>
@@ -4253,108 +4395,110 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                     </div>
 
                     {/* COLUMN 3: LIVE FORM GENERATOR PREVIEW */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', borderLeft: '2px dashed #eae6df', paddingLeft: '28px' }}>
-                      <h4 style={{ margin: 0, color: '#aa7c11', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Sparkles size={18} /> Live Form Generator Preview
-                      </h4>
-                      <p style={{ fontSize: '0.8rem', color: '#666', margin: 0 }}>
-                        This is exactly how the product forms will look for vendors and admins when they select <strong>{selectedConfigCategory}</strong>:
-                      </p>
+                    {showLivePreview && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', borderLeft: '2px dashed #eae6df', paddingLeft: '28px' }}>
+                        <h4 style={{ margin: 0, color: '#aa7c11', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Sparkles size={18} /> Live Form Preview
+                        </h4>
+                        <p style={{ fontSize: '0.8rem', color: '#666', margin: 0 }}>
+                          This is exactly how the product forms will look for vendors and admins when they select <strong>{selectedConfigCategory}</strong>:
+                        </p>
 
-                      <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', background: '#fff', padding: '16px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)' }}>
-                        <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '12px', borderBottom: '1px solid #f1f5f9', paddingBottom: '6px' }}>
-                          COMMON FIELDS (Required)
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.8rem', color: '#334155' }}>
-                          <div><strong>Product Name:</strong> [Input Field] {valNameMinLength ? `(Min Length: ${valNameMinLength})` : ''}</div>
-                          <div><strong>Price (₹):</strong> [Input Field] {valPriceMin ? `(Min: ₹${valPriceMin})` : ''}</div>
-                          <div><strong>Opening Stock:</strong> [Input Field] {valStockMin ? `(Min: ${valStockMin})` : ''}</div>
-                          <div><strong>Description:</strong> [Textarea]</div>
-                          <div><strong>Media / Images:</strong> [Upload Drag & Drop]</div>
-                        </div>
-
-                        {configAttributes.length > 0 && (
-                          <div style={{ marginTop: '16px' }}>
-                            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px' }}>
-                              PRODUCT ATTRIBUTES
-                            </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.78rem' }}>
-                              {configAttributes.map(attr => (
-                                <div key={attr} style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                                  <strong>{attr}</strong>: [Text Input]
-                                </div>
-                              ))}
-                            </div>
+                        <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', background: '#fff', padding: '16px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)' }}>
+                          <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '12px', borderBottom: '1px solid #f1f5f9', paddingBottom: '6px' }}>
+                            COMMON FIELDS (Required)
                           </div>
-                        )}
-
-                        {configSpecs.length > 0 && (
-                          <div style={{ marginTop: '16px' }}>
-                            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px' }}>
-                              TECHNICAL SPECIFICATIONS
-                            </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.78rem' }}>
-                              {configSpecs.map(spec => (
-                                <div key={spec} style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                                  <strong>{spec}</strong>: [Text Input]
-                                </div>
-                              ))}
-                            </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.8rem', color: '#334155' }}>
+                            <div><strong>Product Name:</strong> [Input Field] {valNameMinLength ? `(Min Length: ${valNameMinLength})` : ''}</div>
+                            <div><strong>Price (₹):</strong> [Input Field] {valPriceMin ? `(Min: ₹${valPriceMin})` : ''}</div>
+                            <div><strong>Opening Stock:</strong> [Input Field] {valStockMin ? `(Min: ${valStockMin})` : ''}</div>
+                            <div><strong>Description:</strong> [Textarea]</div>
+                            <div><strong>Media / Images:</strong> [Upload Drag & Drop]</div>
                           </div>
-                        )}
 
-                        {configVariants.length > 0 && (
-                          <div style={{ marginTop: '16px' }}>
-                            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px' }}>
-                              VARIANT MATRIX GENERATOR
-                            </div>
-                            <div style={{ background: '#faf5e6', padding: '10px', borderRadius: '8px', border: '1px solid #f3e8c9', fontSize: '0.78rem' }}>
-                              <div style={{ marginBottom: '6px' }}>Generates bulk rows using matrix of:</div>
-                              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                                {configVariants.map(v => (
-                                  <span key={v} style={{ background: '#aa7c11', color: '#fff', padding: '2px 6px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 600 }}>{v}</span>
+                          {configAttributes.length > 0 && (
+                            <div style={{ marginTop: '16px' }}>
+                              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px' }}>
+                                PRODUCT ATTRIBUTES
+                              </div>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.78rem' }}>
+                                {configAttributes.map(attr => (
+                                  <div key={attr} style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                                    <strong>{attr}</strong>: [Text Input]
+                                  </div>
                                 ))}
                               </div>
-                              <div style={{ marginTop: '8px', fontSize: '0.7rem', color: '#854d0e' }}>
-                                {configAffectsPrice && "✓ Price Overrides enabled  "}
-                                {configAffectsStock && "✓ Inventory Overrides enabled  "}
-                                {configRequireImages && "✓ Variant Image Upload required"}
+                            </div>
+                          )}
+
+                          {configSpecs.length > 0 && (
+                            <div style={{ marginTop: '16px' }}>
+                              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px' }}>
+                                TECHNICAL SPECIFICATIONS
+                              </div>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.78rem' }}>
+                                {configSpecs.map(spec => (
+                                  <div key={spec} style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                                    <strong>{spec}</strong>: [Text Input]
+                                  </div>
+                                ))}
                               </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
-                        {configFilters.length > 0 && (
-                          <div style={{ marginTop: '16px' }}>
-                            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px' }}>
-                              CUSTOMER SHOP FILTERS
-                            </div>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: '0.78rem' }}>
-                              {configFilters.map(f => (
-                                <span key={f} style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '6px', border: '1px solid #e2e8f0', color: '#475569' }}>
-                                  [Check] {f} Filter
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {configShippingOptions.length > 0 && (
-                          <div style={{ marginTop: '16px' }}>
-                            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px' }}>
-                              SHIPPING & FULFILLMENT OPTIONS
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.78rem' }}>
-                              {configShippingOptions.map(option => (
-                                <div key={option} style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                                  [Check] {option}
+                          {configVariants.length > 0 && (
+                            <div style={{ marginTop: '16px' }}>
+                              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px' }}>
+                                VARIANT MATRIX GENERATOR
+                              </div>
+                              <div style={{ background: '#faf5e6', padding: '10px', borderRadius: '8px', border: '1px solid #f3e8c9', fontSize: '0.78rem' }}>
+                                <div style={{ marginBottom: '6px' }}>Generates bulk rows using matrix of:</div>
+                                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                                  {configVariants.map(v => (
+                                    <span key={v} style={{ background: '#aa7c11', color: '#fff', padding: '2px 6px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 600 }}>{v}</span>
+                                  ))}
                                 </div>
-                              ))}
+                                <div style={{ marginTop: '8px', fontSize: '0.7rem', color: '#854d0e' }}>
+                                  {configAffectsPrice && "✓ Price Overrides enabled  "}
+                                  {configAffectsStock && "✓ Inventory Overrides enabled  "}
+                                  {configRequireImages && "✓ Variant Image Upload required"}
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
+
+                          {configFilters.length > 0 && (
+                            <div style={{ marginTop: '16px' }}>
+                              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px' }}>
+                                CUSTOMER SHOP FILTERS
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: '0.78rem' }}>
+                                {configFilters.map(f => (
+                                  <span key={f} style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '6px', border: '1px solid #e2e8f0', color: '#475569' }}>
+                                    [Check] {f} Filter
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {configShippingOptions.length > 0 && (
+                            <div style={{ marginTop: '16px' }}>
+                              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px' }}>
+                                SHIPPING & FULFILLMENT OPTIONS
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.78rem' }}>
+                                {configShippingOptions.map(option => (
+                                  <div key={option} style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                                    [Check] {option}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                   </div>
 
@@ -4447,14 +4591,16 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                                 image: cat.image
                               })}
                             >
-                              <Edit3 size={13} />
+                              <Edit3 size={18} />
+
                             </button>
                             <button 
                               className="cat-card-act-btn delete" 
                               title="Delete Catalogue"
                               onClick={() => deleteCatalogue(cat.name)}
                             >
-                              <Trash2 size={13} />
+                              <Trash2 size={18} />
+
                             </button>
                           </div>
                         </div>
@@ -4703,8 +4849,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                             <td className="cust-profile-cell">
                               <div className="cust-profile-wrap">
                                 <div className="cust-avatar-circle">
-                                  {getCustomerAvatar(c.avatarType) ? (
-                                    <img src={getCustomerAvatar(c.avatarType)} alt={c.name} className="cust-avatar-img" />
+                                  {getCustomerAvatar(c) ? (
+                                    <img src={getCustomerAvatar(c)} alt={c.name} className="cust-avatar-img" />
                                   ) : (
                                     <span className="cust-avatar-fallback">
                                       {c.name.slice(0, 2).toUpperCase()}
@@ -7298,8 +7444,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                       {vendorProducts.map(p => (
                         <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                           <td style={{ padding: '12px 16px' }}>
-                            {p.images?.[0] || p.image ? (
-                              <img src={p.images?.[0] || p.image} alt={p.name}
+                            {resolveProductImage(p) ? (
+                              <img src={resolveProductImage(p)} alt={p.name}
                                 style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
                             ) : (
                               <div style={{ width: '50px', height: '50px', borderRadius: '8px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -7427,100 +7573,168 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
       )}
 
       {/* --- VIEW PRODUCT MODAL DIALOG --- */}
-      {viewProductItem && (
-        <div className="admin-modal-overlay" onClick={() => setViewProductItem(null)}>
-          <div className="admin-modal-box" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-hdr">
-              <h3>Product Specifications</h3>
-              <button className="close-btn" onClick={() => setViewProductItem(null)}><X size={18} /></button>
-            </div>
-            
-            <div className="modal-body-view" style={{ flexDirection: 'column' }}>
-              <div style={{ display: 'flex', gap: '24px', marginBottom: '16px' }}>
-                <div className="view-prod-img-wrap" style={{ flexShrink: 0 }}>
-                  <img src={resolveProductImage(viewProductItem)} alt={viewProductItem.name} className="view-img" style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '10px' }} />
-                </div>
-                <div className="view-prod-details" style={{ flexGrow: 1, paddingLeft: 0 }}>
-                  <h4 className="view-title" style={{ fontSize: '1.25rem', marginBottom: '12px' }}>{viewProductItem.name}</h4>
-                  <div className="view-spec-table">
-                    <div className="spec-row">
-                      <span className="spec-lbl">Catalogue:</span>
-                      <span className="spec-val bold">{viewProductItem.catalogue || 'Catalogue A'}</span>
-                    </div>
-                    <div className="spec-row">
-                      <span className="spec-lbl">Category:</span>
-                      <span className="spec-val bold">{viewProductItem.category || 'Clothing > Kids'}</span>
-                    </div>
-                    <div className="spec-row">
-                      <span className="spec-lbl">SubCategory:</span>
-                      <span className="spec-val bold">{viewProductItem.subCategory || '—'}</span>
-                    </div>
-                    <div className="spec-row">
-                      <span className="spec-lbl">Price:</span>
-                      <span className="spec-val bold text-orange">₹{(viewProductItem.price || 0).toLocaleString()}</span>
-                    </div>
-                    <div className="spec-row">
-                      <span className="spec-lbl">Available Stock:</span>
-                      <span className="spec-val bold">{viewProductItem.stock || 0} items</span>
-                    </div>
-                    <div className="spec-row">
-                      <span className="spec-lbl">Total Sales:</span>
-                      <span className="spec-val bold">{viewProductItem.sales || 0} orders</span>
-                    </div>
-                    <div className="spec-row">
-                      <span className="spec-lbl">Status:</span>
-                      <span className={`status-badge-re ${(viewProductItem.status || 'Active').toLowerCase().replace(' ', '-')}`}>{viewProductItem.status || 'Active'}</span>
-                    </div>
-                  </div>
-                </div>
+      {viewProductItem && (() => {
+        const formatKey = (k) => k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        return (
+          <div className="admin-modal-overlay" onClick={() => setViewProductItem(null)}>
+            <div className="admin-modal-box wide" style={{ 
+              width: '1200px', 
+              maxWidth: '95vw', 
+              maxHeight: '92vh', 
+              display: 'flex', 
+              flexDirection: 'column',
+              boxShadow: '0 25px 50px rgba(5, 24, 56, 0.25)',
+              borderRadius: '24px',
+              border: 'none',
+              overflow: 'hidden'
+            }} onClick={(e) => e.stopPropagation()}>
+              <div className="modal-hdr" style={{ 
+                backgroundColor: '#051838', 
+                padding: '20px 28px', 
+                borderBottom: '3px solid #dfb743',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                color: '#ffffff'
+              }}>
+                <h3 style={{ color: '#ffffff', fontSize: '1.4rem', fontWeight: 800, margin: 0, fontFamily: 'var(--font-serif)' }}>Product Specifications</h3>
+                <button className="close-btn" style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px' }} onClick={() => setViewProductItem(null)}><X size={20} /></button>
               </div>
+              
+              <div className="modal-body-view" style={{ 
+                display: 'flex', 
+                gap: '32px', 
+                padding: '28px', 
+                overflowY: 'auto',
+                flexDirection: 'row',
+                flex: 1,
+                backgroundColor: '#ffffff'
+              }}>
+                {/* Left Column - Product Image, Gallery, and Description */}
+                <div style={{ flex: '1', display: 'flex', flexDirection: 'column', gap: '24px', minWidth: '320px' }}>
+                  <div className="view-prod-img-wrap" style={{ 
+                    width: '100%', 
+                    height: '340px', 
+                    borderRadius: '16px', 
+                    overflow: 'hidden', 
+                    backgroundColor: '#f8fafc', 
+                    border: '1.5px solid #e2e8f0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '16px'
+                  }}>
+                    <img 
+                      src={resolveProductImage(viewProductItem)} 
+                      alt={viewProductItem.name} 
+                      style={{ 
+                        maxWidth: '100%', 
+                        maxHeight: '100%', 
+                        objectFit: 'contain', 
+                        borderRadius: '8px' 
+                      }} 
+                    />
+                  </div>
 
-              {viewProductItem.attributes && Object.keys(viewProductItem.attributes).length > 0 && (
-                <div style={{ marginBottom: '16px', background: '#f6faf0', padding: '16px', borderRadius: '12px', border: '1px solid #dbe8cb' }}>
-                  <span className="spec-lbl" style={{ display: 'block', marginBottom: '8px', fontWeight: 600, color: '#D4AF37' }}>Category Specifications:</span>
-                  <div className="view-spec-table" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
-                    {Object.entries(viewProductItem.attributes).map(([key, val]) => (
-                      <div key={key} className="spec-row" style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eae6df', paddingBottom: '6px' }}>
-                        <span className="spec-lbl" style={{ textTransform: 'capitalize' }}>{key}:</span>
-                        <span className="spec-val bold">{val}</span>
+                  {/* Multiple Images Gallery */}
+                  {Array.isArray(viewProductItem.images) && viewProductItem.images.length > 0 && (
+                    <div>
+                      <span className="spec-lbl" style={{ display: 'block', marginBottom: '10px', fontWeight: 700, fontSize: '0.95rem', color: '#051838' }}>Product Images Gallery:</span>
+                      <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px' }}>
+                        {viewProductItem.images.map((img, idx) => (
+                          <img 
+                            key={idx} 
+                            src={resolveProductImage({ image: img })} 
+                            alt={`${viewProductItem.name} ${idx + 1}`} 
+                            style={{ 
+                              width: '75px', 
+                              height: '75px', 
+                              objectFit: 'cover', 
+                              borderRadius: '8px', 
+                              border: '2px solid #e2e8f0',
+                              backgroundColor: '#fff',
+                              cursor: 'pointer',
+                              transition: 'border-color 0.2s'
+                            }}
+                          />
+                        ))}
                       </div>
-                    ))}
+                    </div>
+                  )}
+
+                  {/* Description */}
+                  <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1.5px solid #e2e8f0' }}>
+                    <span className="spec-lbl" style={{ display: 'block', marginBottom: '8px', fontWeight: 700, fontSize: '1rem', color: '#051838' }}>Description:</span>
+                    <p style={{ fontSize: '0.95rem', color: '#4b5563', margin: 0, lineHeight: '1.6' }}>
+                      {viewProductItem.description || 'No description provided for this product.'}
+                    </p>
                   </div>
                 </div>
-              )}
 
-              {/* Multiple Images Gallery */}
-              {Array.isArray(viewProductItem.images) && viewProductItem.images.length > 0 && (
-                <div style={{ marginBottom: '16px' }}>
-                  <span className="spec-lbl" style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>Product Images Gallery:</span>
-                  <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '8px' }}>
-                    {viewProductItem.images.map((img, idx) => (
-                      <img 
-                        key={idx} 
-                        src={img} 
-                        alt={`${viewProductItem.name} ${idx + 1}`} 
-                        style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #eae6df' }}
-                      />
-                    ))}
+                {/* Right Column - Product Meta Info & Attributes */}
+                <div style={{ flex: '1.3', display: 'flex', flexDirection: 'column', gap: '28px' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.85rem', fontWeight: 800, color: '#051838', marginBottom: '6px', fontFamily: 'var(--font-serif)' }}>{viewProductItem.name}</h2>
+                    <p style={{ fontSize: '0.9rem', color: '#D4AF37', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Product Details & Specifications</p>
+                  </div>
+
+                  <div className="view-spec-table" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <div className="spec-row" style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1.5px solid #f1f5f9', paddingBottom: '8px', fontSize: '1.05rem' }}>
+                      <span className="spec-lbl" style={{ color: '#4b5563', fontWeight: 600 }}>Catalogue:</span>
+                      <span className="spec-val bold" style={{ color: '#051838', fontWeight: 700 }}>{viewProductItem.catalogue || 'Catalogue A'}</span>
+                    </div>
+                    <div className="spec-row" style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1.5px solid #f1f5f9', paddingBottom: '8px', fontSize: '1.05rem' }}>
+                      <span className="spec-lbl" style={{ color: '#4b5563', fontWeight: 600 }}>Category:</span>
+                      <span className="spec-val bold" style={{ color: '#051838', fontWeight: 700 }}>{viewProductItem.category || 'Clothing > Kids'}</span>
+                    </div>
+                    <div className="spec-row" style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1.5px solid #f1f5f9', paddingBottom: '8px', fontSize: '1.05rem' }}>
+                      <span className="spec-lbl" style={{ color: '#4b5563', fontWeight: 600 }}>SubCategory:</span>
+                      <span className="spec-val bold" style={{ color: '#051838', fontWeight: 700 }}>{viewProductItem.subCategory || '—'}</span>
+                    </div>
+                    <div className="spec-row" style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1.5px solid #f1f5f9', paddingBottom: '8px', fontSize: '1.05rem' }}>
+                      <span className="spec-lbl" style={{ color: '#4b5563', fontWeight: 600 }}>Price:</span>
+                      <span className="spec-val bold text-orange" style={{ color: '#f97316', fontWeight: 800, fontSize: '1.2rem' }}>₹{(viewProductItem.price || 0).toLocaleString()}</span>
+                    </div>
+                    <div className="spec-row" style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1.5px solid #f1f5f9', paddingBottom: '8px', fontSize: '1.05rem' }}>
+                      <span className="spec-lbl" style={{ color: '#4b5563', fontWeight: 600 }}>Available Stock:</span>
+                      <span className="spec-val bold" style={{ color: '#051838', fontWeight: 700 }}>{viewProductItem.stock || 0} items</span>
+                    </div>
+                    <div className="spec-row" style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1.5px solid #f1f5f9', paddingBottom: '8px', fontSize: '1.05rem' }}>
+                      <span className="spec-lbl" style={{ color: '#4b5563', fontWeight: 600 }}>Total Sales:</span>
+                      <span className="spec-val bold" style={{ color: '#051838', fontWeight: 700 }}>{viewProductItem.sales || 0} orders</span>
+                    </div>
+                    <div className="spec-row" style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1.5px solid #f1f5f9', paddingBottom: '8px', fontSize: '1.05rem' }}>
+                      <span className="spec-lbl" style={{ color: '#4b5563', fontWeight: 600 }}>Status:</span>
+                      <span className={`status-badge-re ${(viewProductItem.status || 'Active').toLowerCase().replace(' ', '-')}`} style={{ margin: 0 }}>
+                        {viewProductItem.status || 'Active'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Category Specifications (attributes) */}
+                  {viewProductItem.attributes && Object.keys(viewProductItem.attributes).length > 0 && (
+                    <div style={{ background: '#faf6ee', padding: '24px', borderRadius: '16px', border: '1.5px solid #dfb743', marginTop: '6px' }}>
+                      <span className="spec-lbl" style={{ display: 'block', marginBottom: '16px', fontWeight: 800, color: '#051838', fontSize: '1.1rem', fontFamily: 'var(--font-serif)' }}>Category Specifications</span>
+                      <div className="view-spec-table" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px 24px' }}>
+                        {Object.entries(viewProductItem.attributes).map(([key, val]) => (
+                          <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: '6px', borderBottom: '1.5px solid rgba(160, 140, 110, 0.15)', paddingBottom: '8px' }}>
+                            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#b38f2d', textTransform: 'uppercase', letterSpacing: '0.7px' }}>{formatKey(key)}</span>
+                            <span style={{ fontSize: '1rem', fontWeight: 600, color: '#051838', wordBreak: 'break-word', lineHeight: '1.5' }}>{val || '—'}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="modal-actions-row" style={{ marginTop: 'auto', display: 'flex', justifyContent: 'flex-end', paddingTop: '10px' }}>
+                    <button type="button" className="btn-primary" style={{ minWidth: '140px', padding: '12px 24px', fontSize: '1rem' }} onClick={() => setViewProductItem(null)}>Close View</button>
                   </div>
                 </div>
-              )}
-
-              {/* Description */}
-              <div style={{ marginBottom: '16px', background: '#faf9f6', padding: '16px', borderRadius: '12px', border: '1px solid #eae6df' }}>
-                <span className="spec-lbl" style={{ display: 'block', marginBottom: '6px', fontWeight: 600 }}>Description:</span>
-                <p style={{ fontSize: '0.9rem', color: '#555', margin: 0, lineHeight: '1.5' }}>
-                  {viewProductItem.description || 'No description provided for this product.'}
-                </p>
-              </div>
-
-              <div className="modal-actions-row" style={{ marginTop: '8px' }}>
-                <button type="button" className="btn-primary" onClick={() => setViewProductItem(null)}>Close View</button>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* --- ADD COUPON MODAL DIALOG --- */}
       {showAddCouponModal && (
@@ -8244,20 +8458,44 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                   </select>
                 </div>
 
-                <div className="form-field">
-                  <label>Image Template</label>
-                  <select 
-                    value={newCatalogue.image}
-                    onChange={(e) => setNewCatalogue({ ...newCatalogue, image: e.target.value })}
-                    className="modal-input"
+                <div className="form-field cat-img-upload-field">
+                  <label>Catalogue Image</label>
+                  <div
+                    className="cat-img-upload-zone"
+                    onClick={() => document.getElementById('cat-img-upload-new').click()}
                   >
-                    <option value="Kids">Kids Collection Template</option>
-                    <option value="Lifestyle">Lifestyle Collection Template</option>
-                    <option value="Clothing">Clothing Collection Template</option>
-                    <option value="Accessories">Accessories Collection Template</option>
-                    <option value="Stationery">Stationery Collection Template</option>
-                  </select>
+                    {newCatalogue.image ? (
+                      <div className="cat-img-preview">
+                        <img
+                          src={getCatalogueImage(newCatalogue.image)}
+                          alt="Preview"
+                          className="cat-upload-preview"
+                        />
+                        <button
+                          type="button"
+                          className="cat-img-clear-btn"
+                          onClick={(e) => { e.stopPropagation(); setNewCatalogue({ ...newCatalogue, image: '' }); }}
+                        >
+                          <X size={13} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="cat-img-placeholder">
+                        <ImageIcon size={26} strokeWidth={1.4} />
+                        <span>Click to upload image</span>
+                        <span className="cat-upload-hint">PNG, JPG, WEBP — max 5 MB</span>
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    id="cat-img-upload-new"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => handleCatalogueImageUpload(e, 'new')}
+                  />
                 </div>
+
               </div>
 
               <div className="modal-actions-row">
@@ -8336,20 +8574,44 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                   </select>
                 </div>
 
-                <div className="form-field">
-                  <label>Image Template</label>
-                  <select 
-                    value={editCatalogueItem.image}
-                    onChange={(e) => setEditCatalogueItem({ ...editCatalogueItem, image: e.target.value })}
-                    className="modal-input"
+                <div className="form-field cat-img-upload-field">
+                  <label>Catalogue Image</label>
+                  <div
+                    className="cat-img-upload-zone"
+                    onClick={() => document.getElementById('cat-img-upload-edit').click()}
                   >
-                    <option value="Kids">Kids Collection Template</option>
-                    <option value="Lifestyle">Lifestyle Collection Template</option>
-                    <option value="Clothing">Clothing Collection Template</option>
-                    <option value="Accessories">Accessories Collection Template</option>
-                    <option value="Stationery">Stationery Collection Template</option>
-                  </select>
+                    {editCatalogueItem.image ? (
+                      <div className="cat-img-preview">
+                        <img
+                          src={getCatalogueImage(editCatalogueItem.image)}
+                          alt="Preview"
+                          className="cat-upload-preview"
+                        />
+                        <button
+                          type="button"
+                          className="cat-img-clear-btn"
+                          onClick={(e) => { e.stopPropagation(); setEditCatalogueItem({ ...editCatalogueItem, image: '' }); }}
+                        >
+                          <X size={13} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="cat-img-placeholder">
+                        <ImageIcon size={26} strokeWidth={1.4} />
+                        <span>Click to upload image</span>
+                        <span className="cat-upload-hint">PNG, JPG, WEBP — max 5 MB</span>
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    id="cat-img-upload-edit"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => handleCatalogueImageUpload(e, 'edit')}
+                  />
                 </div>
+
               </div>
 
               <div className="modal-actions-row">

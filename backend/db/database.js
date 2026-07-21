@@ -1211,6 +1211,74 @@ async function seedStoreData() {
 			await Settings.create({});
 			console.log("✅ Default settings seeded successfully");
 		}
+		// Seed default reviews if not exist
+		const reviewCount = await Review.countDocuments();
+		if (reviewCount === 0) {
+			const defaultReviews = [
+				{
+					id: 1,
+					productName: 'Kids Party Dress',
+					productImage: 'Kids',
+					customerName: 'Sumathi R',
+					rating: 5,
+					comment: 'Excellent quality!',
+					date: 'Jun 28, 2025',
+					status: 'Approved',
+					reply: '',
+					verifiedPurchase: true
+				},
+				{
+					id: 2,
+					productName: 'Women Kurti',
+					productImage: 'Kids',
+					customerName: 'Priya M',
+					rating: 4,
+					comment: 'Good product',
+					date: 'Jun 27, 2025',
+					status: 'Approved',
+					reply: '',
+					verifiedPurchase: true
+				},
+				{
+					id: 3,
+					productName: 'Stylish Handbag',
+					productImage: 'Kids',
+					customerName: 'Nandhini S',
+					rating: 5,
+					comment: 'Very nice handbag',
+					date: 'Jun 26, 2025',
+					status: 'Pending',
+					reply: '',
+					verifiedPurchase: true
+				},
+				{
+					id: 4,
+					productName: 'Premium Pen Set',
+					productImage: 'Kids',
+					customerName: 'Arjun K',
+					rating: 3,
+					comment: 'Average',
+					date: 'Jun 24, 2025',
+					status: 'Rejected',
+					reply: '',
+					verifiedPurchase: true
+				},
+				{
+					id: 5,
+					productName: 'Snowfall T-Shirt',
+					productImage: 'Kids',
+					customerName: 'sumathi',
+					rating: 3,
+					comment: 'good',
+					date: 'Jul 18, 2026',
+					status: 'Approved',
+					reply: '',
+					verifiedPurchase: true
+				}
+			];
+			await Review.insertMany(defaultReviews);
+			console.log("✅ Default reviews seeded successfully");
+		}
 		// Seed default coupons if not exist
 		const existingL10 = await Coupon.findOne({ code: "LUCKY10" });
 		if (!existingL10) {
@@ -1237,6 +1305,15 @@ async function seedStoreData() {
 				status: "Active"
 			});
 			console.log("✅ Coupon MITHRA100 seeded successfully");
+		}
+		// Seed default catalogues if not exist
+		const catCount = await Catalogue.countDocuments();
+		if (catCount === 0) {
+			await Catalogue.insertMany([
+				{ name: 'Catalogue A', subtitle: 'Kids Collection', count: 12, status: 'Active', revenue: '₹85,000', image: 'Kids' },
+				{ name: 'Catalogue B', subtitle: 'Lifestyle Collection', count: 0, status: 'Active', revenue: '₹1,60,000', image: 'Lifestyle' }
+			]);
+			console.log("✅ Default catalogues seeded successfully");
 		}
 		const defaultFeatures = [
 			{

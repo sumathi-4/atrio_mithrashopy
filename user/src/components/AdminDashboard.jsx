@@ -360,23 +360,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
 
   const stats = getDynamicStats();
 
-  const [coupons, setCoupons] = useState(() => {
-    const local = localStorage.getItem('mithra_admin_coupons');
-    if (local) {
-      try {
-        return JSON.parse(local);
-      } catch (e) {
-        // Fallback
-      }
-    }
-    return [
-      { code: 'WELCOME10', discount: '10% OFF', type: 'Percentage', minCart: '₹499', expiry: 'Jun 30, 2025', usage: '120/500', status: 'Active' },
-      { code: 'SUMMER30', discount: '20% OFF', type: 'Percentage', minCart: '₹999', expiry: 'Jul 15, 2025', usage: '85/300', status: 'Active' },
-      { code: 'FESTIVE50', discount: '50% OFF', type: 'Percentage', minCart: '₹1499', expiry: 'Aug 10, 2025', usage: '25/200', status: 'Active' },
-      { code: 'FREESHIP', discount: 'Free Shipping', type: 'Free Shipping', minCart: '₹0', expiry: 'Jun 30, 2025', usage: '230/500', status: 'Active' },
-      { code: 'NEWUSERS', discount: '5% OFF', type: 'Percentage', minCart: '₹299', expiry: 'Jul 05, 2025', usage: '60/200', status: 'Inactive' }
-    ];
-  });
+  const [coupons, setCoupons] = useState([]);
 
   const [activeCouponSubTab, setActiveCouponSubTab] = useState('Coupons');
   const [showEditCouponModal, setShowEditCouponModal] = useState(false);
@@ -503,20 +487,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     return local ? JSON.parse(local) : { Clothing: true, Women: true };
   });
 
-  const [catalogues, setCatalogues] = useState(() => {
-    const local = localStorage.getItem('mithra_admin_catalogues');
-    if (local) {
-      try {
-        return JSON.parse(local);
-      } catch (e) {
-        // Fallback
-      }
-    }
-    return [
-      { name: 'Catalogue A', subtitle: 'Kids Collection', count: 45, status: 'Active', revenue: '₹85,000', image: 'Kids' },
-      { name: 'Catalogue B', subtitle: 'Lifestyle Collection', count: 63, status: 'Active', revenue: '₹1,60,000', image: 'Lifestyle' }
-    ];
-  });
+  const [catalogues, setCatalogues] = useState([]);
+
 
   const [reviews, setReviews] = useState(() => {
     const local = localStorage.getItem('mithra_admin_reviews');
@@ -525,12 +497,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
         return JSON.parse(local);
       } catch (e) {}
     }
-    return [
-      { id: 1, productName: 'Kids Party Dress', productImage: kidsDressImg, customerName: 'Sumathi R', rating: 5, comment: 'Excellent quality!', date: 'Jun 28, 2025', status: 'Approved', reply: '' },
-      { id: 2, productName: 'Women Kurti', productImage: kidsDressImg, customerName: 'Priya M', rating: 4, comment: 'Good product', date: 'Jun 27, 2025', status: 'Approved', reply: '' },
-      { id: 3, productName: 'Stylish Handbag', productImage: handbagImg, customerName: 'Nandhini S', rating: 5, comment: 'Very nice handbag', date: 'Jun 26, 2025', status: 'Pending', reply: '' },
-      { id: 4, productName: 'Premium Pen Set', productImage: kidsDressImg, customerName: 'Arjun K', rating: 3, comment: 'Average', date: 'Jun 24, 2025', status: 'Rejected', reply: '' }
-    ];
+    return [];
   });
 
   const [activeReviewsSubTab, setActiveReviewsSubTab] = useState('All Reviews');
@@ -551,7 +518,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
   const [showAddCatalogueModal, setShowAddCatalogueModal] = useState(false);
   const [editCatalogueItem, setEditCatalogueItem] = useState(null);
   const [viewCatalogueItem, setViewCatalogueItem] = useState(null);
-  const [newCatalogue, setNewCatalogue] = useState({ name: '', subtitle: '', count: 0, status: 'Active', revenue: '₹0', image: 'Kids' });
+  const [newCatalogue, setNewCatalogue] = useState({ name: '', subtitle: '', count: 0, status: 'Active', revenue: '₹0', image: '' });
+
 
   const [showEditOrderModal, setShowEditOrderModal] = useState(false);
   const [editOrderItem, setEditOrderItem] = useState(null);
@@ -613,10 +581,6 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
   }, [customers]);
 
   useEffect(() => {
-    localStorage.setItem('mithra_admin_coupons', JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
     localStorage.setItem('mithra_admin_categories', JSON.stringify(categories));
   }, [categories]);
 
@@ -624,9 +588,6 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     localStorage.setItem('mithra_expanded_categories', JSON.stringify(expandedCategories));
   }, [expandedCategories]);
 
-  useEffect(() => {
-    localStorage.setItem('mithra_admin_catalogues', JSON.stringify(catalogues));
-  }, [catalogues]);
 
   useEffect(() => {
     localStorage.setItem('mithra_admin_subscribers', JSON.stringify(subscribers));
@@ -685,13 +646,14 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
         }
         
         const catalogueData = await apiService.getCatalogues();
-        if (catalogueData && catalogueData.length > 0) setCatalogues(catalogueData);
+        setCatalogues(catalogueData || []);
+
         
         const ordersData = await apiService.getOrders();
         if (ordersData && ordersData.length > 0) setOrders(ordersData);
         
         const couponsData = await apiService.getCoupons();
-        if (couponsData && couponsData.length > 0) setCoupons(couponsData);
+        if (couponsData) setCoupons(couponsData);
         
         const reviewsData = await apiService.getReviews();
         if (reviewsData && reviewsData.length > 0) setReviews(reviewsData);
@@ -987,6 +949,10 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
 
   // --- Catalogue Helpers ---
   const getCatalogueImage = (imgName) => {
+    if (!imgName) return handbagImg;
+    // If it's an uploaded data URL or a full URL, use it directly
+    if (imgName.startsWith('data:') || imgName.startsWith('http') || imgName.startsWith('blob:') || imgName.startsWith('/')) return imgName;
+    // Legacy keyword mappings
     if (imgName === 'Kids') return heroKidsImg;
     if (imgName === 'Lifestyle') return heroGiftsImg;
     if (imgName === 'Clothing') return heroClothingImg;
@@ -994,6 +960,22 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     if (imgName === 'Stationery') return heroStationeryImg;
     return handbagImg;
   };
+
+  // --- Catalogue Image Upload Handler ---
+  const handleCatalogueImageUpload = (e, target) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      if (target === 'new') {
+        setNewCatalogue(prev => ({ ...prev, image: ev.target.result }));
+      } else {
+        setEditCatalogueItem(prev => ({ ...prev, image: ev.target.result }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
 
   // --- Catalogue CRUD Handlers ---
   const handleAddCatalogueSubmit = async (e) => {
@@ -1021,7 +1003,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
       setCatalogues([...catalogues, catToAdd]);
     }
     setShowAddCatalogueModal(false);
-    setNewCatalogue({ name: '', subtitle: '', count: 0, status: 'Active', revenue: '₹0', image: 'Kids' });
+    setNewCatalogue({ name: '', subtitle: '', count: 0, status: 'Active', revenue: '₹0', image: '' });
+
   };
 
   const handleEditCatalogueSubmit = async (e) => {
@@ -1830,11 +1813,21 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     }
   };
 
-  const getCustomerAvatar = (avatarType) => {
-    if (avatarType === 'celebKid') return celebKidImg;
-    if (avatarType === 'celebKeerthy') return celebKeerthyImg;
-    if (avatarType === 'celebDulquer') return celebDulquerImg;
-    if (avatarType === 'celebCouple') return celebCoupleImg;
+  const getCustomerAvatar = (cOrType) => {
+    if (!cOrType) return null;
+    if (typeof cOrType === 'object') {
+      if (cOrType.profileImage) {
+        const base = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        return cOrType.profileImage.startsWith('http') || cOrType.profileImage.startsWith('data:')
+          ? cOrType.profileImage 
+          : `${base}${cOrType.profileImage}`;
+      }
+      return null;
+    }
+    if (cOrType === 'celebKid') return celebKidImg;
+    if (cOrType === 'celebKeerthy') return celebKeerthyImg;
+    if (cOrType === 'celebDulquer') return celebDulquerImg;
+    if (cOrType === 'celebCouple') return celebCoupleImg;
     return null;
   };
 
@@ -2651,7 +2644,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                 <button 
                   className="catalogues-re-add-btn" 
                   onClick={() => {
-                    setNewCatalogue({ name: '', subtitle: '', count: 0, status: 'Active', revenue: '₹0', image: 'Kids' });
+                    setNewCatalogue({ name: '', subtitle: '', count: 0, status: 'Active', revenue: '₹0', image: '' });
+
                     setShowAddCatalogueModal(true);
                   }}
                 >
@@ -2683,14 +2677,16 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                                 image: cat.image
                               })}
                             >
-                              <Edit3 size={13} />
+                              <Edit3 size={18} />
+
                             </button>
                             <button 
                               className="cat-card-act-btn delete" 
                               title="Delete Catalogue"
                               onClick={() => deleteCatalogue(cat.name)}
                             >
-                              <Trash2 size={13} />
+                              <Trash2 size={18} />
+
                             </button>
                           </div>
                         </div>
@@ -2906,8 +2902,8 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                             <td className="cust-profile-cell">
                               <div className="cust-profile-wrap">
                                 <div className="cust-avatar-circle">
-                                  {getCustomerAvatar(c.avatarType) ? (
-                                    <img src={getCustomerAvatar(c.avatarType)} alt={c.name} className="cust-avatar-img" />
+                                  {getCustomerAvatar(c) ? (
+                                    <img src={getCustomerAvatar(c)} alt={c.name} className="cust-avatar-img" />
                                   ) : (
                                     <span className="cust-avatar-fallback">
                                       {c.name.slice(0, 2).toUpperCase()}
@@ -6330,20 +6326,44 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                   </select>
                 </div>
 
-                <div className="form-field">
-                  <label>Image Template</label>
-                  <select 
-                    value={newCatalogue.image}
-                    onChange={(e) => setNewCatalogue({ ...newCatalogue, image: e.target.value })}
-                    className="modal-input"
+                <div className="form-field cat-img-upload-field">
+                  <label>Catalogue Image</label>
+                  <div
+                    className="cat-img-upload-zone"
+                    onClick={() => document.getElementById('cat-img-upload-new').click()}
                   >
-                    <option value="Kids">Kids Collection Template</option>
-                    <option value="Lifestyle">Lifestyle Collection Template</option>
-                    <option value="Clothing">Clothing Collection Template</option>
-                    <option value="Accessories">Accessories Collection Template</option>
-                    <option value="Stationery">Stationery Collection Template</option>
-                  </select>
+                    {newCatalogue.image ? (
+                      <div className="cat-img-preview">
+                        <img
+                          src={getCatalogueImage(newCatalogue.image)}
+                          alt="Preview"
+                          className="cat-upload-preview"
+                        />
+                        <button
+                          type="button"
+                          className="cat-img-clear-btn"
+                          onClick={(e) => { e.stopPropagation(); setNewCatalogue({ ...newCatalogue, image: '' }); }}
+                        >
+                          <X size={13} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="cat-img-placeholder">
+                        <ImageIcon size={26} strokeWidth={1.4} />
+                        <span>Click to upload image</span>
+                        <span className="cat-upload-hint">PNG, JPG, WEBP — max 5 MB</span>
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    id="cat-img-upload-new"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => handleCatalogueImageUpload(e, 'new')}
+                  />
                 </div>
+
               </div>
 
               <div className="modal-actions-row">
@@ -6422,20 +6442,44 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                   </select>
                 </div>
 
-                <div className="form-field">
-                  <label>Image Template</label>
-                  <select 
-                    value={editCatalogueItem.image}
-                    onChange={(e) => setEditCatalogueItem({ ...editCatalogueItem, image: e.target.value })}
-                    className="modal-input"
+                <div className="form-field cat-img-upload-field">
+                  <label>Catalogue Image</label>
+                  <div
+                    className="cat-img-upload-zone"
+                    onClick={() => document.getElementById('cat-img-upload-edit').click()}
                   >
-                    <option value="Kids">Kids Collection Template</option>
-                    <option value="Lifestyle">Lifestyle Collection Template</option>
-                    <option value="Clothing">Clothing Collection Template</option>
-                    <option value="Accessories">Accessories Collection Template</option>
-                    <option value="Stationery">Stationery Collection Template</option>
-                  </select>
+                    {editCatalogueItem.image ? (
+                      <div className="cat-img-preview">
+                        <img
+                          src={getCatalogueImage(editCatalogueItem.image)}
+                          alt="Preview"
+                          className="cat-upload-preview"
+                        />
+                        <button
+                          type="button"
+                          className="cat-img-clear-btn"
+                          onClick={(e) => { e.stopPropagation(); setEditCatalogueItem({ ...editCatalogueItem, image: '' }); }}
+                        >
+                          <X size={13} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="cat-img-placeholder">
+                        <ImageIcon size={26} strokeWidth={1.4} />
+                        <span>Click to upload image</span>
+                        <span className="cat-upload-hint">PNG, JPG, WEBP — max 5 MB</span>
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    id="cat-img-upload-edit"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => handleCatalogueImageUpload(e, 'edit')}
+                  />
                 </div>
+
               </div>
 
               <div className="modal-actions-row">
