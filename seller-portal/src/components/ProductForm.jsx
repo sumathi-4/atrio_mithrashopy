@@ -1531,8 +1531,8 @@ export default function ProductForm({
 
       {/* Visual Canvas Cropping Modal */}
       {cropModalOpen && (
-        <div className="fixed inset-0 z-[9999]" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', padding: '16px', position: 'fixed' }}>
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '480px', width: '100%', padding: '24px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+        <div className="seller-crop-overlay">
+          <div className="seller-crop-panel">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', marginBottom: '16px' }}>
               <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#051838', margin: 0 }}>Crop Product Image</h3>
               <button type="button" onClick={() => setCropModalOpen(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}><X size={18} /></button>

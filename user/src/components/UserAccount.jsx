@@ -2758,7 +2758,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
           )}
 
           {activeTab === 'security' && (
-            <div className="ua-security-view" style={{ maxWidth: '600px', margin: '0 auto' }}>
+            <div className="ua-security-view">
               
               {/* Change Password */}
               <form className="ua-sec-card" onSubmit={handleUpdatePassword}>
@@ -3079,22 +3079,20 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                             </div>
 
                             {rev.images && rev.images.length > 0 && (
-                              <div className="ua-rev-images-list" style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
+                              <div className="ua-rev-images-list">
                                 {rev.images.map((imgUrl, idx) => (
                                   <img 
                                     key={idx} 
                                     src={imgUrl} 
                                     alt={`Review ${idx + 1}`} 
-                                    style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #c5a880' }} 
                                   />
                                 ))}
                               </div>
                             )}
 
-                            <div className="ua-rev-actions" style={{ marginTop: '12px', display: 'flex', gap: '10px' }}>
+                            <div className="ua-rev-actions">
                               <button
                                 className="ua-rp-btn-review"
-                                style={{ padding: '6px 12px', fontSize: '0.85rem' }}
                                 onClick={() => {
                                   setEditingReviewId(rev.id);
                                   setSelectedReviewProduct({
@@ -3113,8 +3111,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                                 Edit
                               </button>
                               <button
-                                className="ua-rp-btn-review"
-                                style={{ padding: '6px 12px', fontSize: '0.85rem', background: '#333333', color: '#ffffff', border: '1px solid #c5a880' }}
+                                className="ua-rp-btn-review ua-rp-btn-review-delete"
                                 onClick={() => handleDeleteReview(rev.id)}
                               >
                                 Delete
@@ -3307,7 +3304,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
 
               <div className="ua-form-group">
                 <label className="ua-form-label">Review Images (Up to 5)</label>
-                <div className="ua-review-images-uploader" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div className="ua-review-images-uploader">
                   <input
                     type="file"
                     id="review-image-input"
@@ -3318,44 +3315,27 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                   />
                   <button
                     type="button"
-                    className="ua-rp-btn-review"
-                    style={{ width: 'fit-content', padding: '8px 16px', fontSize: '0.85rem' }}
+                    className="ua-rp-btn-review ua-review-uploader-btn"
                     onClick={() => document.getElementById('review-image-input').click()}
                     disabled={isUploadingImage || reviewImages.length >= 5}
                   >
                     {isUploadingImage ? 'Uploading...' : 'Choose Images'}
                   </button>
-                  <span style={{ fontSize: '0.8rem', color: '#b392ac' }}>
+                  <span className="ua-review-uploader-count">
                     {reviewImages.length} of 5 images selected
                   </span>
                   
                   {reviewImages.length > 0 && (
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '5px' }}>
+                    <div className="ua-review-uploader-previews">
                       {reviewImages.map((imgUrl, idx) => (
-                        <div key={idx} style={{ position: 'relative', width: '50px', height: '50px' }}>
+                        <div key={idx} className="ua-review-uploader-preview-item">
                           <img 
                             src={imgUrl} 
                             alt={`Preview ${idx}`} 
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px', border: '1px solid #c5a880' }} 
                           />
                           <button
                             type="button"
-                            style={{
-                              position: 'absolute',
-                              top: '-5px',
-                              right: '-5px',
-                              background: '#C62828',
-                              color: '#fff',
-                              border: 'none',
-                              borderRadius: '50%',
-                              width: '18px',
-                              height: '18px',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '10px'
-                            }}
+                            className="btn-remove-img"
                             onClick={() => setReviewImages(prev => prev.filter((_, i) => i !== idx))}
                           >
                             ×

@@ -896,7 +896,7 @@
 /* ==========================================================================
    RESPONSIVE OVERRIDES
    ========================================================================== */
-@media (max-width: 640px) {
+@media screen and (max-width: 767px) {
   .ms-btn--full-mobile { width: 100%; }
   .ms-modal--md, .ms-modal--lg, .ms-modal--xl {
     border-radius: 16px 16px 0 0;
@@ -929,7 +929,7 @@
   box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
+@media screen and (max-width: 767px) {
   .category-hero-banner {
     height: 180px;
   }
@@ -970,7 +970,7 @@
   line-height: 1.2;
 }
 
-@media (max-width: 768px) {
+@media screen and (max-width: 767px) {
   .category-hero-title {
     font-size: 1.5rem;
   }
@@ -984,7 +984,7 @@
   margin: 0;
 }
 
-@media (max-width: 768px) {
+@media screen and (max-width: 767px) {
   .category-hero-subtitle {
     font-size: 0.85rem;
     display: -webkit-box;
@@ -1112,19 +1112,19 @@
   gap: 20px !important;
 }
 
-@media (min-width: 768px) {
+@media screen and (min-width: 768px) {
   .shop-products-grid {
     grid-template-columns: repeat(3, 1fr) !important;
   }
 }
 
-@media (min-width: 1024px) {
+@media screen and (min-width: 1024px) {
   .shop-products-grid {
     grid-template-columns: repeat(4, 1fr) !important;
   }
 }
 
-@media (min-width: 1440px) {
+@media screen and (min-width: 1536px) {
   .shop-products-grid {
     grid-template-columns: repeat(5, 1fr) !important;
   }
@@ -1144,6 +1144,9 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding-top: 16px;
 }
 
 .mobile-nav-item a {

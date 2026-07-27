@@ -763,7 +763,7 @@ export default function NewArrivalsView() {
   const [isBestSellersOpen, setIsBestSellersOpen] = useState(false);
   const [isCatalogueOpen, setIsCatalogueOpen] = useState(false);
 
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(() => typeof window !== 'undefined' ? window.innerWidth > 767 : true);
   const [currentPage, setCurrentPage] = useState(1);
 
   // Modal selector states

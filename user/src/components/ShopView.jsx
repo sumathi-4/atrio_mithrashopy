@@ -1009,7 +1009,7 @@ export default function ShopView({ authUser, setAuthUser }) {
   const [zoomStyle, setZoomStyle] = useState({ transformOrigin: 'center', transform: 'scale(1)' });
   const [personalizationText, setPersonalizationText] = useState('');
   const [personalizationError, setPersonalizationError] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(() => typeof window !== 'undefined' ? window.innerWidth > 767 : true);
   const [modalSize, setModalSize] = useState('M');
   const [modalColor, setModalColor] = useState('Red');
   const [modalQty, setModalQty] = useState(1);

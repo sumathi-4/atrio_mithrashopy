@@ -356,9 +356,49 @@ export default function LuckyCharmModal() {
           box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 50px rgba(212,175,55,0.2);
           animation: lc-pop-in 0.4s cubic-bezier(0.16,1,0.3,1);
         }
-        @media(max-width:680px) {
-          .lc-landing-card { grid-template-columns: 1fr; max-width: 420px; }
-          .lc-landing-right { display: none; }
+        @media screen and (max-width: 767px) {
+          .lc-landing-card, .lc-spin-card, .lc-congrats-card, .lc-success-card {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            min-height: 100vh !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+            overflow-y: auto !important;
+            padding: 24px 16px !important;
+          }
+          .lc-landing-card {
+            grid-template-columns: 1fr !important;
+          }
+          .lc-landing-right {
+            display: none !important;
+          }
+          .lc-landing-left {
+            padding: 20px 10px !important;
+            align-items: center !important;
+            text-align: center !important;
+          }
+          .lc-spin-cta {
+            align-self: center !important;
+          }
+          .lc-close-btn {
+            top: 24px !important;
+            right: 24px !important;
+          }
+          .lc-wheel-host {
+            width: 280px !important;
+            height: 280px !important;
+          }
+          .lc-wheel-svg-wrap {
+            width: 280px !important;
+            height: 280px !important;
+          }
         }
         @keyframes lc-pop-in {
           from { transform: scale(0.88) translateY(24px); opacity: 0; }

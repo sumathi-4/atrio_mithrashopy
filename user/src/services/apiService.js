@@ -10,18 +10,27 @@ function getStoredToken() {
 let isBackendReachable = true;
 
 async function checkBackendStatus() {
+  if (typeof document !== 'undefined' && document.hidden) return;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3000);
   try {
-    const res = await fetch(`${BASE_URL}/api/health`, { method: 'GET', signal: AbortSignal.timeout(1500) });
+    const res = await fetch(`${BASE_URL}/api/health`, {
+      method: 'GET',
+      signal: controller.signal,
+      headers: { 'Cache-Control': 'no-cache' }
+    });
     isBackendReachable = res.ok;
   } catch {
     isBackendReachable = false;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
 // Perform health check on initialization
 checkBackendStatus();
-// Re-check periodically
-setInterval(checkBackendStatus, 15000);
+// Re-check periodically without exhausting browser sockets
+setInterval(checkBackendStatus, 45000);
 
 // Base fetch wrapper
 async function apiRequest(endpoint, method = 'GET', body = null) {

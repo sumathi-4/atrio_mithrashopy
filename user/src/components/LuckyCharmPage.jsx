@@ -862,7 +862,7 @@ export default function LuckyCharmPage({ authUser, setAuthUser, onNavigate }) {
         }
 
         /* ── Responsive ───────────────────────────────────────────── */
-        @media (max-width: 990px) {
+        @media screen and (max-width: 1023px) {
           .lcp-slide-item {
             overflow-y: auto !important;
           }
@@ -876,7 +876,7 @@ export default function LuckyCharmPage({ authUser, setAuthUser, onNavigate }) {
           }
           .lcp-title { font-size: 3rem; }
         }
-        @media (max-width: 640px) {
+        @media screen and (max-width: 767px) {
           .lcp-root {
             margin: 10px auto;
             width: calc(100% - 20px);
@@ -893,7 +893,7 @@ export default function LuckyCharmPage({ authUser, setAuthUser, onNavigate }) {
           .lcp-skel-cards  { grid-template-columns: 1fr 1fr; }
           .lcp-spin-btn { padding: 14px 28px !important; font-size: 1rem !important; }
         }
-        @media (max-width: 420px) {
+        @media screen and (max-width: 479px) {
           .lcp-cards-grid { grid-template-columns: 1fr; }
           .lcp-skel-cards { grid-template-columns: 1fr; }
           .lcp-title { font-size: 2rem; }
@@ -1414,7 +1414,7 @@ export default function LuckyCharmPage({ authUser, setAuthUser, onNavigate }) {
         }
 
         /* Responsive slide views */
-        @media (max-width: 900px) {
+        @media screen and (max-width: 1023px) {
           .lcp-slide-item {
             overflow-y: auto !important;
           }

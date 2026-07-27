@@ -20,7 +20,7 @@ export default function ProductsSection({ authUser, setAuthUser }) {
   const [currentArrivalIndex, setCurrentArrivalIndex] = useState(0);
 
   // Left filters state matching image3/mockup design
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(() => typeof window !== 'undefined' ? window.innerWidth > 767 : true);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [selectedShopFor, setSelectedShopFor] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
@@ -893,7 +893,6 @@ export default function ProductsSection({ authUser, setAuthUser }) {
         <div className="section-container-full-m3">
           
           <div className="section-header">
-            <img src={logoImg} className="section-crown-icon" alt="Logo" style={{ objectFit: 'contain' }} />
             <h2 className="section-title">Exclusive Products</h2>
             <p className="section-subtitle">Top Trends &amp; Curated Hot Deals</p>
           </div>

@@ -18,6 +18,14 @@
   --blue-mid: hsla(225, 75%, 35%, 1);     /* Brand Royal Blue Hover */
   --gold: hsla(43, 90%, 52%, 1);          /* Brand Warm Gold */
   --cream: hsla(34, 40%, 98%, 1);         /* Brand Soft Cream background */
+
+  /* Standard breakpoints system */
+  --bp-xs: 360px;
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1536px;
 }
 
 @layer base {

@@ -446,3 +446,49 @@
 .product-form-btn-gold:hover {
   background-color: #c59f2e;
 }
+
+/* Responsive Crop Modal */
+.seller-crop-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  padding: 16px;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.seller-crop-panel {
+  background-color: #ffffff;
+  border-radius: 16px;
+  max-width: 480px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-out;
+}
+
+@media (max-width: 768px) {
+  .seller-crop-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .seller-crop-panel {
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    padding: 20px 16px;
+    transform: translateY(0);
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

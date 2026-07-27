@@ -1,31 +1,35 @@
-# Tasks - Standalone Admin Dashboard Migration
+# Mobile Responsiveness Refactoring Checklist
 
-- [x] Backend Updates
-  - [x] Update backend seed credentials in `backend/.env`
-  - [x] Modify `seedAdmin()` in `backend/db/database.js` to seed the new admin and remove the old admin
-- [x] Main Website Cleanup (Port 5173)
-  - [x] Remove admin routes and dashboard imports from `src/App.jsx`
-  - [x] Remove admin login button, form, and handle logic from `src/components/Navbar.jsx`
-- [x] Standalone Admin website (Port 5174)
-  - [x] Create `admin-panel/package.json`
-  - [x] Create `admin-panel/vite.config.js`
-  - [x] Create `admin-panel/index.html`
-  - [x] Create `admin-panel/src/main.jsx`
-  - [x] Create `admin-panel/src/index.css` with layout styles
-  - [x] Create `admin-panel/src/App.jsx` with secure login screen
-  - [x] Copy and adjust `AdminDashboard.jsx`
-  - [x] Customer Website (src/) standard blue replacement
-  - [x] Replace stationery card blues (#1565c0, #1976d2, #0d47a1) in index.css
-  - [x] Replace shipped order status blues (#1565C0, rgba(21, 101, 192)) in index.css
-  - [x] Replace standard blue shadows and borders in Offers/New Arrivals (rgba(29, 78, 216)) in index.css
-- [/] Seller Portal (seller-portal/) standard blue replacement
-  - [x] Copy services (`apiService.js`, `authService.js`) and helpers (`imageHelper.js`)
+- [x] Storefront (`user/`)
+  - [x] Add standardized breakpoints in `user/src/index.css`
+  - [x] Consolidate media queries in `user/src/index.css` and `user/src/components/ui/ui-components.css`
+  - [x] Refactor `Navbar.jsx` inline styles, mobile hamburger menu, focus trap & body scroll lock
+  - [x] Refactor `ShopView.jsx` & `NewArrivalsView.jsx` inline layouts & filter drawer logic
+  - [x] Refactor `LuckyCharmPage.jsx` & `LuckyCharmModal.jsx` SVG and modals sizing
+  - [x] Refactor `UserAccount.jsx` inline styles, grid layouts, forms, and tables
+  - [x] Check touch target dimensions (>= 44x44px) across components
+  - [x] Check inputs font size (>= 16px) for iOS zoom prevention
+  - [x] Verify build compiles via `npm run build` in `user/`
+- [x] Admin Panel (`admin-panel/`)
+  - [x] Add standardized breakpoints in `admin-panel/src/index.css`
+  - [x] Refactor sidebar collapse and touch-friendly controls
+  - [x] Refactor Recharts components inside `AdminDashboard.jsx` using `ResponsiveContainer`
+  - [x] Implement responsive data tables (horizontal scroll with sticky first column or card layout)
+  - [x] Clean up inline styles in `AdminDashboard.jsx`
+  - [x] Verify build compiles via `npm run build` in `admin-panel/`
+- [x] Seller Portal (`seller-portal/`)
+  - [x] Refactor layout and sidebar toggle behavior
+  - [x] Clean up inline styles in `ProductForm.jsx`
+  - [x] Make crop modal responsive bottom-sheet on mobile
+  - [x] Verify build compiles via `npm run build` in `seller-portal/`
+- [x] End-to-End Responsive Validation
+  - [x] Test layout at 320px, 375px, 768px, 1024px, 1440px
+  - [x] Confirm no horizontal scrollbars exist on any page
+  - [x] Ensure safe-area support padding on notched devices (`apiService.js`, `authService.js`) and helpers (`imageHelper.js`)
 - [x] Verification
   - [x] Run backend and verify new routes
   - [x] Run seller-portal dev server
   - [x] Run admin-panel dev server
-  - [x] End-to-end flow testchecks
-- [x] Backend route enhancements
   - [x] Implement `PUT /api/orders/:id/cancel` in `backend/routes/orders.js` (with stock re-incrementation)
   - [x] Update `POST /api/reviews` to save `userId` and auto-set `verifiedPurchase` in `backend/routes/reviews.js`
   - [x] Implement `GET /api/reviews/my-reviews` in `backend/routes/reviews.js`

@@ -459,7 +459,7 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
                 onKeyDown={handleSearchSubmit}
               />
               {searchQuery && (
-                <button className="nav-search-close" onClick={() => { setSearchQuery(''); setSearchResults([]); }} style={{ marginRight: '8px' }}>
+                <button className="nav-search-close" onClick={() => { setSearchQuery(''); setSearchResults([]); }}>
                   <X size={16} />
                 </button>
               )}
@@ -783,7 +783,7 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
             })}
           />
 
-          <ul className="mobile-nav-menu" style={{ marginTop: '16px', borderTop: '1px solid rgba(0,0,0,0.08)', paddingTop: '16px' }}>
+          <ul className="mobile-nav-menu">
             <li className={`mobile-nav-item ${isNewArrivalsActive() ? 'active' : ''}`}>
               <a href="/NewArrivals" onClick={(e) => handleLinkClick(e, '/NewArrivals')}>New Arrivals</a>
             </li>

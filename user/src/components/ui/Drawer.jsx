@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 /**
  * MithraShoppy Shared Drawer Component
@@ -15,9 +15,58 @@ const Drawer = ({
   closeOnBackdrop = true,
   className = '',
 }) => {
+  const drawerRef = useRef(null);
+
   useEffect(() => {
     if (!isOpen) return;
-    const handleKey = (e) => { if (e.key === 'Escape') onClose(); };
+
+    // Focus the drawer panel on open
+    if (drawerRef.current) {
+      const focusable = drawerRef.current.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]'
+      );
+      if (focusable.length > 0) {
+        focusable[0].focus();
+      } else {
+        drawerRef.current.focus();
+      }
+    }
+
+    const handleKey = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+
+      if (e.key === 'Tab' && drawerRef.current) {
+        const focusableElements = Array.from(
+          drawerRef.current.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]'
+          )
+        );
+
+        if (focusableElements.length === 0) {
+          e.preventDefault();
+          return;
+        }
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) { // Shift + Tab
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else { // Tab
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    };
+
     document.addEventListener('keydown', handleKey);
     document.body.style.overflow = 'hidden';
     return () => {
@@ -36,6 +85,8 @@ const Drawer = ({
       />
       {/* Panel */}
       <div
+        ref={drawerRef}
+        tabIndex="-1"
         className={`ms-drawer ms-drawer--${position} ${isOpen ? 'ms-drawer--open' : ''} ${className}`}
         style={{ width }}
         role="dialog"
