@@ -165,3 +165,89 @@ textarea:focus {
   overflow: hidden;
   transition: max-height 0.3s ease, opacity 0.3s ease;
 }
+
+/* ===================================================================
+   SELLER PORTAL - MOBILE & TABLET RESPONSIVE DESIGN ENHANCEMENTS
+   Provides smooth reflow for seller dashboard metrics, product tables,
+   analytics, forms, and sidebars across mobile viewports.
+   =================================================================== */
+
+/* Overflow prevention */
+html, body {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+/* Table scroll wrapper */
+.seller-table-container,
+.table-container,
+table {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* --- BREAKPOINT: TABLET (<= 1024px) --- */
+@media screen and (max-width: 1024px) {
+  .seller-layout {
+    flex-direction: column !important;
+  }
+  
+  .seller-sidebar {
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+  }
+  
+  .seller-main {
+    width: 100% !important;
+    padding: 16px !important;
+  }
+  
+  .metrics-grid,
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+}
+
+/* --- BREAKPOINT: MOBILE (<= 768px) --- */
+@media screen and (max-width: 768px) {
+  .metrics-grid,
+  .dashboard-grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  .seller-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  
+  .form-grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  .seller-modal {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    padding: 16px !important;
+  }
+}
+
+/* --- BREAKPOINT: MOBILE SMALL (<= 480px) --- */
+@media screen and (max-width: 480px) {
+  input, select, textarea, button {
+    font-size: 16px !important;
+    min-height: 44px !important;
+  }
+  
+  .seller-main {
+    padding: 12px 8px !important;
+  }
+}
+

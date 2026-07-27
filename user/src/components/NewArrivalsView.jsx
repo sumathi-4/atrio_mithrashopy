@@ -12,6 +12,7 @@ import { useToast } from './ToastProvider';
 import { categoryConfigService } from '../services/categoryConfigService';
 import { COLOR_MAP, getColorHex, getValuesForFilter, getFilterOptions, applyDynamicFilters, getProductBadge, getMergedFiltersForPath, setCategoryConfigsCache } from '../utils/filterUtils';
 import { loadPersistentFilters, savePersistentFilters, clearPersistentFilters } from '../utils/filterPersistence';
+import Drawer from './ui/Drawer';
 
 import imgClothing from '../assets/hero_clothing_banner.jpg';
 import imgStationery from '../assets/hero_stationery.jpg';
@@ -708,6 +709,13 @@ const fallbackNewArrivals = [];
 
 export default function NewArrivalsView() {
   const [allProducts, setAllProducts] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const [categoriesList, setCategoriesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeLookbookTab, setActiveLookbookTab] = useState('ethnic');
@@ -1898,6 +1906,244 @@ export default function NewArrivalsView() {
       </div>
     );
   }
+  const renderFiltersSidebar = () => (
+    <aside className={`exclusive-filters-sidebar ${showSidebar || isMobile ? 'active-sidebar' : 'inactive-sidebar'}`}>
+      <div className="filters-header-box-m3">
+        <div className="filters-title-row">
+          <span className="filters-title-m3">Filters</span>
+        </div>
+        <button className="filter-reset-btn" onClick={handleClearAllFilters}>
+          RESET
+        </button>
+      </div>
+
+      <div className="filter-block-m3">
+        <span className="filter-label-m3">SEARCH</span>
+        <div className="filter-search-box-m3">
+          <span className="search-icon-m3">🔍</span>
+          <input
+            type="text"
+            className="filter-search-input-m3"
+            placeholder="Search arrivals..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="unified-filters-card">
+        
+        {/* Categories Accordion */}
+        <div className="filter-card-section root-category-accordion">
+          <div className="section-title-row" onClick={() => setIsRootCategoriesOpen(!isRootCategoriesOpen)}>
+            <h3 className="section-title-text">Categories</h3>
+            <ChevronDown size={14} className={`section-chevron ${isRootCategoriesOpen ? 'rotated' : ''}`} />
+          </div>
+          {isRootCategoriesOpen && (
+            <div className="section-content" style={{ marginTop: '10px' }}>
+              {rootCategoryTabs.map(cat => {
+                const isSelected = activeTab === cat;
+                return (
+                  <label key={cat} className="radio-filter-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', cursor: 'pointer', fontSize: '0.95rem' }}>
+                    <input 
+                      type="radio"
+                      name="root-category-radio"
+                      checked={isSelected}
+                      onChange={() => {
+                        setActiveTab(cat);
+                        setActiveSubTab('ALL');
+                        setSelectedSubcategories([]);
+                      }}
+                    />
+                    <span>{cat === 'ALL' ? 'All Categories' : cat.charAt(0) + cat.slice(1).toLowerCase()}</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Subcategories Accordion */}
+        <div className="filter-card-section category-accordion">
+          <div className="section-title-row" onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}>
+            <h3 className="section-title-text">Subcategories</h3>
+            <ChevronDown size={14} className={`section-chevron ${isCategoriesOpen ? 'rotated' : ''}`} />
+          </div>
+          {isCategoriesOpen && (
+            <div className="section-content" style={{ marginTop: '10px' }}>
+              {renderDynamicCategoriesFilter()}
+            </div>
+          )}
+        </div>
+        {/* 3. Price Range Accordion (Rendered dynamically if 'Price' filter is configured) */}
+        {hasPriceFilter && (
+          <div className="filter-card-section price-accordion">
+            <div className="section-title-row" onClick={() => setIsPriceOpen(!isPriceOpen)}>
+              <h3 className="section-title-text">Price Range</h3>
+              <ChevronDown size={14} className={`section-chevron ${isPriceOpen ? 'rotated' : ''}`} />
+            </div>
+            {isPriceOpen && (
+              <div className="section-content price-slider-container" style={{ marginTop: '10px' }}>
+                <input 
+                  type="range" 
+                  min="100" 
+                  max="15000" 
+                  step="100"
+                  value={priceRange} 
+                  onChange={(e) => setPriceRange(Number(e.target.value))}
+                  className="pink-price-slider"
+                />
+                <div className="price-labels-row" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                  <span>₹100</span>
+                  <span>₹{priceRange.toLocaleString()}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Dynamic Configuration-Driven Filters */}
+        {dynamicFilterNames.map(filterName => {
+          const options = getFilterOptions(categoryProducts, filterName);
+          if (options.length === 0) return null; // Hide if no values
+
+          const isSectionOpen = openSections[filterName] !== false; // Default open
+          const selectedVals = activeFilters[filterName] || [];
+
+          return (
+            <div key={filterName} className="filter-card-section dynamic-accordion">
+              <div className="section-title-row" onClick={() => toggleSection(filterName)}>
+                <h3 className="section-title-text">{filterName}</h3>
+                <ChevronDown size={14} className={`section-chevron ${isSectionOpen ? 'rotated' : ''}`} />
+              </div>
+              {isSectionOpen && (
+                <div className="section-content" style={{ marginTop: '10px' }}>
+                  {/* Special case: Color circle bubbles */}
+                  {(filterName.toLowerCase().includes('color')) ? (
+                    <div className="color-circles-list">
+                      {options.map(colorName => {
+                        const isChecked = selectedVals.includes(colorName);
+                        const colorVal = getColorHex(colorName);
+                        const borderStyle = colorName.toLowerCase() === 'white' ? '1px solid #ddd' : 'none';
+                        return (
+                          <button 
+                            key={colorName}
+                            className={`color-bubble ${isChecked ? 'active' : ''}`}
+                            style={{ backgroundColor: colorVal, border: borderStyle }}
+                            onClick={() => handleToggleFilter(filterName, colorName)}
+                            title={colorName}
+                          />
+                        );
+                      })}
+                    </div>
+                  ) : /* Special case: Size/Age button grid */
+                  (filterName.toLowerCase().includes('size') || filterName.toLowerCase().includes('age')) ? (
+                    <div className="size-buttons-grid">
+                      {options.map(sizeName => {
+                        const isChecked = selectedVals.includes(sizeName);
+                        return (
+                          <button 
+                            key={sizeName}
+                            className={`size-btn ${isChecked ? 'active' : ''}`}
+                            onClick={() => handleToggleFilter(filterName, sizeName)}
+                          >
+                            {sizeName}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    /* Standard check-box list */
+                    options.map(val => {
+                      const isChecked = selectedVals.includes(val);
+                      return (
+                        <label key={val} className="checkbox-filter-row">
+                          <input 
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => handleToggleFilter(filterName, val)}
+                          />
+                          <span>{val}</span>
+                        </label>
+                      );
+                    })
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        {/* Rating Accordion */}
+        <div className="filter-card-section rating-accordion">
+          <div className="section-title-row" onClick={() => setIsRatingsOpen(!isRatingsOpen)}>
+            <h3 className="section-title-text">Rating</h3>
+            <ChevronDown size={14} className={`section-chevron ${isRatingsOpen ? 'rotated' : ''}`} />
+          </div>
+          {isRatingsOpen && (
+            <div className="section-content" style={{ marginTop: '10px' }}>
+              {[5, 4, 3, 2, 1].map(stars => {
+                const isChecked = selectedRatings.includes(stars);
+                return (
+                  <label key={stars} className="checkbox-filter-row">
+                    <input 
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => {
+                        if (isChecked) {
+                          setSelectedRatings(selectedRatings.filter(r => r !== stars));
+                        } else {
+                          setSelectedRatings([...selectedRatings, stars]);
+                        }
+                      }}
+                    />
+                    <span>{stars}★ & above</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Collections Accordion */}
+        <div className="filter-card-section collections-accordion">
+          <div className="section-title-row" onClick={() => setIsBestSellersOpen(!isBestSellersOpen)}>
+            <h3 className="section-title-text">Collections</h3>
+            <ChevronDown size={14} className={`section-chevron ${isBestSellersOpen ? 'rotated' : ''}`} />
+          </div>
+          {isBestSellersOpen && (
+            <div className="section-content" style={{ marginTop: '10px' }}>
+              <label className="checkbox-filter-row">
+                <input 
+                  type="checkbox"
+                  checked={filterNewArrivals}
+                  onChange={(e) => setFilterNewArrivals(e.target.checked)}
+                />
+                <span>New Arrivals</span>
+              </label>
+              <label className="checkbox-filter-row">
+                <input 
+                  type="checkbox"
+                  checked={filterBestSellers}
+                  onChange={(e) => setFilterBestSellers(e.target.checked)}
+                />
+                <span>Best Sellers</span>
+              </label>
+              <label className="checkbox-filter-row">
+                <input 
+                  type="checkbox"
+                  checked={filterOffers}
+                  onChange={(e) => setFilterOffers(e.target.checked)}
+                />
+                <span>Offers</span>
+              </label>
+            </div>
+          )}
+        </div>
+
+      </div>
+    </aside>
+  );
 
   return (
     <div className="new-arrivals-view-page">
@@ -1929,8 +2175,6 @@ export default function NewArrivalsView() {
           </div>
         )}
 
-
-
         {/* Sidebar + Products Grid Main layout */}
         <div className="shop-content-container" style={{ padding: 0 }}>
           
@@ -1947,242 +2191,21 @@ export default function NewArrivalsView() {
           <div className={`exclusive-products-layout ${!showSidebar ? 'filters-hidden' : ''}`}>
             
             {/* Left Sidebar */}
-            <aside className={`exclusive-filters-sidebar ${showSidebar ? 'active-sidebar' : 'inactive-sidebar'}`}>
-              <div className="filters-header-box-m3">
-                <div className="filters-title-row">
-                  <span className="filters-title-m3">Filters</span>
+            {isMobile ? (
+              <Drawer
+                isOpen={showSidebar}
+                onClose={() => setShowSidebar(false)}
+                title="Filters"
+                position="left"
+                width="290px"
+              >
+                <div className="mobile-filters-drawer-wrap" style={{ padding: '10px 0' }}>
+                  {renderFiltersSidebar()}
                 </div>
-                <button className="filter-reset-btn" onClick={handleClearAllFilters}>
-                  RESET
-                </button>
-              </div>
-
-              <div className="filter-block-m3">
-                <span className="filter-label-m3">SEARCH</span>
-                <div className="filter-search-box-m3">
-                  <span className="search-icon-m3">🔍</span>
-                  <input
-                    type="text"
-                    className="filter-search-input-m3"
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="unified-filters-card">
-                
-                {/* Categories Accordion */}
-                <div className="filter-card-section root-category-accordion">
-                  <div className="section-title-row" onClick={() => setIsRootCategoriesOpen(!isRootCategoriesOpen)}>
-                    <h3 className="section-title-text">Categories</h3>
-                    <ChevronDown size={14} className={`section-chevron ${isRootCategoriesOpen ? 'rotated' : ''}`} />
-                  </div>
-                  {isRootCategoriesOpen && (
-                    <div className="section-content" style={{ marginTop: '10px' }}>
-                      {rootCategoryTabs.map(cat => {
-                        const isSelected = activeTab === cat;
-                        return (
-                          <label key={cat} className="radio-filter-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', cursor: 'pointer', fontSize: '0.95rem' }}>
-                            <input 
-                              type="radio"
-                              name="root-category-radio"
-                              checked={isSelected}
-                              onChange={() => {
-                                setActiveTab(cat);
-                                setActiveSubTab('ALL');
-                                setSelectedSubcategories([]);
-                              }}
-                            />
-                            <span>{cat === 'ALL' ? 'All Categories' : cat.charAt(0) + cat.slice(1).toLowerCase()}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {/* Subcategories Accordion */}
-                <div className="filter-card-section category-accordion">
-                  <div className="section-title-row" onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}>
-                    <h3 className="section-title-text">Subcategories</h3>
-                    <ChevronDown size={14} className={`section-chevron ${isCategoriesOpen ? 'rotated' : ''}`} />
-                  </div>
-                  {isCategoriesOpen && (
-                    <div className="section-content" style={{ marginTop: '10px' }}>
-                      {renderDynamicCategoriesFilter()}
-                    </div>
-                  )}
-                </div>
-                {/* 3. Price Range Accordion (Rendered dynamically if 'Price' filter is configured) */}
-                {hasPriceFilter && (
-                  <div className="filter-card-section price-accordion">
-                    <div className="section-title-row" onClick={() => setIsPriceOpen(!isPriceOpen)}>
-                      <h3 className="section-title-text">Price Range</h3>
-                      <ChevronDown size={14} className={`section-chevron ${isPriceOpen ? 'rotated' : ''}`} />
-                    </div>
-                    {isPriceOpen && (
-                      <div className="section-content price-slider-container" style={{ marginTop: '10px' }}>
-                        <input 
-                          type="range" 
-                          min="100" 
-                          max="15000" 
-                          step="100"
-                          value={priceRange} 
-                          onChange={(e) => setPriceRange(Number(e.target.value))}
-                          className="pink-price-slider"
-                        />
-                        <div className="price-labels-row" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                          <span>₹100</span>
-                          <span>₹{priceRange.toLocaleString()}</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Dynamic Configuration-Driven Filters */}
-                {dynamicFilterNames.map(filterName => {
-                  const options = getFilterOptions(categoryProducts, filterName);
-                  if (options.length === 0) return null; // Hide if no values
-
-                  const isSectionOpen = openSections[filterName] !== false; // Default open
-                  const selectedVals = activeFilters[filterName] || [];
-
-                  return (
-                    <div key={filterName} className="filter-card-section dynamic-accordion">
-                      <div className="section-title-row" onClick={() => toggleSection(filterName)}>
-                        <h3 className="section-title-text">{filterName}</h3>
-                        <ChevronDown size={14} className={`section-chevron ${isSectionOpen ? 'rotated' : ''}`} />
-                      </div>
-                      {isSectionOpen && (
-                        <div className="section-content" style={{ marginTop: '10px' }}>
-                          {/* Special case: Color circle bubbles */}
-                          {(filterName.toLowerCase().includes('color')) ? (
-                            <div className="color-circles-list">
-                              {options.map(colorName => {
-                                const isChecked = selectedVals.includes(colorName);
-                                const colorVal = getColorHex(colorName);
-                                const borderStyle = colorName.toLowerCase() === 'white' ? '1px solid #ddd' : 'none';
-                                return (
-                                  <button 
-                                    key={colorName}
-                                    className={`color-bubble ${isChecked ? 'active' : ''}`}
-                                    style={{ backgroundColor: colorVal, border: borderStyle }}
-                                    onClick={() => handleToggleFilter(filterName, colorName)}
-                                    title={colorName}
-                                  />
-                                );
-                              })}
-                            </div>
-                          ) : /* Special case: Size/Age button grid */
-                          (filterName.toLowerCase().includes('size') || filterName.toLowerCase().includes('age')) ? (
-                            <div className="size-buttons-grid">
-                              {options.map(sizeName => {
-                                const isChecked = selectedVals.includes(sizeName);
-                                return (
-                                  <button 
-                                    key={sizeName}
-                                    className={`size-btn ${isChecked ? 'active' : ''}`}
-                                    onClick={() => handleToggleFilter(filterName, sizeName)}
-                                  >
-                                    {sizeName}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          ) : (
-                            /* Standard check-box list */
-                            options.map(val => {
-                              const isChecked = selectedVals.includes(val);
-                              return (
-                                <label key={val} className="checkbox-filter-row">
-                                  <input 
-                                    type="checkbox"
-                                    checked={isChecked}
-                                    onChange={() => handleToggleFilter(filterName, val)}
-                                  />
-                                  <span>{val}</span>
-                                </label>
-                              );
-                            })
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-
-                {/* Rating Accordion */}
-                <div className="filter-card-section rating-accordion">
-                  <div className="section-title-row" onClick={() => setIsRatingsOpen(!isRatingsOpen)}>
-                    <h3 className="section-title-text">Rating</h3>
-                    <ChevronDown size={14} className={`section-chevron ${isRatingsOpen ? 'rotated' : ''}`} />
-                  </div>
-                  {isRatingsOpen && (
-                    <div className="section-content" style={{ marginTop: '10px' }}>
-                      {[5, 4, 3, 2, 1].map(stars => {
-                        const isChecked = selectedRatings.includes(stars);
-                        return (
-                          <label key={stars} className="checkbox-filter-row">
-                            <input 
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => {
-                                if (isChecked) {
-                                  setSelectedRatings(selectedRatings.filter(r => r !== stars));
-                                } else {
-                                  setSelectedRatings([...selectedRatings, stars]);
-                                }
-                              }}
-                            />
-                            <span>{stars}★ & above</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {/* Collections Accordion */}
-                <div className="filter-card-section collections-accordion">
-                  <div className="section-title-row" onClick={() => setIsBestSellersOpen(!isBestSellersOpen)}>
-                    <h3 className="section-title-text">Collections</h3>
-                    <ChevronDown size={14} className={`section-chevron ${isBestSellersOpen ? 'rotated' : ''}`} />
-                  </div>
-                  {isBestSellersOpen && (
-                    <div className="section-content" style={{ marginTop: '10px' }}>
-                      <label className="checkbox-filter-row">
-                        <input 
-                          type="checkbox"
-                          checked={filterNewArrivals}
-                          onChange={(e) => setFilterNewArrivals(e.target.checked)}
-                        />
-                        <span>New Arrivals</span>
-                      </label>
-                      <label className="checkbox-filter-row">
-                        <input 
-                          type="checkbox"
-                          checked={filterBestSellers}
-                          onChange={(e) => setFilterBestSellers(e.target.checked)}
-                        />
-                        <span>Best Sellers</span>
-                      </label>
-                      <label className="checkbox-filter-row">
-                        <input 
-                          type="checkbox"
-                          checked={filterOffers}
-                          onChange={(e) => setFilterOffers(e.target.checked)}
-                        />
-                        <span>Offers</span>
-                      </label>
-                    </div>
-                  )}
-                </div>
-
-              </div>
-            </aside>
+              </Drawer>
+            ) : (
+              renderFiltersSidebar()
+            )}
 
             {/* Right Products Content */}
             <main className="exclusive-products-content" style={{ flex: 1 }}>
