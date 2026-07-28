@@ -42,6 +42,12 @@ export default function ProductsSection({ authUser, setAuthUser }) {
   const [categorySearchQuery, setCategorySearchQuery] = useState('');
   const [showAllCategories, setShowAllCategories] = useState(false);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth <= 767) {
+      setShowSidebar(false);
+    }
+  }, []);
+
   // Local Quick View state variables
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);

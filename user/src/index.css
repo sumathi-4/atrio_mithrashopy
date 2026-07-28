@@ -29137,10 +29137,59 @@ body { overflow-x: hidden; }
   }
 
   /* Add to cart button compact fit on mobile */
-  body .clothing-card-add-cart-btn {
-    font-size: 0.65rem !important;
-    padding: 4px 6px !important;
+  body .clothing-product-card .clothing-product-info,
+  body .cat-card-clothing .clothing-product-info,
+  body .cat-card-stationery .clothing-product-info,
+  body .cat-card-gifts .clothing-product-info,
+  body .cat-card-accessories .clothing-product-info {
+    padding: 8px 6px 10px 6px !important;
+  }
+
+  body .clothing-price-and-action {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    margin-top: auto !important;
+    padding-top: 6px !important;
+  }
+
+  body .clothing-price-box {
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+  }
+
+  body .clothing-selling-price {
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+  }
+
+  body .clothing-original-price {
+    font-size: 0.72rem !important;
+    line-height: 1.1 !important;
+  }
+
+  body .clothing-card-add-cart-btn,
+  body .clothing-product-card .clothing-card-add-cart-btn,
+  body .cat-card-stationery .clothing-card-add-cart-btn,
+  body .cat-card-gifts .clothing-card-add-cart-btn,
+  body .cat-card-accessories .clothing-card-add-cart-btn {
+    padding: 4px 7px !important;
+    font-size: 0.62rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.01em !important;
     white-space: nowrap !important;
+    border-radius: 5px !important;
+    line-height: 1.2 !important;
+    flex-shrink: 0 !important;
+    min-width: auto !important;
+    height: auto !important;
+    min-height: 26px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 }
 

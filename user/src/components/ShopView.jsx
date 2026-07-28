@@ -1088,6 +1088,12 @@ export default function ShopView({ authUser, setAuthUser }) {
   }, [authUser]);
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth <= 767) {
+      setShowSidebar(false);
+    }
+  }, []);
+
+  useEffect(() => {
     apiService.getCategories().then(data => {
       if (data && data.length > 0) {
         setCategoriesList(data);
@@ -3655,7 +3661,7 @@ export default function ShopView({ authUser, setAuthUser }) {
   }
 
   const renderFiltersSidebar = () => (
-    <aside className={`exclusive-filters-sidebar ${showSidebar || isMobile ? 'active-sidebar' : 'inactive-sidebar'}`}>
+    <aside className={`exclusive-filters-sidebar ${showSidebar ? 'active-sidebar' : 'inactive-sidebar'}`}>
       
       {/* Filters Header Container with RESET button */}
       <div className="filters-header-box-m3">

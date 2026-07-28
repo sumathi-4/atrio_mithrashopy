@@ -766,6 +766,12 @@ export default function NewArrivalsView() {
   const [showSidebar, setShowSidebar] = useState(() => typeof window !== 'undefined' ? window.innerWidth > 767 : true);
   const [currentPage, setCurrentPage] = useState(1);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth <= 767) {
+      setShowSidebar(false);
+    }
+  }, []);
+
   // Modal selector states
   const [modalSize, setModalSize] = useState('M');
   const [modalColor, setModalColor] = useState('');
@@ -1907,7 +1913,7 @@ export default function NewArrivalsView() {
     );
   }
   const renderFiltersSidebar = () => (
-    <aside className={`exclusive-filters-sidebar ${showSidebar || isMobile ? 'active-sidebar' : 'inactive-sidebar'}`}>
+    <aside className={`exclusive-filters-sidebar ${showSidebar ? 'active-sidebar' : 'inactive-sidebar'}`}>
       <div className="filters-header-box-m3">
         <div className="filters-title-row">
           <span className="filters-title-m3">Filters</span>
