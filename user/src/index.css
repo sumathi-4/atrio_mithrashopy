@@ -29194,6 +29194,171 @@ body { overflow-x: hidden; }
     justify-content: center !important;
     text-align: center !important;
   }
+
+  /* Quick View Modal Mobile Responsiveness Fix */
+  .modal-overlay.quickview-split-overlay {
+    padding: 10px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow-y: auto !important;
+  }
+
+  .quickview-split-card,
+  .quickview-split-modal-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 88vh !important;
+    border-radius: 16px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin: auto !important;
+  }
+
+  .quickview-modal-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #ffffff !important;
+    padding: 12px 16px !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .quickview-modal-title-top {
+    font-size: 1.1rem !important;
+  }
+
+  .quickview-split-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: auto !important;
+    height: auto !important;
+  }
+
+  .quickview-split-gallery-pane {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 12px !important;
+    gap: 10px !important;
+    width: 100% !important;
+    align-items: center !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+
+  .quickview-main-image-wrapper {
+    width: 100% !important;
+    max-width: 260px !important;
+    height: 240px !important;
+    min-height: auto !important;
+    aspect-ratio: auto !important;
+    border-radius: 12px !important;
+    margin: 0 auto !important;
+    padding: 6px !important;
+    background: #fafafa !important;
+  }
+
+  .quickview-split-layout .quickview-split-img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 228px !important;
+    object-fit: contain !important;
+  }
+
+  .quickview-thumbnails-nav-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    gap: 6px !important;
+  }
+
+  .quickview-gallery-thumbnails {
+    display: flex !important;
+    flex-direction: row !important;
+    width: auto !important;
+    max-width: 240px !important;
+    height: auto !important;
+    max-height: 55px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    gap: 6px !important;
+    padding: 2px !important;
+  }
+
+  .quickview-thumbnail-wrapper {
+    width: 44px !important;
+    height: 44px !important;
+    flex-shrink: 0 !important;
+    border-radius: 6px !important;
+  }
+
+  .thumbnail-nav-arrow {
+    display: none !important;
+  }
+
+  .quickview-split-info-pane {
+    padding: 14px 16px 24px 16px !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .quickview-split-info-pane .modal-title {
+    font-size: 1.15rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .quickview-split-info-pane .modal-price-row {
+    margin-bottom: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .quickview-split-info-pane .modal-price {
+    font-size: 1.25rem !important;
+  }
+
+  .quickview-split-info-pane .modal-original-price {
+    font-size: 0.9rem !important;
+  }
+
+  .quickview-split-info-pane .modal-desc {
+    font-size: 0.82rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .modal-actions-buttons-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: 12px !important;
+  }
+
+  .modal-primary-action-btn,
+  .modal-secondary-action-btn {
+    width: 100% !important;
+    padding: 10px !important;
+    font-size: 0.85rem !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .modal-extra-links-row {
+    margin-top: 10px !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
 }
 
 /* Auth modal */
@@ -29375,222 +29540,20 @@ body { overflow-x: hidden; }
    QUICK VIEW MODAL
    ========================================================================== */
 @media screen and (max-width: 1023px) {
-  .quickview-split-card { width: 94vw !important; max-width: 94vw !important; max-height: 90vh !important; overflow-y: auto; border-radius: 18px !important; }
-  .quickview-split-layout { display: flex !important; flex-direction: column !important; gap: 16px !important; }
-  .quickview-split-gallery-pane { width: 100% !important; max-width: 100% !important; margin: 0 auto; }
+  .quickview-split-card { width: 94vw !important; max-width: 94vw !important; max-height: 92vh !important; overflow-y: auto; border-radius: 18px !important; }
+  .quickview-split-layout { flex-direction: column !important; gap: 16px !important; }
+  .quickview-split-gallery-pane { width: 100% !important; max-width: 320px; margin: 0 auto; }
   .quickview-split-info-pane { width: 100% !important; padding: 0 4px !important; }
-  .quickview-split-img { max-height: 240px !important; object-fit: contain; border-radius: 12px; }
+  .quickview-thumbnails-nav-wrapper { display: none; }
+  .quickview-split-img { max-height: 280px !important; object-fit: contain; border-radius: 12px; }
 }
-
 @media screen and (max-width: 767px) {
-  .quickview-split-overlay {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 12px !important;
-    background: rgba(0, 0, 0, 0.6) !important;
-    backdrop-filter: blur(5px) !important;
-    -webkit-backdrop-filter: blur(5px) !important;
-  }
-
-  .quickview-split-card {
-    width: 95% !important;
-    max-width: 440px !important;
-    max-height: 86vh !important;
-    border-radius: 18px !important;
-    margin: auto !important;
-    background: #ffffff !important;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.25) !important;
-    overflow-y: auto !important;
-  }
-
-  .quickview-modal-header {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 10 !important;
-    background: #ffffff !important;
-    padding: 10px 14px !important;
-    border-bottom: 1px solid rgba(0,0,0,0.08) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .quickview-modal-title-top {
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-  }
-
-  .quickview-modal-header .modal-close-btn {
-    position: absolute !important;
-    right: 12px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    width: 28px !important;
-    height: 28px !important;
-  }
-
-  .quickview-split-layout {
-    display: flex !important;
-    flex-direction: column !important;
-    padding: 12px 14px 16px 14px !important;
-    gap: 12px !important;
-  }
-
-  .quickview-split-gallery-pane {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 8px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  .quickview-main-image-wrapper {
-    width: 100% !important;
-    max-height: 200px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: #f8f9fa !important;
-    border-radius: 10px !important;
-    overflow: hidden !important;
-  }
-
-  .quickview-split-img {
-    max-height: 200px !important;
-    width: auto !important;
-    max-width: 100% !important;
-    object-fit: contain !important;
-  }
-
-  .quickview-thumbnails-nav-wrapper {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 6px !important;
-    overflow-x: auto !important;
-    width: 100% !important;
-    justify-content: center !important;
-    padding: 4px 0 !important;
-  }
-
-  .quickview-gallery-thumbnails {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 6px !important;
-  }
-
-  .quickview-thumbnail-wrapper {
-    width: 42px !important;
-    height: 46px !important;
-    border-radius: 6px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .thumbnail-nav-arrow {
-    display: none !important;
-  }
-
-  .quickview-split-info-pane {
-    padding: 0 !important;
-    gap: 8px !important;
-    width: 100% !important;
-  }
-
-  .quickview-split-info-pane .modal-title,
-  .modal-title {
-    font-size: 1.05rem !important;
-    font-weight: 700 !important;
-    color: #051838 !important;
-    line-height: 1.25 !important;
-    margin: 0 !important;
-  }
-
-  .quickview-split-info-pane .modal-rating-row,
-  .modal-rating-row {
-    font-size: 0.8rem !important;
-    gap: 6px !important;
-    margin-top: 0 !important;
-  }
-
-  .quickview-split-info-pane .modal-price-row,
-  .quickview-split-price-row,
-  .modal-price-row {
-    display: flex !important;
-    align-items: baseline !important;
-    gap: 8px !important;
-    margin: 2px 0 !important;
-  }
-
-  .quickview-split-info-pane .modal-price,
-  .modal-price {
-    font-size: 1.25rem !important;
-    font-weight: 800 !important;
-    color: #051838 !important;
-  }
-
-  .quickview-split-info-pane .modal-original-price,
-  .modal-original-price {
-    font-size: 0.85rem !important;
-    text-decoration: line-through !important;
-    opacity: 0.6 !important;
-  }
-
-  .quickview-split-info-pane .modal-desc,
-  .modal-desc {
-    font-size: 0.8rem !important;
-    line-height: 1.35 !important;
-    color: #555555 !important;
-    margin: 2px 0 !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 3 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-  }
-
-  .modal-size-btn,
-  .modal-color-btn {
-    padding: 4px 10px !important;
-    font-size: 0.75rem !important;
-    min-width: 34px !important;
-    border-radius: 6px !important;
-  }
-
-  .modal-quantity-row {
-    margin-top: 4px !important;
-  }
-
-  .modal-actions-buttons-row,
-  .modal-action-row-split {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    width: 100% !important;
-    margin-top: 6px !important;
-  }
-
-  .modal-primary-action-btn,
-  .modal-secondary-action-btn,
-  .modal-add-cart-btn-split,
-  .modal-buy-now-btn-split {
-    width: 100% !important;
-    min-height: 40px !important;
-    padding: 8px 12px !important;
-    font-size: 0.85rem !important;
-    font-weight: 700 !important;
-    border-radius: 8px !important;
-    text-align: center !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .modal-extra-link-btn {
-    width: 100% !important;
-    padding: 6px !important;
-    font-size: 0.8rem !important;
-    justify-content: center !important;
-  }
+  .quickview-split-overlay { padding: 10px; align-items: flex-end; }
+  .quickview-split-card { width: 100% !important; max-width: 100% !important; border-radius: 20px 20px 0 0 !important; max-height: 92vh !important; }
+  .modal-title { font-size: 1.1rem !important; }
+  .modal-price { font-size: 1.4rem !important; }
+  .modal-actions-buttons-row { flex-direction: column !important; gap: 10px !important; }
+  .modal-primary-action-btn, .modal-secondary-action-btn { width: 100% !important; min-height: 46px; font-size: 0.95rem !important; }
 }
 
 /* ==========================================================================
