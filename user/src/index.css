@@ -29886,28 +29886,40 @@ body { overflow-x: hidden; }
     display: none !important;
   }
 
-  /* Rating pill in New Arrivals on mobile matching website white style */
-  .new-arrival-card .clothing-rating-pill-green,
-  .new-arrivals-section .clothing-rating-pill-green {
-    background: #f8fafc !important;
-    color: #334155 !important;
-    border: 1px solid #cbd5e1 !important;
+  /* Rating pill in New Arrivals on mobile matching website dark navy style */
+  body .new-arrival-card .clothing-rating-pill-green,
+  body .new-arrivals-section .clothing-rating-pill-green,
+  body .clothing-product-card .clothing-rating-pill-green {
+    background: #051838 !important;
+    color: #ffffff !important;
+    border: 1px solid #051838 !important;
+    border-radius: 20px !important;
+    padding: 3px 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
   }
-  .new-arrival-card .clothing-rating-pill-green span,
-  .new-arrivals-section .clothing-rating-pill-green span {
-    color: #334155 !important;
+  body .new-arrival-card .clothing-rating-pill-green span,
+  body .new-arrivals-section .clothing-rating-pill-green span,
+  body .clothing-product-card .clothing-rating-pill-green span {
+    color: #8fa0c0 !important;
+    font-weight: 700 !important;
   }
-  .new-arrival-card .clothing-rating-pill-green .rating-star-icon,
-  .new-arrivals-section .clothing-rating-pill-green .rating-star-icon {
-    color: #eab308 !important;
+  body .new-arrival-card .clothing-rating-pill-green .rating-star-icon,
+  body .new-arrivals-section .clothing-rating-pill-green .rating-star-icon,
+  body .clothing-product-card .clothing-rating-pill-green .rating-star-icon {
+    color: #dfb743 !important;
   }
-  .new-arrival-card .clothing-rating-pill-green .rating-divider,
-  .new-arrivals-section .clothing-rating-pill-green .rating-divider {
-    color: #cbd5e1 !important;
+  body .new-arrival-card .clothing-rating-pill-green .rating-divider,
+  body .new-arrivals-section .clothing-rating-pill-green .rating-divider,
+  body .clothing-product-card .clothing-rating-pill-green .rating-divider {
+    color: rgba(255, 255, 255, 0.25) !important;
   }
-  .new-arrival-card .clothing-rating-pill-green .rating-count,
-  .new-arrivals-section .clothing-rating-pill-green .rating-count {
-    color: #64748b !important;
+  body .new-arrival-card .clothing-rating-pill-green .rating-count,
+  body .new-arrivals-section .clothing-rating-pill-green .rating-count,
+  body .clothing-product-card .clothing-rating-pill-green .rating-count {
+    color: #8fa0c0 !important;
+    font-weight: 700 !important;
   }
 
   /* Mobile Product Card Footer & Add to Cart button layout fix for all screen widths (iPhone SE, XR, 12/13/14, Galaxy, etc.) */
