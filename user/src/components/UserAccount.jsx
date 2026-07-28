@@ -623,29 +623,48 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
   const [wishlistItems, setWishlistItems] = useState([]);
 
   const handleRemoveFromWishlist = (itemId) => {
-    setWishlistItems(prev => prev.filter(item => item.id !== itemId));
+    const targetId = String(itemId);
+    setWishlistItems(prev => prev.filter(item => {
+      const iId = String(item.id || item._id);
+      return iId !== targetId;
+    }));
+
     if (authUser) {
-      const updatedIds = (authUser.wishlist || []).filter(id => id !== itemId);
+      const currentWishlist = Array.isArray(authUser.wishlist) ? authUser.wishlist : [];
+      const updatedIds = currentWishlist.filter(id => String(id) !== targetId);
+      
+      if (setAuthUser) {
+        setAuthUser(prev => {
+          const newUser = { ...prev, wishlist: updatedIds };
+          localStorage.setItem('mithira_auth_user', JSON.stringify(newUser));
+          return newUser;
+        });
+      }
+
       apiService.syncWishlist(updatedIds).then(res => {
-        if (res && setAuthUser) {
+        const finalWishlist = Array.isArray(res) ? res : updatedIds;
+        if (setAuthUser) {
           setAuthUser(prev => {
-            const newUser = { ...prev, wishlist: res };
+            const newUser = { ...prev, wishlist: finalWishlist };
             localStorage.setItem('mithira_auth_user', JSON.stringify(newUser));
             return newUser;
           });
         }
+      }).catch(err => {
+        console.error('Failed to sync wishlist removal:', err);
       });
     } else {
       try {
         const local = JSON.parse(localStorage.getItem('mithira_guest_wishlist') || '[]');
-        const updated = local.filter(id => id !== itemId && String(id) !== String(itemId));
+        const updated = local.filter(id => String(id) !== targetId);
         localStorage.setItem('mithira_guest_wishlist', JSON.stringify(updated));
-        window.dispatchEvent(new Event('storage'));
-        window.dispatchEvent(new Event('mithira_cart_update'));
       } catch (e) {
         console.error(e);
       }
     }
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new Event('mithira_cart_update'));
+    addToast({ message: 'Item removed from wishlist', type: 'info' });
   };
 
   // Addresses List State
@@ -2395,7 +2414,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                           <button 
                             className="ua-wl-heart-btn" 
                             aria-label="Remove from Wishlist"
-                            onClick={() => handleRemoveFromWishlist(item.id)}
+                            onClick={() => handleRemoveFromWishlist(item.id || item._id)}
                           >
                             <Heart size={16} fill="#D4AF37" stroke="#D4AF37" />
                           </button>
@@ -2408,10 +2427,11 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                           <button 
                             className="ua-wl-btn-add-cart"
                             onClick={() => {
+                              const targetId = item.id || item._id;
                               if (authUser) {
                                 const currentCart = authUser.cart || [];
-                                if (!currentCart.includes(item.id)) {
-                                  const updatedCart = [...currentCart, item.id];
+                                if (!currentCart.includes(targetId) && !currentCart.includes(String(targetId))) {
+                                  const updatedCart = [...currentCart, targetId];
                                   apiService.syncCart(updatedCart).then(res => {
                                     if (res && setAuthUser) {
                                       setAuthUser(prev => {
@@ -2430,7 +2450,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                           </button>
                           <button 
                             className="ua-wl-btn-remove"
-                            onClick={() => handleRemoveFromWishlist(item.id)}
+                            onClick={() => handleRemoveFromWishlist(item.id || item._id)}
                           >
                             Remove
                           </button>
