@@ -2323,39 +2323,216 @@ ul {
 }
 
 @media screen and (max-width: 767px) {
-  .celeb-content {
+  /* ==========================================================================
+     SIGNATURE / CELEBRITY COLLECTION MOBILE OPTIMIZATION (Mobile View Only)
+     ========================================================================== */
+  body .celebrity-section {
+    padding: 32px 14px !important;
+    background: #fbf8f6 !important;
     width: 100% !important;
-    padding: 30px !important;
-    background: transparent !important;
+    box-sizing: border-box !important;
   }
-  
-  .celeb-gradient-overlay {
-    background: linear-gradient(180deg, rgba(254, 237, 233, 0.15) 0%, rgba(254, 237, 233, 0.65) 50%, rgba(254, 237, 233, 0.94) 100%) !important;
+
+  body .celebrity-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    margin-top: 24px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
-  
-  .celeb-title {
-    font-size: 2.2rem;
+
+  /* Main Banner Card */
+  body .celeb-card-large {
+    height: 450px !important;
+    width: 100% !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    position: relative !important;
+    box-shadow: 0 8px 24px rgba(5, 24, 56, 0.08) !important;
+    background-color: #fcece8 !important;
   }
-  
-  .celeb-content-inner {
-    flex-direction: column;
+
+  body .celeb-card-large .celeb-img-container {
+    width: 100% !important;
+    height: 100% !important;
+    position: relative !important;
   }
-  
-  .celeb-card-small {
-    height: auto;
-    min-height: 380px;
+
+  body .celeb-card-large .celeb-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center 20% !important;
   }
-  
-  .celeb-text-side {
-    width: 100%;
-    padding: 30px;
-    order: 2;
+
+  body .celeb-card-large .celeb-gradient-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(180deg, rgba(254, 237, 233, 0.1) 0%, rgba(254, 237, 233, 0.75) 50%, rgba(254, 237, 233, 0.98) 100%) !important;
+    z-index: 1 !important;
   }
-  
-  .celeb-img-side {
-    width: 100%;
-    height: 200px;
-    order: 1;
+
+  body .celeb-card-large .celeb-content {
+    position: absolute !important;
+    bottom: 0 !important;
+    top: auto !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 22px 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    align-items: flex-start !important;
+    z-index: 2 !important;
+    box-sizing: border-box !important;
+  }
+
+  body .celeb-card-large .celeb-badge {
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+    color: #dfb743 !important;
+    letter-spacing: 0.12em !important;
+    margin-bottom: 6px !important;
+    text-transform: uppercase !important;
+  }
+
+  body .celeb-card-large .celeb-title {
+    font-family: var(--font-serif, inherit) !important;
+    font-size: 1.7rem !important;
+    line-height: 1.25 !important;
+    color: #051838 !important;
+    margin-bottom: 8px !important;
+    font-weight: 800 !important;
+  }
+
+  body .celeb-card-large .celeb-desc {
+    font-size: 0.85rem !important;
+    line-height: 1.45 !important;
+    color: #555555 !important;
+    margin-bottom: 16px !important;
+  }
+
+  body .celeb-card-large .celeb-btn {
+    background-color: #051838 !important;
+    color: #ffffff !important;
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    padding: 12px 24px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(5, 24, 56, 0.2) !important;
+  }
+
+  /* Right Panel Container */
+  body .celeb-right-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    height: auto !important;
+    width: 100% !important;
+  }
+
+  /* Side Cards (Horizontal Split to match Desktop design) */
+  body .celeb-card-small {
+    height: 185px !important;
+    min-height: 185px !important;
+    width: 100% !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 16px rgba(5, 24, 56, 0.06) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+  }
+
+  body .celeb-card-pink {
+    background-color: #f5e2e4 !important;
+  }
+
+  body .celeb-card-gold {
+    background-color: #f4ebd3 !important;
+  }
+
+  body .celeb-content-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    height: 100% !important;
+    align-items: center !important;
+  }
+
+  body .celeb-text-side {
+    width: 58% !important;
+    padding: 16px 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    order: 1 !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  body .celeb-mini-badge {
+    font-size: 0.7rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    margin-bottom: 6px !important;
+  }
+
+  body .celeb-text-side .text-pink {
+    color: #a45a64 !important;
+  }
+
+  body .celeb-text-side .text-gold {
+    color: #8c734b !important;
+  }
+
+  body .celeb-small-title {
+    font-family: var(--font-serif, inherit) !important;
+    font-size: 1.2rem !important;
+    line-height: 1.3 !important;
+    color: #051838 !important;
+    margin-bottom: 12px !important;
+    font-weight: 800 !important;
+  }
+
+  body .celeb-small-btn {
+    background-color: #051838 !important;
+    color: #ffffff !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    padding: 9px 18px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 8px rgba(5, 24, 56, 0.15) !important;
+  }
+
+  body .celeb-img-side {
+    width: 42% !important;
+    height: 100% !important;
+    order: 2 !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+
+  body .celeb-side-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center top !important;
   }
 }
 
@@ -7658,52 +7835,437 @@ ul {
     font-size: 2.2rem;
   }
 
-  .mystery-card {
-    padding: 30px 20px;
+  /* ==========================================================================
+     OFFERS PAGE MOBILE OPTIMIZATION (Mobile View Only)
+     ========================================================================== */
+  body .offers-view-page {
+    padding: 20px 12px 40px 12px !important;
+    background: #faf7f5 !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
   }
 
-  .revealed-code-text {
-    font-size: 1.8rem;
+  body .offers-container {
+    padding: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
-  .countdown-timer-row {
-    gap: 10px;
+  body .offers-header-section {
+    text-align: center !important;
+    margin-bottom: 24px !important;
+    width: 100% !important;
   }
 
-  .timer-block {
-    width: 70px;
+  body .offers-crown-svg {
+    width: 60px !important;
+    height: 60px !important;
+    margin-bottom: 8px !important;
   }
 
-  .timer-number {
-    font-size: 1.8rem;
+  body .offers-main-title {
+    font-family: var(--font-serif, inherit) !important;
+    font-size: 1.65rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+    margin-bottom: 6px !important;
   }
 
-  .coupon-card-item {
-    flex-direction: column;
-    height: auto;
-    padding-bottom: 60px;
+  body .offers-subtitle {
+    font-size: 0.85rem !important;
+    color: #666666 !important;
+    max-width: 320px !important;
+    margin: 0 auto !important;
+    line-height: 1.4 !important;
   }
 
-  .coupon-ticket-left {
-    border-right: none;
-    border-bottom: 1px dashed rgba(185, 122, 126, 0.2);
-    padding: 15px;
+  /* 1. Mystery Reward Section */
+  body .mystery-reward-section {
+    width: 100% !important;
+    margin-bottom: 28px !important;
   }
 
-  .top-notch, .bottom-notch {
-    display: none;
+  body .mystery-card-glass {
+    padding: 22px 16px !important;
+    border-radius: 20px !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(5, 24, 56, 0.08) !important;
+    box-shadow: 0 8px 24px rgba(5, 24, 56, 0.06) !important;
+    text-align: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
-  .offers-grid-cards {
-    grid-template-columns: 1fr;
+  body .mystery-title {
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+    margin-bottom: 6px !important;
   }
 
-  .arrivals-grid {
-    grid-template-columns: 1fr;
+  body .mystery-desc {
+    font-size: 0.82rem !important;
+    color: #666666 !important;
+    line-height: 1.45 !important;
+    margin-bottom: 16px !important;
   }
 
-  .quickview-modal-card {
-    padding: 25px 20px;
+  body .scratch-reveal-btn {
+    min-height: 44px !important;
+    padding: 0 24px !important;
+    background: #051838 !important;
+    color: #ffffff !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    border-radius: 22px !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(5, 24, 56, 0.2) !important;
+    cursor: pointer !important;
+  }
+
+  body .revealed-code-text {
+    font-size: 1.6rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+  }
+
+  /* 2. Deal of the Day Section */
+  body .deal-of-the-day-section {
+    width: 100% !important;
+    margin-bottom: 28px !important;
+  }
+
+  body .deal-countdown-card {
+    padding: 22px 14px !important;
+    border-radius: 20px !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(5, 24, 56, 0.08) !important;
+    text-align: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  body .deal-card-badge {
+    font-size: 0.72rem !important;
+    padding: 4px 12px !important;
+    background: rgba(223, 183, 67, 0.12) !important;
+    color: #dfb743 !important;
+    font-weight: 700 !important;
+    border-radius: 14px !important;
+    margin-bottom: 10px !important;
+  }
+
+  body .deal-card-title {
+    font-size: 1.35rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+    margin-bottom: 6px !important;
+  }
+
+  body .deal-card-desc {
+    font-size: 0.82rem !important;
+    color: #666666 !important;
+    margin-bottom: 16px !important;
+    line-height: 1.4 !important;
+  }
+
+  body .countdown-timer-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  body .timer-block {
+    width: 72px !important;
+    min-width: 68px !important;
+    padding: 10px 4px !important;
+    background: #faf7f5 !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(5, 24, 56, 0.08) !important;
+    text-align: center !important;
+  }
+
+  body .timer-number {
+    font-size: 1.45rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+    line-height: 1 !important;
+    margin-bottom: 4px !important;
+  }
+
+  body .timer-label {
+    font-size: 0.62rem !important;
+    color: #777777 !important;
+    text-transform: uppercase !important;
+    font-weight: 600 !important;
+  }
+
+  body .timer-colon {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    color: #051838 !important;
+    opacity: 0.6 !important;
+    padding-bottom: 12px !important;
+  }
+
+  /* 3. Active Store Coupons Section (Horizontal Ticket Layout) */
+  body .promo-vouchers-section {
+    width: 100% !important;
+    margin-bottom: 32px !important;
+  }
+
+  body .section-block-title {
+    font-size: 1.35rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+    margin-bottom: 18px !important;
+    text-align: left !important;
+  }
+
+  body .coupons-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+
+  body .coupon-card-item {
+    display: flex !important;
+    flex-direction: row !important;
+    height: auto !important;
+    min-height: 135px !important;
+    border-radius: 14px !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(5, 24, 56, 0.08) !important;
+    overflow: hidden !important;
+    position: relative !important;
+    width: 100% !important;
+    box-shadow: 0 4px 16px rgba(5, 24, 56, 0.05) !important;
+    padding-bottom: 0 !important;
+  }
+
+  body .coupon-ticket-left {
+    flex: 0 0 35% !important;
+    width: 35% !important;
+    background-color: #051838 !important;
+    color: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 12px 6px !important;
+    text-align: center !important;
+    border-right: 1.5px dashed rgba(255, 255, 255, 0.4) !important;
+    border-bottom: none !important;
+  }
+
+  body .coupon-discount-text {
+    font-size: 1.3rem !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+    color: #ffffff !important;
+    margin-bottom: 4px !important;
+  }
+
+  body .coupon-badge-tag {
+    font-size: 0.6rem !important;
+    opacity: 0.85 !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+  }
+
+  body .coupon-ticket-right {
+    flex: 1 !important;
+    width: 65% !important;
+    padding: 12px 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    position: relative !important;
+  }
+
+  body .coupon-title {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+    margin-bottom: 2px !important;
+  }
+
+  body .coupon-desc {
+    font-size: 0.78rem !important;
+    color: #666666 !important;
+    margin-bottom: 4px !important;
+    line-height: 1.3 !important;
+  }
+
+  body .coupon-expiry {
+    font-size: 0.7rem !important;
+    color: #dfb743 !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
+  }
+
+  body .coupon-copy-action {
+    position: static !important;
+    align-self: flex-start !important;
+    padding: 5px 12px !important;
+    font-size: 0.72rem !important;
+    border-radius: 14px !important;
+    background: #faf7f5 !important;
+    border: 1px solid rgba(5, 24, 56, 0.2) !important;
+    color: #051838 !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin-top: 2px !important;
+  }
+
+  body .top-notch, body .bottom-notch {
+    display: block !important;
+    position: absolute !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: #faf7f5 !important;
+    border-radius: 50% !important;
+    left: 35% !important;
+    transform: translateX(-50%) !important;
+    z-index: 5 !important;
+  }
+
+  body .top-notch {
+    top: -8px !important;
+  }
+
+  body .bottom-notch {
+    bottom: -8px !important;
+  }
+
+  /* 4. Discounted Products Grid (2-Column Layout) */
+  body .offers-products-section {
+    width: 100% !important;
+  }
+
+  body .offers-grid-cards {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  body .offer-product-item {
+    display: flex !important;
+    flex-direction: column !important;
+    background: #ffffff !important;
+    border-radius: 14px !important;
+    border: 1px solid rgba(5, 24, 56, 0.08) !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 14px rgba(5, 24, 56, 0.05) !important;
+    box-sizing: border-box !important;
+  }
+
+  body .offer-img-box-wrapper {
+    width: 100% !important;
+    aspect-ratio: 1 / 1.15 !important;
+    max-height: 180px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+  }
+
+  body .offer-product-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  body .offer-badge-percent {
+    position: absolute !important;
+    top: 8px !important;
+    left: 8px !important;
+    background: #051838 !important;
+    color: #ffffff !important;
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    padding: 3px 8px !important;
+    border-radius: 4px !important;
+    z-index: 2 !important;
+  }
+
+  body .offer-item-content {
+    padding: 10px 10px 12px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    flex: 1 !important;
+    justify-content: space-between !important;
+  }
+
+  body .offer-item-title {
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    color: #051838 !important;
+    line-height: 1.25 !important;
+    height: 32px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    margin: 0 !important;
+  }
+
+  body .offer-price-row {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 6px !important;
+    margin-top: 2px !important;
+  }
+
+  body .offer-price-discounted {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+  }
+
+  body .offer-price-original {
+    font-size: 0.8rem !important;
+    color: rgba(5, 24, 56, 0.5) !important;
+    text-decoration: line-through !important;
+  }
+
+  body .offer-btn-examine {
+    width: 100% !important;
+    min-height: 36px !important;
+    height: 36px !important;
+    background: transparent !important;
+    color: #051838 !important;
+    border: 1.5px solid #051838 !important;
+    border-radius: 6px !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    margin-top: 6px !important;
+  }
+
+  body .view-all-offers-btn {
+    min-height: 44px !important;
+    padding: 0 28px !important;
+    background: #051838 !important;
+    color: #ffffff !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    border-radius: 22px !important;
+    border: none !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 4px 14px rgba(5, 24, 56, 0.2) !important;
   }
 }
 
@@ -8666,37 +9228,181 @@ ul {
 }
 
 @media screen and (max-width: 767px) {
-  .why-choose-section {
-    padding: 50px 4%;
+  /* ==========================================================================
+     WHY CHOOSE MITHRA SHOPY MOBILE OPTIMIZATION (Mobile View Only)
+     ========================================================================== */
+  body .why-choose-section {
+    padding: 32px 14px 40px 14px !important;
+    background: #FAF6EE !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
-  .why-main-title {
-    font-size: 2.2rem;
+  body .why-choose-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 36px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
   }
 
-  .why-overlapping-card {
-    position: static;
-    margin-top: 15px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+  /* Left Side: Image + Floating Overlapping Card */
+  body .why-choose-left {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
   }
-  
-  .why-image-wrapper {
-    aspect-ratio: auto;
+
+  body .why-image-wrapper {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 360px !important;
+    margin: 0 auto !important;
+    overflow: visible !important;
+    border-radius: 24px !important;
+    aspect-ratio: auto !important;
     height: auto !important;
-    border-radius: 24px;
   }
-  
-  .why-main-image {
-    height: 300px !important;
-    border-radius: 24px;
-    width: 100%;
-    object-fit: cover;
+
+  body .why-main-image {
+    width: 100% !important;
+    height: 310px !important;
+    object-fit: cover !important;
+    object-position: center top !important;
+    border-radius: 24px !important;
+    box-shadow: 0 8px 24px rgba(5, 24, 56, 0.1) !important;
+    display: block !important;
   }
-  
-  .why-metrics-grid {
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
+
+  /* Floating Card Overlapping Image (matches Desktop design) */
+  body .why-overlapping-card {
+    position: absolute !important;
+    bottom: -24px !important;
+    left: 10px !important;
+    right: 10px !important;
+    background: #ffffff !important;
+    padding: 14px 16px !important;
+    border-radius: 18px !important;
+    box-shadow: 0 10px 30px rgba(5, 24, 56, 0.12) !important;
+    border: 1px solid rgba(5, 24, 56, 0.06) !important;
+    z-index: 10 !important;
+    margin-top: 0 !important;
+    transition: transform 0.3s ease !important;
+  }
+
+  body .why-card-badge {
+    font-size: 0.7rem !important;
+    font-weight: 800 !important;
+    color: #dfb743 !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    margin-bottom: 4px !important;
+    display: block !important;
+  }
+
+  body .why-card-title {
+    font-family: var(--font-serif, inherit) !important;
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+    margin-bottom: 4px !important;
+    line-height: 1.2 !important;
+  }
+
+  body .why-card-desc {
+    font-size: 0.78rem !important;
+    color: #666666 !important;
+    line-height: 1.35 !important;
+    margin: 0 !important;
+  }
+
+  /* Right Side: Commitment text, Metrics row, Explore button */
+  body .why-choose-right {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    margin-top: 24px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  body .why-commitment-tag {
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    color: #c2957e !important;
+    letter-spacing: 0.15em !important;
+    text-transform: uppercase !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+  }
+
+  body .why-main-title {
+    font-family: var(--font-serif, inherit) !important;
+    font-size: 1.65rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+    margin-bottom: 12px !important;
+    line-height: 1.25 !important;
+  }
+
+  body .why-main-desc {
+    font-size: 0.85rem !important;
+    color: #555555 !important;
+    line-height: 1.55 !important;
+    margin-bottom: 24px !important;
+    max-width: 360px !important;
+  }
+
+  /* Metrics Grid (Horizontal Row to match Desktop design) */
+  body .why-metrics-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-around !important;
+    width: 100% !important;
+    gap: 8px !important;
+    border-bottom: 1px solid rgba(5, 24, 56, 0.1) !important;
+    padding-bottom: 18px !important;
+    margin-bottom: 22px !important;
+  }
+
+  body .why-metric-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    flex: 1 !important;
+  }
+
+  body .why-metric-value {
+    font-family: var(--font-serif, inherit) !important;
+    font-size: 1.55rem !important;
+    font-weight: 800 !important;
+    color: #dfb743 !important;
+    margin-bottom: 2px !important;
+  }
+
+  body .why-metric-label {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    color: #051838 !important;
+    opacity: 0.85 !important;
+    white-space: nowrap !important;
+  }
+
+  body .why-explore-btn {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 12px 28px !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    border-radius: 30px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.3s ease !important;
   }
 }
 

@@ -172,9 +172,6 @@ export default function OffersView() {
         
         {/* 1. Header Banner */}
         <div className="offers-header-section">
-          <div className="offers-crown-icon">
-            <img src={logoImg} className="offers-crown-svg" alt="Logo" style={{ objectFit: 'contain' }} />
-          </div>
           <h1 className="offers-main-title">Exclusive Offers & Deals</h1>
           <p className="offers-subtitle">Unlock limited-time discounts, luxury rewards, and voucher values</p>
         </div>
