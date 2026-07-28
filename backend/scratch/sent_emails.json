@@ -229,5 +229,14 @@
     "orderId": "#ORD7398",
     "status": "Delivered",
     "timestamp": "2026-07-18T17:21:12.248Z"
+  },
+  {
+    "to": "mathi@example.com",
+    "subject": "Order Status Updated: #ORD2937",
+    "body": "Dear mathi,\n\nYour order status has been updated.\n\nOrder ID: #ORD2937\nUpdated Status: Delivered\nOrder Date: Jul 18, 2026\nTotal Amount: ₹511\n\nItems Ordered:\n- Summer Kids Long Sleeve T-Shirt x 1 (₹349)\n\nThank you for shopping with us!\nMithraShopy Team",
+    "type": "customer_order_status",
+    "orderId": "#ORD2937",
+    "status": "Delivered",
+    "timestamp": "2026-07-28T07:20:29.694Z"
   }
 ]
