@@ -9,13 +9,7 @@ export default defineConfig({
     react()
   ],
   build: {
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
+    minify: true,
     rollupOptions: {
       output: {
         manualChunks(id) {
