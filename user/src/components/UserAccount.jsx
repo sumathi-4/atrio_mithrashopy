@@ -938,10 +938,11 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
         ids.includes(String(p._id))
       );
       setWishlistItems(resolved.map(p => ({
+        ...p,
         id: p.id || p._id,
         title: p.title || p.name,
         price: typeof p.price === 'number' ? `₹${p.price.toLocaleString('en-IN')}` : p.price,
-        image: p.image || (p.images && p.images[0])
+        image: resolveProductImage(p)
       })));
     }
   }, [authUser, allProducts]);
@@ -2390,7 +2391,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                     {wishlistItems.map(item => (
                       <div key={item.id} className="ua-wishlist-card">
                         <div className="ua-wl-img-wrapper">
-                          <img src={item.image} alt={item.title} className="ua-wl-img" />
+                          <img src={resolveProductImage(item)} alt={item.title} className="ua-wl-img" />
                           <button 
                             className="ua-wl-heart-btn" 
                             aria-label="Remove from Wishlist"
