@@ -26144,8 +26144,21 @@ body .quickview-thumbnail-wrapper.active {
 }
 
 .new-arrival-card .clothing-rating-pill-green {
-  background: #051838 !important;
-  color: #dfb743 !important;
+  background: #f8fafc !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+.new-arrival-card .clothing-rating-pill-green span {
+  color: #334155 !important;
+}
+.new-arrival-card .clothing-rating-pill-green .rating-star-icon {
+  color: #eab308 !important;
+}
+.new-arrival-card .clothing-rating-pill-green .rating-divider {
+  color: #cbd5e1 !important;
+}
+.new-arrival-card .clothing-rating-pill-green .rating-count {
+  color: #64748b !important;
 }
 
 /* View All button overrides for theme */
@@ -29151,6 +29164,30 @@ body { overflow-x: hidden; }
     display: none !important;
   }
 
+  /* Rating pill in New Arrivals on mobile matching website white style */
+  .new-arrival-card .clothing-rating-pill-green,
+  .new-arrivals-section .clothing-rating-pill-green {
+    background: #f8fafc !important;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+  .new-arrival-card .clothing-rating-pill-green span,
+  .new-arrivals-section .clothing-rating-pill-green span {
+    color: #334155 !important;
+  }
+  .new-arrival-card .clothing-rating-pill-green .rating-star-icon,
+  .new-arrivals-section .clothing-rating-pill-green .rating-star-icon {
+    color: #eab308 !important;
+  }
+  .new-arrival-card .clothing-rating-pill-green .rating-divider,
+  .new-arrivals-section .clothing-rating-pill-green .rating-divider {
+    color: #cbd5e1 !important;
+  }
+  .new-arrival-card .clothing-rating-pill-green .rating-count,
+  .new-arrivals-section .clothing-rating-pill-green .rating-count {
+    color: #64748b !important;
+  }
+
   /* Mobile Product Card Footer & Add to Cart button layout fix for all screen widths (iPhone SE, XR, 12/13/14, Galaxy, etc.) */
   body .clothing-product-card .clothing-product-info,
   body .cat-card-clothing .clothing-product-info,
@@ -30170,6 +30207,161 @@ body { overflow-x: hidden; }
     gap: 10px 8px !important;
     width: 100% !important;
     box-sizing: border-box !important;
+  }
+
+  /* ==========================================================================
+     NEW ARRIVALS MARQUEE CAROUSEL MOBILE OPTIMIZATION (Mobile View Only)
+     ========================================================================== */
+  body .new-arrivals-carousel-container {
+    padding: 0 5px !important;
+    margin: 20px 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  body .new-arrivals-carousel-viewport {
+    overflow: hidden !important;
+    width: 100% !important;
+  }
+
+  body .new-arrivals-carousel-track {
+    display: flex !important;
+    width: max-content !important;
+    animation: new-arrivals-marquee 35s linear infinite !important;
+    align-items: stretch !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-product-card.new-arrival-card {
+    flex: 0 0 230px !important;
+    width: 230px !important;
+    max-width: 230px !important;
+    margin: 0 10px !important; /* Fixed: 20px total gap between cards on mobile */
+    background: #fdfbf7 !important;
+    border: 2px solid #dfb743 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 4px 16px rgba(5, 24, 56, 0.08) !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: auto !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-img-wrapper {
+    width: 100% !important;
+    aspect-ratio: 1 / 1.15 !important;
+    height: auto !important;
+    max-height: 220px !important;
+    border-radius: 16px 16px 0 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    position: relative !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-product-info {
+    padding: 10px 12px 14px 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    box-sizing: border-box !important;
+    background: transparent !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-brand-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-brand-name {
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    color: #051838 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-stock-pill-green {
+    font-size: 0.7rem !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-product-title {
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+    color: #000000 !important;
+    height: 36px !important;
+    line-height: 1.25 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    margin: 2px 0 !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-rating-row {
+    margin-top: 2px !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-rating-pill-green {
+    font-size: 0.75rem !important;
+    padding: 2px 8px !important;
+    border-radius: 12px !important;
+    background: #051838 !important;
+    color: #dfb743 !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-price-and-action {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    margin-top: 6px !important;
+    gap: 8px !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-card-price-row {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 4px !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-selling-price {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-original-price {
+    font-size: 0.8rem !important;
+    color: rgba(5, 24, 56, 0.5) !important;
+    text-decoration: line-through !important;
+  }
+
+  body .new-arrivals-carousel-track .clothing-card-add-cart-btn {
+    min-height: 34px !important;
+    height: 34px !important;
+    padding: 0 12px !important;
+    background: #051838 !important;
+    color: #ffffff !important;
+    border: 1.5px solid #051838 !important;
+    border-radius: 6px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
   }
 }
 
@@ -31567,50 +31759,257 @@ button, input, select, textarea, a {
     gap: 12px !important;
   }
 
-  /* Newsletter Banner */
-  .newsletter-side-img-container {
+  /* Newsletter Banner Mobile Overrides */
+  body .newsletter-side-img-container {
     display: none !important;
   }
 
-  .newsletter-banner {
-    padding: 30px 16px !important;
+  body .newsletter-banner {
+    padding: 28px 16px !important;
+    background: #dfb743 !important;
+    text-align: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
   }
 
-  .newsletter-input-group {
+  body .newsletter-content-wrapper {
+    display: flex !important;
     flex-direction: column !important;
-    width: 100% !important;
-    gap: 10px !important;
-  }
-
-  .newsletter-input {
-    width: 100% !important;
-    border-radius: 30px !important;
-    text-align: center !important;
-  }
-
-  .newsletter-btn {
-    width: 100% !important;
-    border-radius: 30px !important;
-  }
-
-  /* Sitemap & Footer Bottom */
-  .footer-main-inner {
-    grid-template-columns: 1fr !important;
-    gap: 28px !important;
-    text-align: center !important;
-  }
-
-  .footer-brand-col {
     align-items: center !important;
-  }
-
-  .footer-nav-list a {
     justify-content: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
-  .footer-bottom-inner {
-    text-align: center !important;
+  body .newsletter-center-content {
+    width: 100% !important;
+    max-width: 380px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
     align-items: center !important;
+    text-align: center !important;
+  }
+
+  body .newsletter-title {
+    font-family: var(--font-serif, inherit) !important;
+    font-size: 1.35rem !important;
+    font-weight: 800 !important;
+    color: #051838 !important;
+    margin-bottom: 6px !important;
+  }
+
+  body .newsletter-subtitle {
+    font-size: 0.85rem !important;
+    color: rgba(5, 24, 56, 0.85) !important;
+    margin-bottom: 16px !important;
+    line-height: 1.4 !important;
+    font-weight: 500 !important;
+  }
+
+  body .newsletter-form {
+    width: 100% !important;
+  }
+
+  body .newsletter-input-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  body .newsletter-input {
+    width: 100% !important;
+    min-height: 46px !important;
+    height: 46px !important;
+    border-radius: 24px !important;
+    border: 1.5px solid #051838 !important;
+    padding: 0 18px !important;
+    font-size: 0.9rem !important;
+    text-align: center !important;
+    background: #ffffff !important;
+    color: #051838 !important;
+    box-sizing: border-box !important;
+  }
+
+  body .newsletter-btn {
+    width: 100% !important;
+    min-height: 46px !important;
+    height: 46px !important;
+    border-radius: 24px !important;
+    background: #051838 !important;
+    color: #ffffff !important;
+    border: 2px solid #051838 !important;
+    font-size: 0.88rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(5, 24, 56, 0.2) !important;
+    transition: all 0.2s ease !important;
+  }
+
+  /* Sitemap & Main Footer Mobile Layout */
+  body .footer-main {
+    background: #051838 !important;
+    padding: 32px 18px 24px 18px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  body .footer-main-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: left !important;
+    grid-template-columns: none !important;
+  }
+
+  body .footer-brand-col {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+    padding-bottom: 12px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    width: 100% !important;
+  }
+
+  body .footer-logo-img {
+    max-width: 120px !important;
+    height: auto !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+  }
+
+  body .footer-brand-tagline {
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+    color: #dfb743 !important;
+    font-style: italic !important;
+    margin-bottom: 6px !important;
+  }
+
+  body .footer-brand-desc {
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    margin: 0 !important;
+    max-width: 320px !important;
+  }
+
+  body .footer-links-col {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  body .footer-col-heading {
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    color: #dfb743 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1.5px solid rgba(223, 183, 67, 0.3) !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+
+  body .footer-nav-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
+  }
+
+  body .footer-nav-list li {
+    width: 100% !important;
+  }
+
+  body .footer-nav-list a,
+  body .footer-nav-link {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    font-size: 0.88rem !important;
+    font-weight: 500 !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-decoration: none !important;
+    padding: 4px 0 !important;
+    transition: all 0.2s ease !important;
+    width: 100% !important;
+  }
+
+  body .footer-nav-link--active {
+    color: #dfb743 !important;
+    font-weight: 700 !important;
+  }
+
+  body .footer-nav-chevron {
+    color: #dfb743 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Footer Bottom Bar */
+  body .footer-bottom-bar {
+    background: #031027 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 16px 16px 24px 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  body .footer-bottom-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  body .footer-bottom-right {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    font-size: 0.8rem !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+    margin-right: 30px !important;
+  }
+
+  body .footer-bottom-left,
+  body .footer-copyright {
+    font-size: 0.78rem !important;
+    line-height: 1.5 !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    text-align: center !important;
+    max-width: 320px !important;
+    margin: 0 auto !important;
+  }
+
+  body .footer-copyright-dev {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 600 !important;
   }
 }
 
