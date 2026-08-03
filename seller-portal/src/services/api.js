@@ -32,6 +32,7 @@ export const deleteVendorProduct = (id) => api.delete(`/api/vendors/products/${i
 export const getVendorOrders = () => api.get('/api/vendors/orders')
 export const updateOrderStatus = (id, status) => api.put(`/api/vendors/orders/${encodeURIComponent(id)}/status`, { status })
 export const changeVendorPassword = (data) => api.put('/api/vendors/change-password', data)
+export const getVendorProfile = () => api.get('/api/vendors/profile')
 export const updateVendorProfile = (data) => api.put('/api/vendors/profile', data)
 export const getNotifications = () => api.get('/api/vendors/notifications')
 export const markNotificationRead = (id) => api.put(`/api/vendors/notifications/${id}/read`)

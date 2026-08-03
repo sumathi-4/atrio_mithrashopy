@@ -5,8 +5,15 @@ import { useDispatch } from 'react-redux'
 import { motion } from 'framer-motion'
 import { setVendor, setToken } from '../store/authSlice'
 import { vendorLogin } from '../services/api'
-import { HiOutlineEye, HiOutlineEyeOff, HiOutlineExclamationCircle } from 'react-icons/hi'
-import { FaStore } from 'react-icons/fa'
+import {
+  HiOutlineEye,
+  HiOutlineEyeOff,
+  HiOutlineExclamationCircle,
+  HiOutlineMail,
+  HiOutlineArrowRight,
+} from 'react-icons/hi'
+import logoImg from '../assets/logo.png'
+import loginLeftBanner from '../assets/login_left_banner.png'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -59,105 +66,81 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left side - Branding */}
+    <div className="h-screen w-screen overflow-hidden flex flex-col lg:flex-row bg-[#FFFDF8] relative font-sans antialiased">
+      {/* LEFT SIDE - Pristine Match to Image 1 */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
-        className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12"
-        style={{
-          background: 'linear-gradient(135deg, var(--blue-deep) 0%, #051838 60%, #081d3f 100%)',
-        }}
+        className="w-full lg:w-7/12 h-full relative overflow-hidden bg-[#061638] flex items-center justify-center"
       >
-        <div className="flex items-center gap-2">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center font-bold"
-            style={{ background: 'var(--gold)', color: 'var(--blue-deep)' }}
-          >
-            M
-          </div>
-          <span className="text-white font-bold text-xl">
-            Mithra<span style={{ color: 'var(--gold)' }}>Shopy</span>
-          </span>
-        </div>
+        {/* High-Resolution Image 1 Left Banner Artwork */}
+        <img
+          src={loginLeftBanner}
+          alt="MithraShoppy Seller Portal Marketplace Illustration"
+          className="w-full h-full object-cover object-left max-h-screen"
+        />
 
-        <div className="text-white">
-          <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6"
-            style={{ backgroundColor: 'rgba(223,183,67,0.15)' }}
+        {/* Curved Separation Mask Divider on Right Edge */}
+        <div className="hidden lg:block absolute top-0 bottom-0 right-0 w-24 pointer-events-none z-20">
+          <svg
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            className="h-full w-full fill-[#FFFDF8] text-[#FFFDF8]"
           >
-            <FaStore className="w-8 h-8" style={{ color: 'var(--gold)' }} />
-          </div>
-          <h2 className="text-4xl font-bold mb-4 leading-tight">
-            Welcome Back,<br />
-            <span style={{ color: 'var(--gold)' }}>Seller!</span>
-          </h2>
-          <p className="text-gray-300 text-lg leading-relaxed max-w-md">
-            Access your vendor dashboard to manage products, track orders, and grow your business.
-          </p>
-          <div className="mt-10 grid grid-cols-3 gap-4">
-            {[
-              { label: '10K+', sub: 'Sellers' },
-              { label: '50K+', sub: 'Products' },
-              { label: '₹10Cr+', sub: 'Monthly Sales' },
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="p-4 rounded-xl text-center"
-                style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
-              >
-                <p className="text-xl font-bold" style={{ color: 'var(--gold)' }}>
-                  {stat.label}
-                </p>
-                <p className="text-gray-400 text-xs mt-1">{stat.sub}</p>
-              </div>
-            ))}
-          </div>
+            <path d="M100,0 C40,0 20,40 60,70 C80,85 100,95 100,100 Z" />
+          </svg>
         </div>
-
-        <p className="text-gray-500 text-sm">
-          © {new Date().getFullYear()} MithraShopy. All rights reserved.
-        </p>
       </motion.div>
 
-      {/* Right side - Form */}
+      {/* RIGHT SIDE - Warm Soft Cream Background & Centered Login Card */}
       <motion.div
         initial={{ opacity: 0, x: 40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="flex-1 flex items-center justify-center p-6 bg-white"
+        className="w-full lg:w-5/12 h-full flex items-center justify-center p-6 sm:p-10 relative z-10 bg-[#FFFDF8]"
       >
-        <div className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="flex lg:hidden items-center gap-2 mb-8">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm"
-              style={{ background: 'var(--gold)', color: 'var(--blue-deep)' }}
-            >
-              M
-            </div>
-            <span className="font-bold text-xl" style={{ color: 'var(--blue-deep)' }}>
-              Mithra<span style={{ color: 'var(--gold)' }}>Shopy</span>
+        {/* Soft Decorative Ambient Backdrop Lines */}
+        <div className="absolute inset-0 pointer-events-none opacity-20">
+          <svg className="w-full h-full text-[#DFB743]" viewBox="0 0 400 800" fill="none">
+            <path d="M100,-50 C300,200 50,500 350,850" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" />
+            <path d="M150,-50 C350,250 100,550 400,850" stroke="currentColor" strokeWidth="1.5" />
+          </svg>
+        </div>
+
+        {/* Centered White Login Card */}
+        <div className="w-full max-w-md bg-white rounded-[28px] p-8 sm:p-10 shadow-2xl shadow-slate-200/70 border border-slate-100/90 relative z-10">
+          {/* Top Logo Header using Website Logo */}
+          <div className="flex flex-col items-center mb-6">
+            <img
+              src={logoImg}
+              alt="MithraShoppy Logo"
+              className="w-12 h-12 object-contain mb-1.5 drop-shadow-xs"
+            />
+            <span className="text-[#0B1A40] font-black text-xl tracking-tight leading-none">
+              Mithra<span className="text-[#DFB743]">Shoppy</span>
+            </span>
+            <span className="text-slate-400 text-[10px] font-black tracking-widest uppercase mt-1">
+              SELLER PORTAL
             </span>
           </div>
 
-          <h2 className="text-2xl font-bold mb-1" style={{ color: 'var(--blue-deep)' }}>
+          <h2 className="text-2xl font-black text-center text-[#0B1A40] tracking-tight mb-1">
             Sign in to your account
           </h2>
-          <p className="text-gray-500 text-sm mb-8">
+          <p className="text-center text-xs font-semibold text-slate-500 mb-8">
             Don't have an account?{' '}
-            <Link to="/register" className="font-semibold" style={{ color: 'var(--gold)' }}>
+            <Link to="/register" className="font-extrabold text-[#D4AF37] hover:underline">
               Register as Vendor
             </Link>
           </p>
 
-          {/* Alerts */}
+          {/* Alert Notification */}
           {alertInfo && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`flex items-start gap-3 p-4 rounded-xl mb-6 text-sm ${
+              className={`flex items-start gap-3 p-4 rounded-xl mb-6 text-sm font-medium ${
                 alertInfo.type === 'warning'
                   ? 'bg-amber-50 border border-amber-200 text-amber-800'
                   : 'bg-red-50 border border-red-200 text-red-700'
@@ -168,36 +151,46 @@ const LoginPage = () => {
             </motion.div>
           )}
 
+          {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Email */}
+            {/* Email Field */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+              <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">
                 Email Address
               </label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                {...register('email', {
-                  required: 'Email is required',
-                  pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid email' },
-                })}
-                className={`w-full px-4 py-3 rounded-xl border text-sm transition-all ${
-                  errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'
-                }`}
-              />
+              <div className="relative">
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  {...register('email', {
+                    required: 'Email is required',
+                    pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid email' },
+                  })}
+                  className={`w-full px-4 py-3.5 pr-11 rounded-xl border text-sm font-medium transition-all outline-none ${
+                    errors.email
+                      ? 'border-red-300 bg-red-50/50 focus:ring-2 focus:ring-red-200'
+                      : 'border-slate-200 bg-slate-50/50 focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100'
+                  }`}
+                />
+                <HiOutlineMail className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+              </div>
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                <p className="text-red-500 text-xs mt-1.5 font-semibold flex items-center gap-1">
+                  <HiOutlineExclamationCircle className="w-3.5 h-3.5" />
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
-            {/* Password */}
+            {/* Password Field */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-sm font-semibold text-gray-700">Password</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">
+                  Password
+                </label>
                 <Link
                   to="/forgot-password"
-                  className="text-xs font-medium"
-                  style={{ color: 'var(--gold)' }}
+                  className="text-xs font-bold text-[#D4AF37] hover:underline"
                 >
                   Forgot password?
                 </Link>
@@ -207,59 +200,56 @@ const LoginPage = () => {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   {...register('password', { required: 'Password is required' })}
-                  className={`w-full px-4 py-3 pr-12 rounded-xl border text-sm transition-all ${
-                    errors.password ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'
+                  className={`w-full px-4 py-3.5 pr-11 rounded-xl border text-sm font-medium transition-all outline-none ${
+                    errors.password
+                      ? 'border-red-300 bg-red-50/50 focus:ring-2 focus:ring-red-200'
+                      : 'border-slate-200 bg-slate-50/50 focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100'
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
                 >
                   {showPassword ? (
-                    <HiOutlineEyeOff className="w-4 h-4" />
+                    <HiOutlineEyeOff className="w-5 h-5" />
                   ) : (
-                    <HiOutlineEye className="w-4 h-4" />
+                    <HiOutlineEye className="w-5 h-5" />
                   )}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                <p className="text-red-500 text-xs mt-1.5 font-semibold flex items-center gap-1">
+                  <HiOutlineExclamationCircle className="w-3.5 h-3.5" />
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
-            {/* Submit */}
+            {/* Sign In Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-[1.01] disabled:opacity-70 disabled:cursor-not-allowed mt-2"
-              style={{
-                background: loading
-                  ? 'rgba(223,183,67,0.6)'
-                  : 'linear-gradient(135deg, var(--gold), #c9a030)',
-                color: 'var(--blue-deep)',
-                boxShadow: '0 4px 16px rgba(223,183,67,0.35)',
-              }}
+              className="w-full py-4 rounded-xl text-sm font-black text-[#051838] bg-gradient-to-r from-[#DFB743] via-[#F5D98B] to-[#E5C058] shadow-lg shadow-[#DFB743]/25 hover:shadow-xl hover:shadow-[#DFB743]/35 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer border border-[#DFB743]/40 flex items-center justify-center gap-2 mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <svg className="w-4 h-4 animate-spin text-[#051838]" viewBox="0 0 24 24" fill="none">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                   </svg>
                   Signing in...
                 </span>
               ) : (
-                'Sign In'
+                <>
+                  Sign In
+                  <div className="w-6 h-6 rounded-full bg-[#051838]/10 flex items-center justify-center ml-1">
+                    <HiOutlineArrowRight className="w-3.5 h-3.5 text-[#051838]" />
+                  </div>
+                </>
               )}
             </button>
           </form>
-
-          <p className="text-center text-xs text-gray-400 mt-8">
-            By signing in, you agree to our{' '}
-            <a href="#" className="underline">Terms of Service</a> and{' '}
-            <a href="#" className="underline">Privacy Policy</a>.
-          </p>
         </div>
       </motion.div>
     </div>

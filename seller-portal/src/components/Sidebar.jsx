@@ -13,6 +13,7 @@ import {
   HiOutlineCog,
   HiOutlineLogout,
 } from 'react-icons/hi'
+import logoImg from '../assets/logo.png'
 
 const navLinks = [
   { path: '/dashboard', label: 'Dashboard', icon: HiOutlineHome },
@@ -54,76 +55,67 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           animate={{ x: 0 }}
           exit={{ x: -240 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed top-0 left-0 h-full w-60 flex flex-col z-40 shadow-2xl sidebar-scroll overflow-y-auto"
-          style={{ backgroundColor: 'var(--blue-deep)', borderRight: '1px solid rgba(223,183,67,0.15)' }}
+          className="fixed top-0 left-0 h-full w-60 flex flex-col z-40 shadow-2xl sidebar-scroll overflow-y-auto bg-gradient-to-b from-[#061638] via-[#0A204C] to-[#05122E] border-r border-[#DFB743]/20 font-sans antialiased"
         >
-          {/* Logo */}
-          <div className="px-5 pt-6 pb-5 border-b border-white border-opacity-10">
-            <div className="flex items-center gap-2 mb-3">
-              <div
-                className="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold"
-                style={{ background: 'linear-gradient(135deg, var(--gold), #f5d98b)' }}
-              >
-                <span style={{ color: 'var(--blue-deep)' }}>M</span>
-              </div>
-              <div>
-                <span className="text-white font-bold text-sm leading-none block">MithraShopy</span>
-                <span className="text-xs leading-none" style={{ color: 'var(--gold)' }}>
-                  Vendor Portal
+          {/* Logo Header */}
+          <div className="px-5 pt-6 pb-5 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <img src={logoImg} alt="MithraShoppy Logo" className="w-9 h-9 object-contain drop-shadow-xs" />
+              <div className="flex flex-col">
+                <span className="text-white font-black text-lg tracking-tight leading-none">
+                  Mithra<span className="text-[#DFB743]">Shoppy</span>
+                </span>
+                <span className="text-[#DFB743]/90 text-[9px] font-black tracking-widest uppercase mt-0.5">
+                  SELLER PORTAL
                 </span>
               </div>
             </div>
 
-            {/* Vendor info */}
-            <div className="flex items-center gap-3 mt-4 p-3 rounded-xl" style={{ backgroundColor: 'rgba(223,183,67,0.08)' }}>
-              <div
-                className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, var(--gold), #c9a030)', color: 'var(--blue-deep)' }}
-              >
-                {getInitials(vendor?.ownerName || vendor?.businessName)}
-              </div>
+            {/* Vendor Profile Badge */}
+            <div className="flex items-center gap-3 mt-4 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+              {vendor?.logo || vendor?.businessLogo || vendor?.storeLogo || vendor?.logoUrl ? (
+                <img
+                  src={vendor?.logo || vendor?.businessLogo || vendor?.storeLogo || vendor?.logoUrl}
+                  alt="Vendor Logo"
+                  className="w-9 h-9 rounded-xl object-cover shadow-md flex-shrink-0 border border-[#DFB743]/40"
+                />
+              ) : (
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#DFB743] via-[#F5D98B] to-[#C29B27] flex items-center justify-center font-black text-[#051838] text-sm shadow-md flex-shrink-0">
+                  {getInitials(vendor?.ownerName || vendor?.businessName)}
+                </div>
+              )}
               <div className="overflow-hidden">
-                <p className="text-white text-xs font-semibold truncate">
+                <p className="text-white text-xs font-black truncate">
                   {vendor?.ownerName || 'Vendor'}
                 </p>
-                <p className="text-xs truncate" style={{ color: 'var(--gold)', opacity: 0.8 }}>
+                <p className="text-[11px] truncate font-semibold text-[#DFB743]">
                   {vendor?.businessName || 'Business'}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 px-3 py-4 space-y-1">
+          {/* Navigation Links */}
+          <nav className="flex-1 px-3 py-4 space-y-1.5">
             {navLinks.map(({ path, label, icon: Icon, hasbadge }) => (
               <NavLink
                 key={path}
                 to={path}
-                onClick={() => { if (window.innerWidth < 1024) setIsOpen(false) }}
+                onClick={() => {
+                  if (window.innerWidth < 1024) setIsOpen(false)
+                }}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 relative group ${
+                  `flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition-all duration-200 relative ${
                     isActive
-                      ? 'text-yellow-400'
-                      : 'text-gray-400 hover:text-white hover:bg-white hover:bg-opacity-5'
+                      ? 'text-[#DFB743] bg-gradient-to-r from-[#DFB743]/20 to-[#DFB743]/5 border-l-4 border-[#DFB743] shadow-inner'
+                      : 'text-slate-300 hover:text-white hover:bg-white/5'
                   }`
-                }
-                style={({ isActive }) =>
-                  isActive
-                    ? {
-                        backgroundColor: 'rgba(223,183,67,0.12)',
-                        borderLeft: '3px solid var(--gold)',
-                        paddingLeft: '9px',
-                      }
-                    : {}
                 }
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
                 <span>{label}</span>
                 {hasbadge && unreadCount > 0 && (
-                  <span
-                    className="ml-auto text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-                    style={{ backgroundColor: '#ef4444', color: '#fff' }}
-                  >
+                  <span className="ml-auto text-[10px] font-black rounded-full px-2 py-0.5 bg-red-500 text-white shadow-sm">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
@@ -131,11 +123,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             ))}
           </nav>
 
-          {/* Logout */}
-          <div className="px-3 pb-6 border-t border-white border-opacity-10 pt-4">
+          {/* Logout Button */}
+          <div className="px-3 pb-6 border-t border-white/10 pt-4">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-red-500 hover:bg-opacity-10 transition-all duration-200"
+              className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold text-slate-300 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 cursor-pointer"
             >
               <HiOutlineLogout className="w-5 h-5 flex-shrink-0" />
               <span>Logout</span>

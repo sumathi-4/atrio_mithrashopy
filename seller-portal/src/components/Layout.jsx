@@ -10,7 +10,6 @@ const Layout = ({ children }) => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024
       setIsMobile(mobile)
-      // Automatically close sidebar on mobile resize, open on desktop
       setSidebarOpen(!mobile)
     }
     window.addEventListener('resize', handleResize)
@@ -18,11 +17,11 @@ const Layout = ({ children }) => {
   }, [])
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: 'var(--cream)' }}>
+    <div className="flex h-screen overflow-hidden bg-[#FFFDF8] font-sans antialiased relative">
       {/* Mobile Backdrop Overlay */}
       {isMobile && sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 transition-opacity"
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-30 transition-opacity"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -30,20 +29,17 @@ const Layout = ({ children }) => {
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
-      {/* Main content area */}
+      {/* Main Content Area */}
       <div
         className="flex flex-col flex-1 overflow-hidden transition-all duration-300"
-        style={{ marginLeft: (!isMobile && sidebarOpen) ? '240px' : '0px' }}
+        style={{ marginLeft: !isMobile && sidebarOpen ? '240px' : '0px' }}
       >
         {/* Top Navigation */}
         <TopNav sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-        {/* Scrollable page content */}
-        <main
-          className="flex-1 overflow-y-auto pt-16"
-          style={{ backgroundColor: 'var(--cream)' }}
-        >
-          <div className="p-6 min-h-full">{children}</div>
+        {/* Scrollable Page Content */}
+        <main className="flex-1 overflow-y-auto pt-16 bg-gradient-to-b from-[#FFFDF8] via-[#FFFBF2] to-[#FAF8F5]">
+          <div className="p-4 sm:p-6 lg:p-8 min-h-full max-w-7xl mx-auto">{children}</div>
         </main>
       </div>
     </div>
