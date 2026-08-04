@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { apiService } from '../services/apiService';
 import { Gift, X, Sparkles, Trophy, CheckCircle, ShoppingBag, Star } from 'lucide-react';
+import { triggerConfetti } from '../utils/confetti';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Lucky Charm Modal
@@ -205,6 +206,7 @@ export default function LuckyCharmModal() {
           setWonReward(won);
           setStep('congratulations');
           setIsSpinning(false);
+          triggerConfetti();
           fetchActiveRewards();
         }, 4200);
       } else {

@@ -717,8 +717,8 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
   const [addressForm, setAddressForm] = useState({
     type: 'Home',
     isDefault: false,
-    name: 'Sumati Reddy',
-    phone: '+91 98765 43210',
+    name: authUser?.name || '',
+    phone: authUser?.phone || '',
     street: '',
     locality: '',
     city: 'Hyderabad',
@@ -1016,8 +1016,8 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
       setAddressForm({
         type: 'Home',
         isDefault: false,
-        name: authUser?.name || 'Sumati Reddy',
-        phone: authUser?.phone || '+91 98765 43210',
+        name: authUser?.name || '',
+        phone: authUser?.phone || '',
         street: '',
         locality: '',
         city: 'Hyderabad',
@@ -1124,12 +1124,12 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
 
   // Profile Form State
   const [profileForm, setProfileForm] = useState({
-    name: authUser?.name || 'Sumati Reddy',
-    email: authUser?.email || 'sumati.reddy@gmail.com',
-    phone: authUser?.phone || '+91 98765 43210',
-    dob: authUser?.dob || '15/08/1995',
-    gender: authUser?.gender || 'Female',
-    avatar: authUser?.profileImage || authUser?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80'
+    name: authUser?.name || '',
+    email: authUser?.email || '',
+    phone: authUser?.phone || '',
+    dob: authUser?.dob || '',
+    gender: authUser?.gender || 'Prefer not to say',
+    avatar: authUser?.profileImage || authUser?.avatar || ''
   });
 
   const handleSaveProfile = (e) => {
@@ -1791,11 +1791,38 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
       const match = allProducts.find(p => String(p.id) === String(item.productId) || String(p._id) === String(item.productId));
       const image = match ? resolveProductImage(match) : 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=150&q=80';
       
+      const isLuckyCharmItem = Boolean(
+        item.isLuckyCharm || 
+        item.variant?.isLuckyCharm || 
+        item.price === 0 || 
+        item.variant?.rewardPrice === 0
+      );
+      
       return (
         <div key={index} className="order-details-item-row">
           <img src={image} alt={item.name} className="item-thumbnail" />
           <div className="item-details">
-            <h5 className="item-name">{item.name}</h5>
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+              <h5 className="item-name" style={{ margin: 0 }}>{item.name}</h5>
+              {isLuckyCharmItem && (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  backgroundColor: '#FFF8E1',
+                  color: '#B78103',
+                  border: '1px solid #FFE082',
+                  borderRadius: '12px',
+                  padding: '2px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: '700',
+                  boxShadow: '0 1px 4px rgba(183,129,3,0.12)'
+                }}>
+                  <Sparkles size={11} color="#B78103" />
+                  Lucky Reward
+                </span>
+              )}
+            </div>
             {item.variant && (item.variant.size || item.variant.color) && (
               <div className="item-variant">
                 {item.variant.size ? `Size: ${item.variant.size} ` : ''}
@@ -1804,7 +1831,13 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
             )}
             <div className="item-price-qty">
               <span>₹{(item.price || 0).toLocaleString('en-IN')} × {item.quantity}</span>
-              <span className="item-row-total">₹{((item.price || 0) * (item.quantity || 1)).toLocaleString('en-IN')}</span>
+              <span className="item-row-total">
+                {isLuckyCharmItem ? (
+                  <span style={{ color: '#2E7D32', fontWeight: 700 }}>FREE (₹0)</span>
+                ) : (
+                  `₹${((item.price || 0) * (item.quantity || 1)).toLocaleString('en-IN')}`
+                )}
+              </span>
             </div>
           </div>
         </div>
@@ -1828,21 +1861,29 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
           />
           <div className="ua-profile-card">
             <div className="ua-avatar-wrapper">
-              <img 
-                src={authUser?.profileImage || authUser?.avatar || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80"} 
-                alt="Profile Avatar" 
-                className="ua-avatar"
-              />
-              <button 
-                className="ua-camera-btn" 
-                aria-label="Upload photo" 
-                onClick={() => triggerPhotoUpload(true)}
-              >
-                <Camera size={14} />
-              </button>
+              {authUser?.profileImage || authUser?.avatar ? (
+                <img 
+                  src={authUser.profileImage || authUser.avatar} 
+                  alt="Profile Avatar" 
+                  className="ua-avatar"
+                />
+              ) : (
+                <div className="ua-avatar" style={{ backgroundColor: '#e8eaf6', color: '#1a237e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.4rem', border: '2px solid #D4AF37', borderRadius: '50%', width: '100px', height: '100px', margin: '0 auto' }}>
+                  {authUser?.name ? authUser.name.charAt(0).toUpperCase() : <User size={40} />}
+                </div>
+              )}
+              {authUser && (
+                <button 
+                  className="ua-camera-btn" 
+                  aria-label="Upload photo" 
+                  onClick={() => triggerPhotoUpload(true)}
+                >
+                  <Camera size={14} />
+                </button>
+              )}
             </div>
-            <h2 className="ua-user-name">{authUser?.name || 'Sumati Reddy'}</h2>
-            <p className="ua-user-email">{authUser?.email || 'sumati.reddy@gmail.com'}</p>
+            <h2 className="ua-user-name">{authUser?.name || 'Guest User'}</h2>
+            <p className="ua-user-email">{authUser?.email || 'Guest Account'}</p>
           </div>
 
           <nav className="ua-nav">
@@ -1919,16 +1960,45 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
             
             <div className="ua-nav-divider" />
             
-            <button className="ua-nav-item ua-logout-btn" onClick={handleLogout}>
-              <LogOut size={18} />
-              <span>Logout</span>
-            </button>
+            {authUser ? (
+              <button className="ua-nav-item ua-logout-btn" onClick={handleLogout}>
+                <LogOut size={18} />
+                <span>Logout</span>
+              </button>
+            ) : (
+              <button 
+                className="ua-nav-item ua-logout-btn" 
+                style={{ color: '#1a237e' }}
+                onClick={() => window.dispatchEvent(new CustomEvent('mithira_open_auth_modal', { detail: { mode: 'login' } }))}
+              >
+                <User size={18} />
+                <span>Sign In / Register</span>
+              </button>
+            )}
           </nav>
         </aside>
 
         {/* Right Dashboard Area */}
         <main className="ua-main-content">
-          {activeTab === 'cart' && (
+          {!authUser && activeTab !== 'cart' ? (
+            <div style={{ padding: '50px 24px', textAlign: 'center', backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', margin: '10px 0' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#f0f4ff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#1a237e' }}>
+                <User size={32} />
+              </div>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#1a237e', marginBottom: '8px' }}>Sign in to view your {activeTab}</h3>
+              <p style={{ color: '#666', fontSize: '0.95rem', marginBottom: '24px', maxWidth: '420px', margin: '0 auto 24px' }}>
+                Please log in or create an account to view your order history, manage addresses, track rewards, and update settings.
+              </p>
+              <button 
+                onClick={() => window.dispatchEvent(new CustomEvent('mithira_open_auth_modal', { detail: { mode: 'login' } }))}
+                style={{ backgroundColor: '#1a237e', color: '#fff', border: 'none', borderRadius: '12px', padding: '12px 28px', fontSize: '1rem', fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(26,35,126,0.2)' }}
+              >
+                Sign In / Register
+              </button>
+            </div>
+          ) : (
+            <>
+              {activeTab === 'cart' && (
             <div className="ua-cart-view">
               <div className="ua-cart-header">
                 <h2 className="ua-cart-title">My Shopping Cart ({cartItemsDetailed.length})</h2>
@@ -2309,7 +2379,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
             <>
               {/* Welcome Section */}
               <div className="ua-welcome-section">
-                <h1 className="ua-welcome-title">Welcome back, {authUser?.name?.split(' ')[0] || 'Sumati'}! 👋</h1>
+                <h1 className="ua-welcome-title">Welcome back, {authUser?.name ? authUser.name.split(' ')[0] : 'Guest'}! 👋</h1>
                 <p className="ua-welcome-subtitle">Here's what's happening with your account today.</p>
               </div>
 
@@ -2434,7 +2504,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                         <div className="ua-od-info">
                           <h4 className="ua-od-number">
                            Order {order.id.startsWith('#') ? order.id : '#' + order.id}
-                            {order.rawOrder?.isLuckyCharmOrder && (
+                            {(order.rawOrder?.isLuckyCharmOrder || order.rawOrder?.items?.some(it => it.isLuckyCharm || it.variant?.isLuckyCharm || it.price === 0)) && (
                               <span style={{
                                 marginLeft: '10px',
                                 backgroundColor: 'rgba(212, 175, 55, 0.1)',
@@ -2918,12 +2988,12 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                       type="button" 
                       className="ua-ps-btn-cancel"
                       onClick={() => setProfileForm({
-                        name: authUser?.name || 'Sumati Reddy',
-                        email: authUser?.email || 'sumati.reddy@gmail.com',
-                        phone: authUser?.phone || '+91 98765 43210',
-                        dob: '15/08/1995',
-                        gender: 'Female',
-                        avatar: ''
+                        name: authUser?.name || '',
+                        email: authUser?.email || '',
+                        phone: authUser?.phone || '',
+                        dob: authUser?.dob || '',
+                        gender: authUser?.gender || 'Prefer not to say',
+                        avatar: authUser?.profileImage || authUser?.avatar || ''
                       })}
                     >
                       Cancel
@@ -3117,21 +3187,6 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                             {isProduct ? `Value: ₹${claim.rewardValue}` : `Discount: ${claim.rewardValue}% OFF`}
                           </p>
                         </div>
-                        <div className="ua-claim-actions">
-                          {isPending ? (
-                            <button
-                              className="ua-claim-btn-action claim-pending-btn"
-                              onClick={() => handleClaimReward(claim)}
-                            >
-                              {isProduct ? 'Claim Product' : 'Apply Coupon'}
-                            </button>
-                          ) : (
-                            <button className="ua-claim-btn-action claim-done-btn" disabled>
-                              <CheckCircle size={14} style={{ marginRight: '4px' }} />
-                              Claimed
-                            </button>
-                          )}
-                        </div>
                       </div>
                     );
                   })}
@@ -3316,6 +3371,8 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
                 </div>
               )}
             </div>
+          )}
+            </>
           )}
         </main>
       </div>

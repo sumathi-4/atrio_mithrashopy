@@ -63,7 +63,7 @@ router.put('/vendors/:id/status', async (req, res) => {
     const vendor = await Vendor.findOneAndUpdate(
       { id: req.params.id },
       { $set: update },
-      { new: true }
+      { returnDocument: 'after' }
     ).select('-password').lean();
 
     if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found.' });
@@ -165,7 +165,7 @@ router.put('/vendors/:id', async (req, res) => {
     const vendor = await Vendor.findOneAndUpdate(
       { id: req.params.id },
       { $set: updateFields },
-      { new: true }
+      { returnDocument: 'after' }
     ).select('-password').lean();
 
     if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found.' });
@@ -246,7 +246,7 @@ router.put('/products/:id/status', async (req, res) => {
     const product = await Product.findOneAndUpdate(
       { id: productId },
       { $set: update },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     if (!product) return res.status(404).json({ success: false, message: 'Product not found.' });

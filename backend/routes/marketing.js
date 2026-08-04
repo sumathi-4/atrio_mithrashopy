@@ -53,7 +53,7 @@ router.put('/banners/:id', authenticate, requireAdmin, async (req, res) => {
     const updated = await Banner.findOneAndUpdate(
       { id },
       { $set: { status: targetStatus } },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     res.json({ success: true, message: 'Banner status toggled!', banner: updated });
@@ -123,7 +123,7 @@ router.put('/announcements/:id', authenticate, requireAdmin, async (req, res) =>
     const updated = await Announcement.findOneAndUpdate(
       { id },
       { $set: { status: targetStatus } },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     res.json({ success: true, message: 'Announcement status toggled!', announcement: updated });

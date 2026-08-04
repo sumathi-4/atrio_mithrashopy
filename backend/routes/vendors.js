@@ -283,7 +283,7 @@ router.put('/profile', authenticateVendor, async (req, res) => {
     const updated = await Vendor.findOneAndUpdate(
       { id: req.vendor.id },
       { $set: update },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     ).lean();
 
     return res.json({ success: true, message: 'Profile updated.', vendor: safeVendor(updated) });
@@ -326,7 +326,7 @@ router.put('/profile/business', authenticateVendor, async (req, res) => {
     const updated = await Vendor.findOneAndUpdate(
       { id: req.vendor.id },
       { $set: update },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     return res.json({ success: true, message: 'Business profile updated.', vendor: safeVendor(updated) });
@@ -357,7 +357,7 @@ router.put('/profile/address', authenticateVendor, async (req, res) => {
     const updated = await Vendor.findOneAndUpdate(
       { id: req.vendor.id },
       { $set: update },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     return res.json({ success: true, message: 'Business address updated.', vendor: safeVendor(updated) });
@@ -403,7 +403,7 @@ router.put('/profile/gst-pan', authenticateVendor, async (req, res) => {
     const updated = await Vendor.findOneAndUpdate(
       { id: req.vendor.id },
       { $set: update },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     return res.json({ success: true, message: 'GST & PAN details updated.', vendor: safeVendor(updated) });
@@ -442,7 +442,7 @@ router.put('/profile/bank', authenticateVendor, async (req, res) => {
     const updated = await Vendor.findOneAndUpdate(
       { id: req.vendor.id },
       { $set: update },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     return res.json({ success: true, message: 'Bank details updated.', vendor: safeVendor(updated) });
@@ -583,7 +583,7 @@ router.put('/products/:id', authenticateVendor, async (req, res) => {
     const updated = await Product.findOneAndUpdate(
       { id: productId, vendorId: req.vendor.id },
       { $set: update },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     ).lean();
 
     return res.json({ success: true, product: updated });
@@ -650,7 +650,7 @@ router.put('/orders/:id/status', authenticateVendor, async (req, res) => {
     const order = await Order.findOneAndUpdate(
       { id: req.params.id },
       { $set: { status } },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     if (!order) return res.status(404).json({ success: false, message: 'Order not found.' });

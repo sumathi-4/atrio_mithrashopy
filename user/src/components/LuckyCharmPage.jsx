@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { apiService } from '../services/apiService';
 import { resolveProductImage } from '../utils/imageHelper';
+import { triggerConfetti } from '../utils/confetti';
 import {
   ArrowLeft, ShieldCheck, ShieldAlert, ShoppingBag, Gift, Crown,
   Lock, ArrowRight, Package, RefreshCw, AlertTriangle, Store, Star, Trophy
@@ -285,6 +286,7 @@ export default function LuckyCharmPage({ authUser, setAuthUser, onNavigate }) {
             setWonReward(won);
             setStep('reveal');
             setWinningSegmentIndex(null);
+            triggerConfetti();
             checkEligibility();
           }, 1800);
           

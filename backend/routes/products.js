@@ -212,7 +212,7 @@ router.put('/:id', authenticate, requireAdmin, async (req, res) => {
     const updated = await Product.findOneAndUpdate(
       { id },
       { $set: updateFields },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     if (!updated) {

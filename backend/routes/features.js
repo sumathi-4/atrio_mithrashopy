@@ -74,7 +74,7 @@ router.put('/:id', authenticate, requireAdmin, async (req, res) => {
     const updated = await Feature.findOneAndUpdate(
       { id },
       { $set: updateFields },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     res.json({ success: true, message: 'Feature updated successfully!', feature: updated });

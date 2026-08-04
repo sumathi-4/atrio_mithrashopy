@@ -53,7 +53,7 @@ router.put("/", authenticate, requireAdmin, async (req, res) => {
 		if (upiId !== undefined) updateFields.upiId = String(upiId).trim();
 		if (upiQrImage !== undefined) updateFields.upiQrImage = String(upiQrImage);
 		const saved = await Settings.findOneAndUpdate({}, { $set: updateFields }, {
-			new: true,
+			returnDocument: 'after',
 			upsert: true
 		}).lean();
 		res.json({

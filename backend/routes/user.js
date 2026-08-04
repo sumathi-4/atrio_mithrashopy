@@ -24,7 +24,7 @@ router.put('/profile', authenticate, async (req, res) => {
           profileImage: profileImage !== undefined ? profileImage : user.profileImage
         }
       },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     const { password: _, ...safe } = updated;
@@ -105,7 +105,7 @@ router.post('/addresses', authenticate, async (req, res) => {
     const updatedUser = await User.findOneAndUpdate(
       { id: req.user.id },
       { $set: { addresses } },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     res.status(201).json({ success: true, message: 'Address added successfully!', addresses: updatedUser.addresses });
@@ -151,7 +151,7 @@ router.put('/addresses/:id', authenticate, async (req, res) => {
     const updatedUser = await User.findOneAndUpdate(
       { id: req.user.id },
       { $set: { addresses } },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     res.json({ success: true, message: 'Address updated successfully!', addresses: updatedUser.addresses });
@@ -171,7 +171,7 @@ router.delete('/addresses/:id', authenticate, async (req, res) => {
     const updatedUser = await User.findOneAndUpdate(
       { id: req.user.id },
       { $set: { addresses } },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     res.json({ success: true, message: 'Address deleted successfully!', addresses: updatedUser.addresses });

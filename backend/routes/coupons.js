@@ -78,7 +78,7 @@ router.put('/:code', authenticate, requireAdmin, async (req, res) => {
     const updated = await Coupon.findOneAndUpdate(
       { code: originalCode },
       { $set: updateFields },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     res.json({ success: true, message: 'Coupon updated successfully!', coupon: updated });

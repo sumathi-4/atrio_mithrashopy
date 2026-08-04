@@ -291,9 +291,19 @@ router.post('/', authenticate, async (req, res) => {
 
       if (isLuckyCharmOrder) {
         for (const item of orderItems) {
-          if (item.variant && item.variant.isLuckyCharm === true) {
+          if (item.isLuckyCharm || (item.variant && item.variant.isLuckyCharm === true) || item.price === 0) {
+            const query = { claimStatus: 'Pending' };
+            if (req.user) {
+              query.userId = req.user.id;
+            }
+            if (item.productId) {
+              query.$or = [
+                { productId: Number(item.productId) },
+                { productId: String(item.productId) }
+              ];
+            }
             await LuckySpinHistory.findOneAndUpdate(
-              { productId: item.productId, claimStatus: 'Pending', ...(req.user ? { userId: req.user.id } : {}) },
+              query,
               { $set: { claimStatus: 'Claimed', orderId: orderId, order: orderId } },
               { sort: { spinTime: -1 } }
             );
@@ -579,7 +589,7 @@ router.put('/:id', authenticate, requireAdmin, async (req, res) => {
     const updated = await Order.findOneAndUpdate(
       { id: orderId },
       { $set: updateFields },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     // Send email notification to customer

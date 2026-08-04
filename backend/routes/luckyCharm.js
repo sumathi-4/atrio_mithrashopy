@@ -184,12 +184,24 @@ router.post('/check-eligibility', async (req, res) => {
     if (userId) {
       const pendingSpin = await LuckySpinHistory.findOne({ userId, claimStatus: 'Pending', orderId: null });
       if (pendingSpin) {
-        return res.json({ 
-          success: true, 
-          available: false, 
-          message: 'You have a pending reward from your last spin. Please complete your checkout or claim your reward before spinning again.',
-          cartTotal
+        // Double check if user has already placed an order containing this reward item
+        const matchingOrder = await Order.findOne({
+          $or: [{ userId }, { user: userId }],
+          "items.productId": pendingSpin.productId
         });
+
+        if (matchingOrder) {
+          pendingSpin.claimStatus = 'Claimed';
+          pendingSpin.orderId = matchingOrder.id;
+          await pendingSpin.save();
+        } else {
+          return res.json({ 
+            success: true, 
+            available: false, 
+            message: 'You have a pending reward from your last spin. Please complete your checkout or claim your reward before spinning again.',
+            cartTotal
+          });
+        }
       }
     }
 
@@ -244,22 +256,24 @@ router.post('/check-eligibility', async (req, res) => {
       createdAt: { $gt: oneHourAgo }
     }).populate('wheelProducts');
 
+    const targetCount = activeCampaign.wheelProductCount || 8;
+
     if (existingSession && existingSession.wheelProducts && existingSession.wheelProducts.length > 0) {
       const unifiedList = existingSession.wheelProducts
-        .filter(p => p && p.luckyStock > 0 && p.status === 'Active')
+        .filter(p => p && p.status === 'Active')
         .map(p => ({
           _id: p._id,
           rewardName: p.name,
           rewardType: 'product',
           productId: p.id,
           couponId: null,
-          luckyStock: p.luckyStock || 0,
+          luckyStock: p.luckyStock || 1,
           luckyPrice: 0,
           image: p.image,
           value: 0
         }));
 
-      if (unifiedList.length > 0) {
+      if (unifiedList.length >= targetCount) {
         return res.json({ 
           success: true, 
           available: true, 
@@ -273,20 +287,48 @@ router.post('/check-eligibility', async (req, res) => {
       }
     }
 
-    // Find all candidate products
-    const candidateProducts = await Product.find({
+    // Find all candidate products marked for Lucky Charm
+    let candidateProducts = await Product.find({
       includeInLuckyCharm: true,
-      luckyStock: { $gt: 0 },
-      price: { $lte: activeCampaign.rewardBudget },
       status: 'Active',
       $or: [
         { vendorId: null },
         { vendorId: "" },
         { vendorId: { $exists: false } }
       ]
-    });
+    }).lean();
 
-    if (candidateProducts.length === 0) {
+    // Prefer products within reward budget if specified
+    let eligible = candidateProducts.filter(p => 
+      (p.luckyStock === undefined || p.luckyStock === null || p.luckyStock > 0) &&
+      (activeCampaign.rewardBudget ? p.price <= activeCampaign.rewardBudget : true)
+    );
+
+    // If budget-restricted items are fewer than target count, include all Lucky Charm enabled products
+    if (eligible.length < targetCount) {
+      eligible = candidateProducts.filter(p => (p.luckyStock === undefined || p.luckyStock === null || p.luckyStock > 0));
+    }
+
+    // If still fewer than target count, fallback to all active products so wheel fills to 8 items
+    if (eligible.length < targetCount) {
+      const extraProducts = await Product.find({
+        status: 'Active',
+        $or: [
+          { vendorId: null },
+          { vendorId: "" },
+          { vendorId: { $exists: false } }
+        ]
+      }).limit(targetCount).lean();
+      
+      const existingIds = new Set(eligible.map(p => String(p._id)));
+      extraProducts.forEach(p => {
+        if (!existingIds.has(String(p._id)) && eligible.length < targetCount) {
+          eligible.push(p);
+        }
+      });
+    }
+
+    if (eligible.length === 0) {
       return res.json({ 
         success: true, 
         available: false, 
@@ -295,10 +337,9 @@ router.post('/check-eligibility', async (req, res) => {
       });
     }
 
-    // Randomly select the configured number of products
-    const limit = activeCampaign.wheelProductCount || 8;
-    const shuffled = [...candidateProducts].sort(() => 0.5 - Math.random());
-    const selectedProducts = shuffled.slice(0, limit);
+    // Randomly select up to targetCount products
+    const shuffled = [...eligible].sort(() => 0.5 - Math.random());
+    const selectedProducts = shuffled.slice(0, targetCount);
 
     // Create a new session with unique ID and campaign snapshot
     const sessionId = crypto.randomBytes(16).toString('hex');
@@ -418,7 +459,7 @@ router.post('/spin', async (req, res) => {
     const wonProduct = await Product.findOneAndUpdate(
       { _id: selectedProduct._id, luckyStock: { $gt: 0 } },
       { $inc: { luckyStock: -1 } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!wonProduct) {
@@ -617,7 +658,7 @@ router.put('/campaigns/:id', authenticate, requireAdmin, async (req, res) => {
           status: status || campaign.status
         }
       },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     res.json({ success: true, campaign: updated });
@@ -707,7 +748,7 @@ router.put('/spin-history/:id', authenticate, requireAdmin, async (req, res) => 
           order: order || orderId || record.order
         }
       },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     res.json({ success: true, spinHistory: updated });

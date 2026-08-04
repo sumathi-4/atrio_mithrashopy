@@ -73,7 +73,7 @@ router.put('/:name', authenticate, requireAdmin, async (req, res) => {
     const updated = await Catalogue.findOneAndUpdate(
       { name: originalName },
       { $set: updateFields },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     // Re-link products if catalogue name changed
