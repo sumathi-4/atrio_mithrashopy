@@ -332,6 +332,16 @@ export const apiService = {
     }
   },
 
+  async updateOrderDetails(id, orderData) {
+    try {
+      const res = await apiRequest(`/api/orders/${encodeURIComponent(id)}`, 'PUT', orderData);
+      return res.order;
+    } catch (err) {
+      if (isBackendReachable) throw err;
+      return null;
+    }
+  },
+
   async deleteOrder(id) {
     try {
       await apiRequest(`/api/orders/${encodeURIComponent(id)}`, 'DELETE');

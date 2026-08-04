@@ -9,9 +9,9 @@ router.get('/', authenticate, async (req, res) => {
   try {
     let orders = [];
     if (req.user.role === 'admin') {
-      orders = await Order.find().lean();
+      orders = await Order.find().sort({ createdAt: -1, _id: -1 }).lean();
     } else {
-      orders = await Order.find({ userId: req.user.id }).lean();
+      orders = await Order.find({ userId: req.user.id }).sort({ createdAt: -1, _id: -1 }).lean();
     }
     res.json({ success: true, orders });
   } catch (err) {
@@ -184,37 +184,46 @@ router.post('/', authenticate, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid order amount.' });
     }
 
+    // Check for rapid duplicate order placement from the same user (within 10 seconds)
+    const recentDuplicate = await Order.findOne({
+      userId: req.user.id,
+      amount: `₹${cleanAmount}`,
+      payment: payment
+    }).sort({ _id: -1 }).lean();
+
+    if (recentDuplicate && recentDuplicate._id) {
+      const orderTimestamp = recentDuplicate.createdAt 
+        ? new Date(recentDuplicate.createdAt).getTime() 
+        : (recentDuplicate._id.getTimestamp ? recentDuplicate._id.getTimestamp().getTime() : 0);
+
+      if (Date.now() - orderTimestamp < 10000) {
+        return res.status(200).json({ 
+          success: true, 
+          message: 'Order already placed.', 
+          order: recentDuplicate 
+        });
+      }
+    }
+
     const orderId = '#ORD' + Math.floor(1000 + Math.random() * 9000);
 
     const isLuckyCharmOrder = orderItems.some(item => item.variant && item.variant.isLuckyCharm === true);
 
-    // If payment is Razorpay or UPI, check if we should create a Razorpay order
-    if (payment === 'Razorpay' || payment === 'UPI') {
+    const { Settings } = require('../db/database');
+    const storeSettings = (await Settings.findOne().lean()) || {};
+
+    // If payment is Razorpay
+    if (payment === 'Razorpay') {
+      if (storeSettings.enableRazorpay === false) {
+        return res.status(400).json({ success: false, message: 'Razorpay payment is currently disabled.' });
+      }
+
       const amountInPaise = Math.round(cleanAmount * 100);
 
-      // Create Order in DB, but with a status like "Pending Payment"
-      const tempOrder = await Order.create({
-        id: orderId,
-        userId: req.user.id,
-        customerEmail: req.user.email,
-        customerPhone: req.user.phone || '',
-        customer: req.user.name,
-        product: summaryProduct,
-        amount: `₹${cleanAmount}`,
-        payment: payment,
-        status: 'Pending Payment',
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
-        items: orderItems,
-        catalogueDetails: catalogueDetails || {},
-        isLuckyCharmOrder,
-        shippingAddress: req.body.shippingAddress || {},
-        subtotal: req.body.subtotal,
-        gst: req.body.gst,
-        shipping: req.body.shipping,
-        discount: req.body.discount
-      });
+      let rzpOrderId = 'mock_order_' + Math.floor(100000 + Math.random() * 900000);
+      let rzpKeyId = 'rzp_test_mock_key';
+      let isMockMode = true;
 
-      // If Razorpay instance is active, create real order
       if (razorpayInstance) {
         try {
           const rzpOrder = await razorpayInstance.orders.create({
@@ -222,33 +231,20 @@ router.post('/', authenticate, async (req, res) => {
             currency: 'INR',
             receipt: orderId
           });
-
-          return res.status(201).json({
-            success: true,
-            requiresRazorpay: true,
-            razorpayOrderId: rzpOrder.id,
-            razorpayKeyId: process.env.RAZORPAY_KEY_ID,
-            amount: amountInPaise,
-            currency: 'INR',
-            orderId: orderId,
-            user: {
-              name: req.user.name,
-              email: req.user.email,
-              phone: req.user.phone || ''
-            }
-          });
+          rzpOrderId = rzpOrder.id;
+          rzpKeyId = process.env.RAZORPAY_KEY_ID;
+          isMockMode = false;
         } catch (rzpErr) {
           console.error('Razorpay order creation failed, falling back to mock mode:', rzpErr);
         }
       }
 
-      // Mock Mode Fallback if credentials are missing or Razorpay API failed
-      return res.status(201).json({
+      return res.status(200).json({
         success: true,
         requiresRazorpay: true,
-        mock: true,
-        razorpayOrderId: 'mock_order_' + Math.floor(100000 + Math.random() * 900000),
-        razorpayKeyId: 'rzp_test_mock_key',
+        mock: isMockMode,
+        razorpayOrderId: rzpOrderId,
+        razorpayKeyId: rzpKeyId,
         amount: amountInPaise,
         currency: 'INR',
         orderId: orderId,
@@ -260,7 +256,75 @@ router.post('/', authenticate, async (req, res) => {
       });
     }
 
-    // Cash on Delivery (COD) Flow - directly create the order and decrease stock
+    // UPI / QR Code Scanner Flow
+    if (payment === 'UPI' || payment === 'UPI / QR Code Scanner') {
+      if (storeSettings.enableUpi === false) {
+        return res.status(400).json({ success: false, message: 'UPI Payment is currently disabled.' });
+      }
+
+      const utrNumber = req.body.utrNumber && String(req.body.utrNumber).trim() 
+        ? String(req.body.utrNumber).trim() 
+        : 'Pending Verification';
+
+      const newOrder = await Order.create({
+        id: orderId,
+        userId: req.user.id,
+        customerEmail: req.user.email,
+        customerPhone: req.user.phone || '',
+        customer: req.user.name,
+        product: summaryProduct,
+        amount: `₹${cleanAmount}`,
+        payment: 'UPI / QR Code Scanner',
+        paymentStatus: 'Pending',
+        utrNumber: utrNumber,
+        status: 'Processing',
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        items: orderItems,
+        catalogueDetails: catalogueDetails || {},
+        isLuckyCharmOrder,
+        shippingAddress: req.body.shippingAddress || {},
+        subtotal: req.body.subtotal,
+        gst: req.body.gst,
+        shipping: req.body.shipping,
+        discount: req.body.discount
+      });
+
+      if (isLuckyCharmOrder) {
+        for (const item of orderItems) {
+          if (item.variant && item.variant.isLuckyCharm === true) {
+            await LuckySpinHistory.findOneAndUpdate(
+              { productId: item.productId, claimStatus: 'Pending', ...(req.user ? { userId: req.user.id } : {}) },
+              { $set: { claimStatus: 'Claimed', orderId: orderId, order: orderId } },
+              { sort: { spinTime: -1 } }
+            );
+          }
+        }
+      }
+
+      await decreaseProductStock(orderItems, product);
+
+      try {
+        const { sendOrderConfirmationEmail } = require('../services/emailService');
+        if (req.user && req.user.email) {
+          await sendOrderConfirmationEmail(req.user.email, req.user.name, newOrder);
+        }
+      } catch (mailErr) {
+        console.error('Failed to send order confirmation email:', mailErr);
+      }
+
+      return res.status(201).json({ success: true, message: 'Order placed successfully! Pending payment verification.', order: newOrder });
+    }
+
+    // Cash on Delivery (COD) Flow
+    if (storeSettings.enableCod === false) {
+      return res.status(400).json({ success: false, message: 'Cash on Delivery is currently disabled.' });
+    }
+
+    const maxCod = storeSettings.maxCodAmount !== undefined ? parseFloat(storeSettings.maxCodAmount) : 5000;
+    if (cleanAmount > maxCod) {
+      return res.status(400).json({ success: false, message: `Cash on Delivery is only available for orders up to ₹${maxCod}.` });
+    }
+
     const newOrder = await Order.create({
       id: orderId,
       userId: req.user.id,
@@ -270,6 +334,7 @@ router.post('/', authenticate, async (req, res) => {
       product: summaryProduct,
       amount: `₹${cleanAmount}`,
       payment: 'COD',
+      paymentStatus: 'Pending',
       status: 'Processing',
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
       items: orderItems,
@@ -315,10 +380,10 @@ router.post('/', authenticate, async (req, res) => {
   }
 });
 
-// POST /api/orders/verify - Verify Razorpay payment signature
+// POST /api/orders/verify - Verify Razorpay payment signature and create order
 router.post('/verify', authenticate, async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId, orderPayload } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !orderId) {
       return res.status(400).json({ success: false, message: 'Missing payment verification details.' });
@@ -342,50 +407,72 @@ router.post('/verify', authenticate, async (req, res) => {
     }
 
     if (!verified) {
-      // Payment verification failed
-      await Order.updateOne({ id: orderId }, { $set: { status: 'Payment Failed' } });
-      return res.status(400).json({ success: false, message: 'Payment signature verification failed.' });
+      return res.status(400).json({ success: false, message: 'Payment signature verification failed. Order was not placed.' });
     }
 
-    // Fetch order
-    const order = await Order.findOne({ id: orderId });
+    // Create or update order upon successful payment verification
+    let order = await Order.findOne({ id: orderId });
     if (!order) {
-      return res.status(404).json({ success: false, message: 'Order record not found.' });
-    }
+      const payload = orderPayload || {};
+      const orderItems = payload.items || [];
+      const summaryProduct = payload.product || orderItems.map(item => `${item.name} (${item.quantity})`).join(', ');
+      let cleanAmountStr = String(payload.amount || 0).replace(/[₹,]/g, '').trim();
+      const cleanAmount = parseFloat(cleanAmountStr) || 0;
+      const isLuckyCharmOrder = orderItems.some(item => item.variant && item.variant.isLuckyCharm === true);
 
-    // Update order status to Processing
-    await Order.updateOne({ id: orderId }, { $set: { status: 'Processing' } });
+      order = await Order.create({
+        id: orderId,
+        userId: req.user.id,
+        customerEmail: req.user.email,
+        customerPhone: req.user.phone || '',
+        customer: req.user.name,
+        product: summaryProduct,
+        amount: `₹${cleanAmount}`,
+        payment: 'Razorpay',
+        paymentStatus: 'Paid',
+        status: 'Processing',
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        items: orderItems,
+        catalogueDetails: payload.catalogueDetails || {},
+        isLuckyCharmOrder,
+        shippingAddress: payload.shippingAddress || {},
+        subtotal: payload.subtotal,
+        gst: payload.gst,
+        shipping: payload.shipping,
+        discount: payload.discount
+      });
 
-    // Update pending lucky spin history records if any
-    if (order.isLuckyCharmOrder) {
-      for (const item of order.items || []) {
-        if (item.variant && item.variant.isLuckyCharm === true) {
-          await LuckySpinHistory.findOneAndUpdate(
-            { productId: item.productId, claimStatus: 'Pending', ...(req.user ? { userId: req.user.id } : {}) },
-            { $set: { claimStatus: 'Claimed', orderId: orderId, order: orderId } },
-            { sort: { spinTime: -1 } }
-          );
+      if (isLuckyCharmOrder) {
+        for (const item of orderItems) {
+          if (item.variant && item.variant.isLuckyCharm === true) {
+            await LuckySpinHistory.findOneAndUpdate(
+              { productId: item.productId, claimStatus: 'Pending', ...(req.user ? { userId: req.user.id } : {}) },
+              { $set: { claimStatus: 'Claimed', orderId: orderId, order: orderId } },
+              { sort: { spinTime: -1 } }
+            );
+          }
         }
       }
+
+      await decreaseProductStock(orderItems, summaryProduct);
+    } else {
+      await Order.updateOne({ id: orderId }, { $set: { status: 'Processing', paymentStatus: 'Paid' } });
+      order = await Order.findOne({ id: orderId });
     }
 
-    // Decrease product stock (since payment succeeded)
-    await decreaseProductStock(order.items || [], order.product);
-
-    // Return the updated order
-    const updatedOrder = await Order.findOne({ id: orderId }).lean();
+    const updatedOrder = order.toObject ? order.toObject() : order;
 
     // Send order confirmation email
     try {
       const { sendOrderConfirmationEmail } = require('../services/emailService');
       if (req.user && req.user.email) {
-        await sendOrderConfirmationEmail(req.user.email, req.user.name || order.customer, updatedOrder);
+        await sendOrderConfirmationEmail(req.user.email, req.user.name || updatedOrder.customer, updatedOrder);
       }
     } catch (mailErr) {
       console.error('Failed to send order confirmation email:', mailErr);
     }
 
-    res.json({ success: true, message: 'Payment verified successfully!', order: updatedOrder });
+    res.json({ success: true, message: 'Payment verified and order placed successfully!', order: updatedOrder });
   } catch (err) {
     console.error('Verify payment error:', err);
     res.status(500).json({ success: false, message: 'Payment verification failed.' });
@@ -484,9 +571,14 @@ router.put('/:id', authenticate, requireAdmin, async (req, res) => {
       }
     }
 
+    const updateFields = {};
+    if (status !== undefined) updateFields.status = status;
+    if (req.body.paymentStatus !== undefined) updateFields.paymentStatus = req.body.paymentStatus;
+    if (req.body.payment !== undefined) updateFields.payment = req.body.payment;
+
     const updated = await Order.findOneAndUpdate(
       { id: orderId },
-      { $set: { status: status || order.status } },
+      { $set: updateFields },
       { new: true }
     ).lean();
 

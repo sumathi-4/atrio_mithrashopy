@@ -36,11 +36,40 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
   const [coupons, setCoupons] = useState([]);
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponCodeInput, setCouponCodeInput] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('Razorpay');
+  const [paymentMethod, setPaymentMethod] = useState('');
   const [userOrders, setUserOrders] = useState([]);
+  const [paymentSettings, setPaymentSettings] = useState(null);
+  const [utrNumber, setUtrNumber] = useState('');
+  const [copiedUpi, setCopiedUpi] = useState(false);
+
+  useEffect(() => {
+    apiService.getSettings().then(settings => {
+      if (settings) {
+        const loaded = {
+          enableRazorpay: settings.enableRazorpay !== false,
+          enableCod: settings.enableCod !== false,
+          maxCodAmount: settings.maxCodAmount !== undefined ? Number(settings.maxCodAmount) : 5000,
+          enableUpi: settings.enableUpi !== false,
+          upiId: settings.upiId || '',
+          upiQrImage: settings.upiQrImage || '',
+          storeName: settings.storeName || 'MithraShopy'
+        };
+        setPaymentSettings(loaded);
+        if (loaded.enableRazorpay) setPaymentMethod('Razorpay');
+        else if (loaded.enableCod) setPaymentMethod('COD');
+        else if (loaded.enableUpi) setPaymentMethod('UPI / QR Code Scanner');
+      }
+    }).catch(err => console.error('Error loading payment settings:', err));
+  }, []);
 
   // States for double click prevention
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const isPlacingOrderRef = useRef(false);
+
+  const resetPlacingOrder = () => {
+    isPlacingOrderRef.current = false;
+    setIsPlacingOrder(false);
+  };
 
   // Dynamic States for Claims & Reviews
   const [myClaims, setMyClaims] = useState([]);
@@ -440,7 +469,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
         });
       }
     });
-    setUserOrders(prev => [order, ...prev]);
+    setUserOrders(prev => [order, ...prev.filter(o => String(o.id) !== String(order.id))]);
     setAppliedCoupon(null);
     setCouponCodeInput('');
     
@@ -454,7 +483,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
   };
 
   const handlePlaceOrder = () => {
-    if (isPlacingOrder) return;
+    if (isPlacingOrderRef.current || isPlacingOrder) return;
     if (cartItemsDetailed.length === 0) return;
     if (!authUser) {
       addToast({ message: 'Please log in to place your order.', type: 'info' });
@@ -466,6 +495,14 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
       return;
     }
 
+    if (paymentMethod === 'UPI / QR Code Scanner' || paymentMethod === 'UPI') {
+      if (!utrNumber.trim()) {
+        addToast({ message: 'Please enter the 12-digit Payment Transaction Ref / UTR No.', type: 'error' });
+        return;
+      }
+    }
+
+    isPlacingOrderRef.current = true;
     setIsPlacingOrder(true);
 
     const selectedAddr = addresses.find(a => a.id === selectedAddressId);
@@ -492,6 +529,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
       product: orderItems.map(item => `${item.name} (${item.quantity})`).join(', '),
       amount: String(calculateTotal()),
       payment: paymentMethod,
+      utrNumber: utrNumber.trim(),
       items: orderItems,
       catalogueDetails: catDetails,
       shippingAddress: selectedAddr || {},
@@ -504,7 +542,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
     apiService.createOrder(orderPayload).then(async (res) => {
       if (!res || !res.success) {
         addToast({ message: 'Failed to place order. Please try again.', type: 'error' });
-        setIsPlacingOrder(false);
+        resetPlacingOrder();
         return;
       }
 
@@ -512,36 +550,37 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
       if (!res.requiresRazorpay) {
         addToast({ message: 'Order placed successfully! Thank you for shopping with us.', type: 'success' });
         completeOrderCheckout(res.order);
-        setIsPlacingOrder(false);
+        resetPlacingOrder();
         return;
       }
 
       // Handle Mock Mode
       if (res.mock) {
         const confirmPayment = window.confirm(
-          `[MOCK PAYMENT GATEWAY]\n\nOrder ID: ${res.orderId}\nAmount: ₹${orderPayload.amount}\n\nClick OK to simulate successful payment, or Cancel to simulate failure.`
+          `[RAZORPAY PAYMENT GATEWAY]\n\nOrder ID: ${res.orderId}\nAmount: ₹${orderPayload.amount}\n\nClick OK to complete successful payment, or Cancel to abort payment.`
         );
         if (confirmPayment) {
           const verifyPayload = {
             razorpay_order_id: res.razorpayOrderId,
             razorpay_payment_id: 'mock_pay_' + Math.floor(100000 + Math.random() * 900000),
             razorpay_signature: 'mock_signature',
-            orderId: res.orderId
+            orderId: res.orderId,
+            orderPayload
           };
           apiService.verifyPayment(verifyPayload).then(verifyRes => {
             if (verifyRes && verifyRes.success) {
-              addToast({ message: 'Mock payment successful! Order placed.', type: 'success' });
+              addToast({ message: 'Payment successful! Order placed.', type: 'success' });
               completeOrderCheckout(verifyRes.order);
             } else {
-              addToast({ message: 'Mock payment verification failed.', type: 'error' });
+              addToast({ message: 'Payment verification failed. Order was not placed.', type: 'error' });
             }
-            setIsPlacingOrder(false);
+            resetPlacingOrder();
           }).catch(() => {
-            setIsPlacingOrder(false);
+            resetPlacingOrder();
           });
         } else {
-          addToast({ message: 'Payment cancelled.', type: 'info' });
-          setIsPlacingOrder(false);
+          addToast({ message: 'Payment cancelled. Order was not placed.', type: 'info' });
+          resetPlacingOrder();
         }
         return;
       }
@@ -564,7 +603,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
       const loaded = await loadRazorpayScript();
       if (!loaded) {
         addToast({ message: 'Failed to load Razorpay SDK. Please check your internet connection.', type: 'error' });
-        setIsPlacingOrder(false);
+        resetPlacingOrder();
         return;
       }
 
@@ -577,7 +616,8 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
         order_id: res.razorpayOrderId,
         modal: {
           ondismiss: function () {
-            setIsPlacingOrder(false);
+            addToast({ message: 'Payment cancelled. Order was not placed.', type: 'info' });
+            resetPlacingOrder();
           }
         },
         handler: async function (paymentRes) {
@@ -586,20 +626,21 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
               razorpay_order_id: paymentRes.razorpay_order_id,
               razorpay_payment_id: paymentRes.razorpay_payment_id,
               razorpay_signature: paymentRes.razorpay_signature,
-              orderId: res.orderId
+              orderId: res.orderId,
+              orderPayload
             };
             const verifyRes = await apiService.verifyPayment(verifyPayload);
             if (verifyRes && verifyRes.success) {
               addToast({ message: 'Payment successful and verified! Order placed.', type: 'success' });
               completeOrderCheckout(verifyRes.order);
             } else {
-              addToast({ message: 'Payment verification failed.', type: 'error' });
+              addToast({ message: 'Payment verification failed. Order was not placed.', type: 'error' });
             }
           } catch (err) {
             console.error(err);
             addToast({ message: 'Error verifying payment.', type: 'error' });
           } finally {
-            setIsPlacingOrder(false);
+            resetPlacingOrder();
           }
         },
         prefill: {
@@ -2101,29 +2142,146 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
 
                       {/* Payment Method Selector */}
                       <div className="ua-payment-method-selector">
-                        <h4>Payment Method</h4>
-                        <div className="ua-payment-options">
-                          <label>
-                            <input 
-                              type="radio" 
-                              name="payment_method" 
-                              value="Razorpay" 
-                              checked={paymentMethod === 'Razorpay'}
-                              onChange={() => setPaymentMethod('Razorpay')}
-                            />
-                            Razorpay
-                          </label>
-                          <label>
-                            <input 
-                              type="radio" 
-                              name="payment_method" 
-                              value="COD" 
-                              checked={paymentMethod === 'COD'}
-                              onChange={() => setPaymentMethod('COD')}
-                            />
-                            Cash on Delivery (COD)
-                          </label>
-                        </div>
+                        <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#333', marginBottom: '12px' }}>Payment Method</h4>
+                        
+                        {!paymentSettings ? (
+                          <div style={{ padding: '16px', color: '#666', fontSize: '0.9rem' }}>Loading available payment methods...</div>
+                        ) : (
+                          <div className="ua-payment-options" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {/* Razorpay Option */}
+                            {paymentSettings.enableRazorpay === true && (
+                              <label className={`ua-payment-option-card ${paymentMethod === 'Razorpay' ? 'selected' : ''}`} style={{
+                                display: 'flex', alignItems: 'center', padding: '14px 18px', border: paymentMethod === 'Razorpay' ? '2px solid #b8860b' : '1px solid #e0e0e0',
+                                borderRadius: '12px', cursor: 'pointer', backgroundColor: paymentMethod === 'Razorpay' ? '#fffdf5' : '#fff', transition: '0.2s'
+                              }}>
+                                <input 
+                                  type="radio" 
+                                  name="payment_method" 
+                                  value="Razorpay" 
+                                  checked={paymentMethod === 'Razorpay'}
+                                  onChange={() => setPaymentMethod('Razorpay')}
+                                  style={{ accentColor: '#b8860b', marginRight: '12px' }}
+                                />
+                                <span style={{ fontWeight: 700, color: '#1a1a1a', fontSize: '0.95rem' }}>Razorpay</span>
+                              </label>
+                            )}
+
+                            {/* Cash on Delivery (COD) Option */}
+                            {paymentSettings.enableCod === true && (
+                              <label className={`ua-payment-option-card ${paymentMethod === 'COD' ? 'selected' : ''} ${calculateTotal() > (paymentSettings.maxCodAmount || 5000) ? 'disabled' : ''}`} style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px',
+                                border: paymentMethod === 'COD' ? '2px solid #b8860b' : '1px solid #e0e0e0',
+                                borderRadius: '12px', cursor: calculateTotal() > (paymentSettings.maxCodAmount || 5000) ? 'not-allowed' : 'pointer',
+                                backgroundColor: paymentMethod === 'COD' ? '#fffdf5' : '#fff', opacity: calculateTotal() > (paymentSettings.maxCodAmount || 5000) ? 0.6 : 1, transition: '0.2s'
+                              }}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <input 
+                                    type="radio" 
+                                    name="payment_method" 
+                                    value="COD" 
+                                    checked={paymentMethod === 'COD'}
+                                    disabled={calculateTotal() > (paymentSettings.maxCodAmount || 5000)}
+                                    onChange={() => setPaymentMethod('COD')}
+                                    style={{ accentColor: '#b8860b', marginRight: '12px' }}
+                                  />
+                                  <span style={{ fontWeight: 700, color: '#1a1a1a', fontSize: '0.95rem' }}>Cash on Delivery (COD)</span>
+                                </div>
+                                {calculateTotal() > (paymentSettings.maxCodAmount || 5000) && (
+                                  <span style={{ fontSize: '0.78rem', color: '#d32f2f', fontWeight: 600 }}>Max limit ₹{paymentSettings.maxCodAmount || 5000}</span>
+                                )}
+                              </label>
+                            )}
+
+                            {/* UPI / QR Code Scanner Option */}
+                            {paymentSettings.enableUpi === true && (
+                              <div style={{ border: (paymentMethod === 'UPI / QR Code Scanner' || paymentMethod === 'UPI') ? '2px solid #c2185b' : '1px solid #e0e0e0', borderRadius: '12px', backgroundColor: '#fff', overflow: 'hidden', transition: '0.2s' }}>
+                                <label style={{
+                                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', cursor: 'pointer',
+                                  backgroundColor: (paymentMethod === 'UPI / QR Code Scanner' || paymentMethod === 'UPI') ? '#fce4ec' : '#fff'
+                                }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <input 
+                                      type="radio" 
+                                      name="payment_method" 
+                                      value="UPI / QR Code Scanner" 
+                                      checked={paymentMethod === 'UPI / QR Code Scanner' || paymentMethod === 'UPI'}
+                                      onChange={() => setPaymentMethod('UPI / QR Code Scanner')}
+                                      style={{ accentColor: '#c2185b' }}
+                                    />
+                                    <div>
+                                      <div style={{ fontWeight: 700, color: '#333', fontSize: '0.95rem' }}>UPI / QR Code Scanner</div>
+                                    </div>
+                                  </div>
+                                  <div style={{ display: 'flex', gap: '6px' }}>
+                                    <span style={{ fontSize: '0.72rem', backgroundColor: '#e0e0e0', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>GPay</span>
+                                    <span style={{ fontSize: '0.72rem', backgroundColor: '#e0e0e0', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>PhonePe</span>
+                                    <span style={{ fontSize: '0.72rem', backgroundColor: '#e0e0e0', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>Paytm</span>
+                                    <span style={{ fontSize: '0.72rem', backgroundColor: '#e0e0e0', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>BHIM</span>
+                                  </div>
+                                </label>
+
+                                {/* UPI Details Box if Selected */}
+                                {(paymentMethod === 'UPI / QR Code Scanner' || paymentMethod === 'UPI') && (
+                                  <div style={{ padding: '20px', backgroundColor: '#fdf7fa', borderTop: '1px solid #f8bbd0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                                    <div style={{ textAlign: 'center', fontWeight: 700, fontSize: '0.85rem', color: '#1a237e', letterSpacing: '0.5px' }}>
+                                      SCAN QR CODE & PAY VIA GOOGLE PAY / PHONEPE / PAYTM / BHIM
+                                    </div>
+
+                                    {/* QR Image Box - Prioritize dynamic amount pre-filled UPI QR code using Admin UPI ID */}
+                                    {paymentSettings.upiId ? (
+                                      <div style={{ padding: '14px', backgroundColor: '#fff', border: '1px solid #e0e0e0', borderRadius: '16px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                                        <img 
+                                          src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`upi://pay?pa=${paymentSettings.upiId}&pn=${encodeURIComponent(paymentSettings.storeName || 'MithraShopy')}&am=${calculateTotal()}&cu=INR&mode=02&orgid=000000`)}`} 
+                                          alt="UPI QR Code" 
+                                          style={{ width: '180px', height: '180px', objectFit: 'contain', borderRadius: '8px' }} 
+                                        />
+                                        <span style={{ fontSize: '0.78rem', color: '#2e7d32', fontWeight: 600, backgroundColor: '#e8f5e9', padding: '4px 12px', borderRadius: '12px' }}>
+                                          ✓ Amount Pre-filled: ₹{calculateTotal()}
+                                        </span>
+                                      </div>
+                                    ) : null}
+
+                                    {/* UPI ID Pill with Copy button - ONLY rendered if admin provided UPI ID */}
+                                    {paymentSettings.upiId ? (
+                                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: '#fff', padding: '6px 14px', borderRadius: '20px', border: '1px solid #e0e0e0', boxShadow: '0 2px 4px rgba(0,0,0,0.04)' }}>
+                                        <span style={{ fontWeight: 700, fontSize: '0.88rem', color: '#333' }}>{paymentSettings.upiId}</span>
+                                        <button 
+                                          type="button" 
+                                          onClick={() => {
+                                            navigator.clipboard.writeText(paymentSettings.upiId);
+                                            setCopiedUpi(true);
+                                            setTimeout(() => setCopiedUpi(false), 2000);
+                                          }}
+                                          style={{ backgroundColor: '#1a237e', color: '#fff', border: 'none', borderRadius: '12px', padding: '3px 10px', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}
+                                        >
+                                          {copiedUpi ? '✓ Copied' : 'Copy'}
+                                        </button>
+                                      </div>
+                                    ) : null}
+
+                                    {/* UTR Input Field */}
+                                    <div style={{ width: '100%', backgroundColor: '#fff', padding: '16px', borderRadius: '12px', border: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                      <label style={{ fontSize: '0.88rem', fontWeight: 700, color: '#333' }}>
+                                        Payment Transaction Ref / UTR No. <span style={{ color: '#888', fontWeight: 400 }}>(Optional)</span>
+                                      </label>
+                                      <input 
+                                        type="text" 
+                                        value={utrNumber} 
+                                        onChange={(e) => setUtrNumber(e.target.value)} 
+                                        placeholder="Enter 12-digit UTR No. (Optional)" 
+                                        maxLength={20}
+                                        style={{ width: '100%', padding: '10px 14px', border: '1px solid #cccccc', borderRadius: '8px', fontSize: '0.9rem' }}
+                                      />
+                                      <span style={{ fontSize: '0.78rem', color: '#666' }}>
+                                        Enter the 12-digit UTR from GPay / PhonePe activity history, or leave blank to verify later.
+                                      </span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       <button 

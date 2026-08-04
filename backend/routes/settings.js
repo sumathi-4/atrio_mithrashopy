@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
 // PUT /api/settings - Update general store settings (admin only)
 router.put("/", authenticate, requireAdmin, async (req, res) => {
 	try {
-		const { storeName, supportEmail, taxPercentage, defaultCurrency, shippingInfoLines, freeShippingAbove, standardCharge, expressCharge, codCharges, enableCod, enableExpress, enableInternational, senderName, senderEmail, smtpHost, smtpPort, smtpUsername, smtpPassword } = req.body;
+		const { storeName, supportEmail, taxPercentage, defaultCurrency, shippingInfoLines, freeShippingAbove, standardCharge, expressCharge, codCharges, enableCod, enableExpress, enableInternational, enableRazorpay, maxCodAmount, enableUpi, upiId, upiQrImage, senderName, senderEmail, smtpHost, smtpPort, smtpUsername, smtpPassword } = req.body;
 		const updateFields = {};
 		if (storeName !== undefined) updateFields.storeName = storeName.trim();
 		if (senderName !== undefined) updateFields.senderName = senderName.trim();
@@ -47,6 +47,11 @@ router.put("/", authenticate, requireAdmin, async (req, res) => {
 		if (enableCod !== undefined) updateFields.enableCod = !!enableCod;
 		if (enableExpress !== undefined) updateFields.enableExpress = !!enableExpress;
 		if (enableInternational !== undefined) updateFields.enableInternational = !!enableInternational;
+		if (enableRazorpay !== undefined) updateFields.enableRazorpay = !!enableRazorpay;
+		if (maxCodAmount !== undefined) updateFields.maxCodAmount = parseFloat(maxCodAmount);
+		if (enableUpi !== undefined) updateFields.enableUpi = !!enableUpi;
+		if (upiId !== undefined) updateFields.upiId = String(upiId).trim();
+		if (upiQrImage !== undefined) updateFields.upiQrImage = String(upiQrImage);
 		const saved = await Settings.findOneAndUpdate({}, { $set: updateFields }, {
 			new: true,
 			upsert: true

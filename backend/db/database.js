@@ -555,11 +555,20 @@ const OrderSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.Mixed,
 		default: {}
 	},
+	paymentStatus: {
+		type: String,
+		enum: ["Paid", "Pending", "Failed"],
+		default: "Pending"
+	},
+	utrNumber: {
+		type: String,
+		default: ""
+	},
 	subtotal: { type: Number },
 	gst: { type: Number },
 	shipping: { type: Number },
 	discount: { type: Number }
-});
+}, { timestamps: true });
 const CouponSchema = new mongoose.Schema({
 	code: {
 		type: String,
@@ -806,6 +815,26 @@ const SettingsSchema = new mongoose.Schema({
 	enableInternational: {
 		type: Boolean,
 		default: false
+	},
+	enableRazorpay: {
+		type: Boolean,
+		default: true
+	},
+	maxCodAmount: {
+		type: Number,
+		default: 5000
+	},
+	enableUpi: {
+		type: Boolean,
+		default: true
+	},
+	upiId: {
+		type: String,
+		default: "manishmadhava91@okicici"
+	},
+	upiQrImage: {
+		type: String,
+		default: ""
 	},
 	senderName: {
 		type: String,

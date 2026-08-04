@@ -49,7 +49,9 @@ import {
   Move,
   ToggleLeft,
   ToggleRight,
-  Sliders
+  Sliders,
+  Upload,
+  Save
 } from 'lucide-react';
 import logoImg from '../../../user/src/assets/logo.png';
 import { resolveProductImage, isRealImg } from '../utils/imageHelper';
@@ -330,11 +332,12 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     enableInternational: false,
   });
   const [paymentSettings, setPaymentSettings] = useState({
-    cod: true,
-    razorpay: true,
-    upi: true,
-    stripe: false,
-    bankTransfer: true,
+    enableRazorpay: true,
+    enableCod: true,
+    maxCodAmount: '5000',
+    enableUpi: true,
+    upiId: 'manishmadhava91@okicici',
+    upiQrImage: '',
   });
   const [socialMediaSettings, setSocialMediaSettings] = useState({
     instagram: 'https://instagram.com/mithrashopy',
@@ -1054,6 +1057,14 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
               smtpPort: settingsData.smtpPort !== undefined ? String(settingsData.smtpPort) : '587',
               smtpUsername: settingsData.smtpUsername || 'info@mithrashopy.com',
               smtpPassword: settingsData.smtpPassword || '',
+            });
+            setPaymentSettings({
+              enableRazorpay: settingsData.enableRazorpay !== undefined ? settingsData.enableRazorpay : true,
+              enableCod: settingsData.enableCod !== undefined ? settingsData.enableCod : true,
+              maxCodAmount: settingsData.maxCodAmount !== undefined ? String(settingsData.maxCodAmount) : '5000',
+              enableUpi: settingsData.enableUpi !== undefined ? settingsData.enableUpi : true,
+              upiId: settingsData.upiId || 'manishmadhava91@okicici',
+              upiQrImage: settingsData.upiQrImage || '',
             });
           }
         } catch (settingsErr) {
@@ -2621,20 +2632,64 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     if (!editOrderItem.customer || !editOrderItem.amount || !editOrderItem.payment) return;
     
     try {
-      const saved = await apiService.updateOrderStatus(editOrderItem.id, editOrderItem.status);
-    } catch (err) {}
+      await apiService.updateOrderDetails(editOrderItem.id, {
+        status: editOrderItem.status,
+        paymentStatus: editOrderItem.paymentStatus || 'Pending',
+        payment: editOrderItem.payment
+      });
+    } catch (err) {
+      console.error('Error updating order:', err);
+    }
 
     setOrders(orders.map(o => o.id === editOrderItem.id ? {
       ...o,
       customer: editOrderItem.customer.trim(),
       amount: editOrderItem.amount.startsWith('₹') ? editOrderItem.amount : `₹${editOrderItem.amount}`,
       payment: editOrderItem.payment.trim(),
+      paymentStatus: editOrderItem.paymentStatus || 'Pending',
       status: editOrderItem.status,
       date: editOrderItem.date
     } : o));
     
     setShowEditOrderModal(false);
     setEditOrderItem(null);
+  };
+
+  const handleSavePaymentSettings = async () => {
+    try {
+      const payload = {
+        enableRazorpay: !!paymentSettings.enableRazorpay,
+        enableCod: !!paymentSettings.enableCod,
+        maxCodAmount: parseFloat(paymentSettings.maxCodAmount) || 5000,
+        enableUpi: !!paymentSettings.enableUpi,
+        upiId: paymentSettings.upiId ? paymentSettings.upiId.trim() : '',
+        upiQrImage: paymentSettings.upiQrImage || '',
+      };
+      await apiService.updateSettings(payload);
+      alert('Payment Settings saved successfully!');
+    } catch (err) {
+      console.error('Error saving payment settings:', err);
+      alert('Failed to save payment settings.');
+    }
+  };
+
+  const handlePaymentQrUpload = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const uploadedUrl = await apiService.uploadImage(file.name, reader.result);
+        if (uploadedUrl) {
+          setPaymentSettings(prev => ({ ...prev, upiQrImage: uploadedUrl }));
+          alert('UPI QR Code image uploaded successfully!');
+        }
+      } catch (err) {
+        console.error('QR image upload error:', err);
+        alert('Failed to upload QR image.');
+      }
+    };
+    reader.readAsDataURL(file);
   };
   
   const deleteOrder = async (id) => {
@@ -4727,7 +4782,19 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                             </td>
                             <td className="text-gray">{order.customer}</td>
                             <td className="bold text-black">{order.amount}</td>
-                            <td className="text-gray">{order.payment}</td>
+                            <td className="text-gray">
+                              <div style={{ fontWeight: 600, color: '#333' }}>{order.payment || 'Razorpay'}</div>
+                              <div style={{ marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span className={`orders-status-badge ${(order.paymentStatus || (order.payment === 'Razorpay' && order.status !== 'Pending Payment' ? 'Paid' : 'Pending')).toLowerCase()}`}>
+                                  {order.paymentStatus || (order.payment === 'Razorpay' && order.status !== 'Pending Payment' ? 'Paid' : 'Pending')}
+                                </span>
+                                {order.utrNumber && (
+                                  <span style={{ fontSize: '0.72rem', color: '#666', fontFamily: 'monospace' }} title={`UTR: ${order.utrNumber}`}>
+                                    UTR: {order.utrNumber}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
                             <td>
                               <span className={`orders-status-badge ${order.status.toLowerCase()}`}>
                                 {order.status}
@@ -6261,190 +6328,123 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
 
                 {settingsSubTab === 'payment' && (
                   <div className="settings-form-content" style={{ display: 'block' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-                      <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'rgba(122, 193, 66, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#D4AF37' }}>
-                        <CreditCard size={22} />
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: '#fce4ec', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c2185b' }}>
+                          <CreditCard size={22} />
+                        </div>
+                        <div>
+                          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#4a148c', margin: 0, fontFamily: 'Georgia, serif' }}>Payment & Integration Configurations</h3>
+                        </div>
                       </div>
-                      <div>
-                        <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Payment Settings</h3>
-                        <p style={{ fontSize: '0.85rem', color: '#666', margin: '2px 0 0 0' }}>Manage payment gateway configurations</p>
-                      </div>
+                      <button 
+                        className="btn-primary" 
+                        style={{ backgroundColor: '#2e7d32', color: '#fff', padding: '10px 20px', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }} 
+                        onClick={handleSavePaymentSettings}
+                      >
+                        Save Payment Settings
+                      </button>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      {/* COD toggle */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', backgroundColor: '#faf9f6', border: '1px solid #eae6df', borderRadius: '16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: '#f0f9eb', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#D4AF37' }}>
-                            <Truck size={20} />
-                          </div>
-                          <div>
-                            <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Cash On Delivery (COD)</h4>
-                            <p style={{ fontSize: '0.82rem', color: '#777', margin: '4px 0 0 0' }}>Allow customers to pay on delivery</p>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <label style={{ position: 'relative', display: 'inline-block', width: '48px', height: '26px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                      {/* Razorpay Card */}
+                      <div style={{ padding: '20px', backgroundColor: '#fff', border: '1px solid #f8bbd0', borderRadius: '12px' }}>
+                        <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#333', margin: '0 0 12px 0' }}>Razorpay Payment Gateway</h4>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <label style={{ position: 'relative', display: 'inline-block', width: '50px', height: '26px' }}>
                             <input 
                               type="checkbox" 
-                              checked={paymentSettings.cod} 
-                              onChange={(e) => setPaymentSettings(prev => ({ ...prev, cod: e.target.checked }))} 
+                              checked={!!paymentSettings.enableRazorpay} 
+                              onChange={(e) => setPaymentSettings(prev => ({ ...prev, enableRazorpay: e.target.checked }))} 
                               style={{ opacity: 0, width: 0, height: 0 }} 
                             />
                             <span style={{
                               position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0,
-                              backgroundColor: paymentSettings.cod ? '#D4AF37' : '#ccc',
+                              backgroundColor: paymentSettings.enableRazorpay ? '#d32f2f' : '#ccc',
                               transition: '0.3s', borderRadius: '34px',
                             }}>
                               <span style={{
-                                position: 'absolute', content: '""', height: '18px', width: '18px', left: paymentSettings.cod ? '26px' : '4px', bottom: '4px',
+                                position: 'absolute', content: '""', height: '18px', width: '18px', left: paymentSettings.enableRazorpay ? '26px' : '4px', bottom: '4px',
                                 backgroundColor: 'white', transition: '0.3s', borderRadius: '50%'
                               }}></span>
                             </span>
                           </label>
-                          <button style={{ border: 'none', background: 'transparent', color: '#666', cursor: 'pointer' }} onClick={() => alert('COD Config trigger')}><Settings size={18} /></button>
+                          <span style={{ fontWeight: 600, color: '#555', fontSize: '0.9rem' }}>Enable Razorpay</span>
                         </div>
                       </div>
 
-                      {/* Razorpay toggle */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', backgroundColor: '#faf9f6', border: '1px solid #eae6df', borderRadius: '16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: '#eef6fe', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2b87e3' }}>
-                            <CreditCard size={20} />
-                          </div>
-                          <div>
-                            <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Razorpay</h4>
-                            <p style={{ fontSize: '0.82rem', color: '#777', margin: '4px 0 0 0' }}>Accept payments via Razorpay</p>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <label style={{ position: 'relative', display: 'inline-block', width: '48px', height: '26px' }}>
+                      {/* Cash on Delivery Card */}
+                      <div style={{ padding: '20px', backgroundColor: '#fff', border: '1px solid #f8bbd0', borderRadius: '12px' }}>
+                        <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#333', margin: '0 0 12px 0' }}>Cash on Delivery (COD)</h4>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                          <label style={{ position: 'relative', display: 'inline-block', width: '50px', height: '26px' }}>
                             <input 
                               type="checkbox" 
-                              checked={paymentSettings.razorpay} 
-                              onChange={(e) => setPaymentSettings(prev => ({ ...prev, razorpay: e.target.checked }))} 
+                              checked={!!paymentSettings.enableCod} 
+                              onChange={(e) => setPaymentSettings(prev => ({ ...prev, enableCod: e.target.checked }))} 
                               style={{ opacity: 0, width: 0, height: 0 }} 
                             />
                             <span style={{
                               position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0,
-                              backgroundColor: paymentSettings.razorpay ? '#D4AF37' : '#ccc',
+                              backgroundColor: paymentSettings.enableCod ? '#d32f2f' : '#ccc',
                               transition: '0.3s', borderRadius: '34px',
                             }}>
                               <span style={{
-                                position: 'absolute', content: '""', height: '18px', width: '18px', left: paymentSettings.razorpay ? '26px' : '4px', bottom: '4px',
+                                position: 'absolute', content: '""', height: '18px', width: '18px', left: paymentSettings.enableCod ? '26px' : '4px', bottom: '4px',
                                 backgroundColor: 'white', transition: '0.3s', borderRadius: '50%'
                               }}></span>
                             </span>
                           </label>
-                          <button style={{ border: 'none', background: 'transparent', color: '#666', cursor: 'pointer' }} onClick={() => alert('Razorpay Config trigger')}><Settings size={18} /></button>
+                          <span style={{ fontWeight: 600, color: '#555', fontSize: '0.9rem' }}>Enable Cash on Delivery</span>
+                        </div>
+                        
+                        <div style={{ maxWidth: '400px' }}>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#333', marginBottom: '6px' }}>Maximum COD Order Amount (₹)</label>
+                          <input 
+                            type="number" 
+                            value={paymentSettings.maxCodAmount} 
+                            onChange={(e) => setPaymentSettings(prev => ({ ...prev, maxCodAmount: e.target.value }))} 
+                            placeholder="5000" 
+                            style={{ width: '100%', padding: '10px 14px', border: '1px solid #fce4ec', borderRadius: '8px', backgroundColor: '#fff5f8', fontSize: '0.95rem' }} 
+                          />
                         </div>
                       </div>
 
-                      {/* UPI Payments */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', backgroundColor: '#faf9f6', border: '1px solid #eae6df', borderRadius: '16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: '#faf2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9c27b0' }}>
-                            <CreditCard size={20} />
-                          </div>
-                          <div>
-                            <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>UPI Payments</h4>
-                            <p style={{ fontSize: '0.82rem', color: '#777', margin: '4px 0 0 0' }}>Accept UPI payments</p>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <label style={{ position: 'relative', display: 'inline-block', width: '48px', height: '26px' }}>
+                      {/* UPI / QR Code Card */}
+                      <div style={{ padding: '20px', backgroundColor: '#fff', border: '1px solid #f8bbd0', borderRadius: '12px' }}>
+                        <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#333', margin: '0 0 12px 0' }}>UPI / QR Code Scanner Payment</h4>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                          <label style={{ position: 'relative', display: 'inline-block', width: '50px', height: '26px' }}>
                             <input 
                               type="checkbox" 
-                              checked={paymentSettings.upi} 
-                              onChange={(e) => setPaymentSettings(prev => ({ ...prev, upi: e.target.checked }))} 
+                              checked={!!paymentSettings.enableUpi} 
+                              onChange={(e) => setPaymentSettings(prev => ({ ...prev, enableUpi: e.target.checked }))} 
                               style={{ opacity: 0, width: 0, height: 0 }} 
                             />
                             <span style={{
                               position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0,
-                              backgroundColor: paymentSettings.upi ? '#D4AF37' : '#ccc',
+                              backgroundColor: paymentSettings.enableUpi ? '#d32f2f' : '#ccc',
                               transition: '0.3s', borderRadius: '34px',
                             }}>
                               <span style={{
-                                position: 'absolute', content: '""', height: '18px', width: '18px', left: paymentSettings.upi ? '26px' : '4px', bottom: '4px',
+                                position: 'absolute', content: '""', height: '18px', width: '18px', left: paymentSettings.enableUpi ? '26px' : '4px', bottom: '4px',
                                 backgroundColor: 'white', transition: '0.3s', borderRadius: '50%'
                               }}></span>
                             </span>
                           </label>
-                          <button style={{ border: 'none', background: 'transparent', color: '#666', cursor: 'pointer' }} onClick={() => alert('UPI Config trigger')}><Settings size={18} /></button>
+                          <span style={{ fontWeight: 600, color: '#555', fontSize: '0.9rem' }}>Enable UPI / QR Code Payment</span>
                         </div>
-                      </div>
 
-                      {/* Stripe toggle */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', backgroundColor: '#faf9f6', border: '1px solid #eae6df', borderRadius: '16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: '#e8faf7', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00af91' }}>
-                            <CreditCard size={20} />
-                          </div>
-                          <div>
-                            <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Stripe</h4>
-                            <p style={{ fontSize: '0.82rem', color: '#777', margin: '4px 0 0 0' }}>Accept international payments via Stripe</p>
-                          </div>
+                        <div style={{ maxWidth: '480px' }}>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#333', marginBottom: '6px' }}>UPI ID / VPA</label>
+                          <input 
+                            type="text" 
+                            value={paymentSettings.upiId} 
+                            onChange={(e) => setPaymentSettings(prev => ({ ...prev, upiId: e.target.value }))} 
+                            placeholder="e.g. manishmadhava91@okicici" 
+                            style={{ width: '100%', padding: '10px 14px', border: '1px solid #fce4ec', borderRadius: '8px', backgroundColor: '#fff5f8', fontSize: '0.95rem' }} 
+                          />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <label style={{ position: 'relative', display: 'inline-block', width: '48px', height: '26px' }}>
-                            <input 
-                              type="checkbox" 
-                              checked={paymentSettings.stripe} 
-                              onChange={(e) => setPaymentSettings(prev => ({ ...prev, stripe: e.target.checked }))} 
-                              style={{ opacity: 0, width: 0, height: 0 }} 
-                            />
-                            <span style={{
-                              position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0,
-                              backgroundColor: paymentSettings.stripe ? '#D4AF37' : '#ccc',
-                              transition: '0.3s', borderRadius: '34px',
-                            }}>
-                              <span style={{
-                                position: 'absolute', content: '""', height: '18px', width: '18px', left: paymentSettings.stripe ? '26px' : '4px', bottom: '4px',
-                                backgroundColor: 'white', transition: '0.3s', borderRadius: '50%'
-                              }}></span>
-                            </span>
-                          </label>
-                          <button style={{ border: 'none', background: 'transparent', color: '#666', cursor: 'pointer' }} onClick={() => alert('Stripe Config trigger')}><Settings size={18} /></button>
-                        </div>
-                      </div>
-
-                      {/* Bank Transfer toggle */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', backgroundColor: '#faf9f6', border: '1px solid #eae6df', borderRadius: '16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: '#fff5ec', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#C59B6C' }}>
-                            <Globe size={20} />
-                          </div>
-                          <div>
-                            <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Bank Transfer</h4>
-                            <p style={{ fontSize: '0.82rem', color: '#777', margin: '4px 0 0 0' }}>Allow payments via bank transfer</p>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          <label style={{ position: 'relative', display: 'inline-block', width: '48px', height: '26px' }}>
-                            <input 
-                              type="checkbox" 
-                              checked={paymentSettings.bankTransfer} 
-                              onChange={(e) => setPaymentSettings(prev => ({ ...prev, bankTransfer: e.target.checked }))} 
-                              style={{ opacity: 0, width: 0, height: 0 }} 
-                            />
-                            <span style={{
-                              position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0,
-                              backgroundColor: paymentSettings.bankTransfer ? '#D4AF37' : '#ccc',
-                              transition: '0.3s', borderRadius: '34px',
-                            }}>
-                              <span style={{
-                                position: 'absolute', content: '""', height: '18px', width: '18px', left: paymentSettings.bankTransfer ? '26px' : '4px', bottom: '4px',
-                                backgroundColor: 'white', transition: '0.3s', borderRadius: '50%'
-                              }}></span>
-                            </span>
-                          </label>
-                          <button style={{ border: 'none', background: 'transparent', color: '#666', cursor: 'pointer' }} onClick={() => alert('Bank Config trigger')}><Settings size={18} /></button>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
-                        <button className="profile-change-photo-btn" onClick={() => alert('Cancel trigger')}>Cancel</button>
-                        <button className="settings-save-btn" style={{ margin: 0 }} onClick={() => alert('Payment Settings Saved successfully!')}>Save Changes</button>
                       </div>
                     </div>
                   </div>
@@ -8664,87 +8664,115 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
       )}
 
       {/* --- EDIT ORDER MODAL DIALOG --- */}
-      {showEditOrderModal && editOrderItem && (
-        <div className="admin-modal-overlay" onClick={() => { setShowEditOrderModal(false); setEditOrderItem(null); }}>
-          <div className="admin-modal-box" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-hdr">
-              <h3>Edit Order Details</h3>
-              <button className="close-btn" onClick={() => { setShowEditOrderModal(false); setEditOrderItem(null); }}><X size={18} /></button>
+      {showEditOrderModal && editOrderItem && (() => {
+        const isPaid = (editOrderItem.paymentStatus === 'Paid' || (editOrderItem.payment === 'Razorpay' && editOrderItem.paymentStatus !== 'Pending' && editOrderItem.paymentStatus !== 'Failed'));
+
+        return (
+          <div className="admin-modal-overlay" onClick={() => { setShowEditOrderModal(false); setEditOrderItem(null); }}>
+            <div className="admin-modal-box" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-hdr">
+                <h3>Edit Order Details</h3>
+                <button className="close-btn" onClick={() => { setShowEditOrderModal(false); setEditOrderItem(null); }}><X size={18} /></button>
+              </div>
+              
+              <form onSubmit={handleEditOrderSubmit} className="modal-body-form">
+                <div className="form-field">
+                  <label>Customer Name</label>
+                  <input 
+                    type="text" 
+                    value={editOrderItem.customer}
+                    disabled
+                    className="modal-input"
+                    style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed', color: '#666' }}
+                  />
+                </div>
+
+                <div className="form-field-row">
+                  <div className="form-field">
+                    <label>Order Amount</label>
+                    <input 
+                      type="text" 
+                      value={editOrderItem.amount}
+                      disabled
+                      className="modal-input"
+                      style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed', color: '#666' }}
+                    />
+                  </div>
+                  
+                  <div className="form-field">
+                    <label>Payment Method</label>
+                    <input 
+                      type="text" 
+                      value={editOrderItem.payment}
+                      disabled
+                      className="modal-input"
+                      style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed', color: '#666' }}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-field-row">
+                  <div className="form-field">
+                    <label>Payment Status <span className="req">*</span></label>
+                    <select 
+                      value={editOrderItem.paymentStatus || (editOrderItem.payment === 'Razorpay' ? 'Paid' : 'Pending')}
+                      onChange={(e) => {
+                        const newPayStatus = e.target.value;
+                        setEditOrderItem({ ...editOrderItem, paymentStatus: newPayStatus });
+                      }}
+                      className="modal-input"
+                    >
+                      <option value="Paid">Paid</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Failed">Failed</option>
+                    </select>
+                  </div>
+
+                  <div className="form-field">
+                    <label>Delivery Status {!isPaid && <span style={{ fontSize: '0.75rem', color: '#d32f2f', fontWeight: 600 }}>(Locked)</span>}</label>
+                    <select 
+                      value={editOrderItem.status}
+                      disabled={!isPaid}
+                      onChange={(e) => setEditOrderItem({ ...editOrderItem, status: e.target.value })}
+                      className="modal-input"
+                      style={!isPaid ? { backgroundColor: '#f5f5f5', cursor: 'not-allowed', color: '#888' } : {}}
+                    >
+                      <option value="Processing">Processing</option>
+                      <option value="Shipped">Shipped</option>
+                      <option value="Delivered">Delivered</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                    {!isPaid && (
+                      <span style={{ fontSize: '0.72rem', color: '#d32f2f', marginTop: '4px', display: 'block', fontWeight: 500 }}>
+                        Mark Payment Status as "Paid" to unlock Delivery Status changes.
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="form-field-row">
+                  <div className="form-field">
+                    <label>Date Ordered</label>
+                    <input 
+                      type="text" 
+                      value={editOrderItem.date}
+                      disabled
+                      className="modal-input"
+                      style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed', color: '#666' }}
+                    />
+                  </div>
+                </div>
+
+                <div className="modal-actions-row">
+                  <button type="button" className="btn-secondary" onClick={() => { setShowEditOrderModal(false); setEditOrderItem(null); }}>Cancel</button>
+                  <button type="submit" className="btn-primary">Save Changes</button>
+                </div>
+              </form>
             </div>
-            
-            <form onSubmit={handleEditOrderSubmit} className="modal-body-form">
-              <div className="form-field">
-                <label>Customer Name <span className="req">*</span></label>
-                <input 
-                  type="text" 
-                  value={editOrderItem.customer}
-                  onChange={(e) => setEditOrderItem({ ...editOrderItem, customer: e.target.value })}
-                  required 
-                  className="modal-input"
-                />
-              </div>
-
-              <div className="form-field-row">
-                <div className="form-field">
-                  <label>Order Amount (e.g. ₹2,499) <span className="req">*</span></label>
-                  <input 
-                    type="text" 
-                    value={editOrderItem.amount}
-                    onChange={(e) => setEditOrderItem({ ...editOrderItem, amount: e.target.value })}
-                    required 
-                    className="modal-input"
-                  />
-                </div>
-                
-                <div className="form-field">
-                  <label>Payment Method <span className="req">*</span></label>
-                  <select 
-                    value={editOrderItem.payment}
-                    onChange={(e) => setEditOrderItem({ ...editOrderItem, payment: e.target.value })}
-                    className="modal-input"
-                  >
-                    <option value="Razorpay">Razorpay</option>
-                    <option value="UPI">UPI</option>
-                    <option value="COD">COD</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-field-row">
-                <div className="form-field">
-                  <label>Status</label>
-                  <select 
-                    value={editOrderItem.status}
-                    onChange={(e) => setEditOrderItem({ ...editOrderItem, status: e.target.value })}
-                    className="modal-input"
-                  >
-                    <option value="Delivered">Delivered</option>
-                    <option value="Shipped">Shipped</option>
-                    <option value="Processing">Processing</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </select>
-                </div>
-
-                <div className="form-field">
-                  <label>Date Ordered</label>
-                  <input 
-                    type="text" 
-                    value={editOrderItem.date}
-                    onChange={(e) => setEditOrderItem({ ...editOrderItem, date: e.target.value })}
-                    className="modal-input"
-                  />
-                </div>
-              </div>
-
-              <div className="modal-actions-row">
-                <button type="button" className="btn-secondary" onClick={() => { setShowEditOrderModal(false); setEditOrderItem(null); }}>Cancel</button>
-                <button type="submit" className="btn-primary">Save Changes</button>
-              </div>
-            </form>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* --- VIEW ORDER MODAL DIALOG --- */}
       {showViewOrderModal && viewOrderItem && (
@@ -8775,6 +8803,18 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                     <span className="spec-lbl">Payment Method:</span>
                     <span className="spec-val bold">{viewOrderItem.payment}</span>
                   </div>
+                  <div className="spec-row">
+                    <span className="spec-lbl">Payment Status:</span>
+                    <span className={`orders-status-badge ${(viewOrderItem.paymentStatus || (viewOrderItem.payment === 'Razorpay' && viewOrderItem.status !== 'Pending Payment' ? 'Paid' : 'Pending')).toLowerCase()}`}>
+                      {viewOrderItem.paymentStatus || (viewOrderItem.payment === 'Razorpay' && viewOrderItem.status !== 'Pending Payment' ? 'Paid' : 'Pending')}
+                    </span>
+                  </div>
+                  {viewOrderItem.utrNumber && (
+                    <div className="spec-row">
+                      <span className="spec-lbl">UTR / Ref No:</span>
+                      <span className="spec-val bold text-orange" style={{ fontFamily: 'monospace' }}>{viewOrderItem.utrNumber}</span>
+                    </div>
+                  )}
                   <div className="spec-row">
                     <span className="spec-lbl">Date Ordered:</span>
                     <span className="spec-val bold">{viewOrderItem.date}</span>
