@@ -23,6 +23,8 @@ import {
   HiOutlineBadgeCheck,
   HiOutlineLightningBolt,
   HiOutlineCube,
+  HiOutlineMenu,
+  HiOutlineX,
 } from 'react-icons/hi'
 import {
   FaStar,
@@ -196,6 +198,7 @@ const AccordionItem = ({ q, a, icon: Icon, badgeBg = 'bg-[#2563EB]' }) => {
 
 export default function LandingPage() {
   const navigate = useNavigate()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [stats, setStats] = useState({
     totalSellers: 12,
     totalProducts: 56,
@@ -245,18 +248,18 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans antialiased overflow-x-hidden">
       {/* Premium Sticky Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs px-4 md:px-12 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs px-3 sm:px-6 md:px-12 py-2.5 sm:py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <img
             src={logoImg}
             alt="MithraShoppy Logo"
-            className="w-10 h-10 object-contain hover:scale-105 transition-transform"
+            className="w-8 h-8 sm:w-10 sm:h-10 object-contain hover:scale-105 transition-transform shrink-0"
           />
           <div className="flex flex-col">
-            <span className="text-[#08214D] font-black text-lg tracking-tight leading-none">
+            <span className="text-[#08214D] font-black text-base sm:text-lg tracking-tight leading-none whitespace-nowrap">
               Mithra<span className="text-[#DFB743]">Shoppy</span>
             </span>
-            <span className="text-[#08214D]/60 text-[10px] font-bold tracking-widest uppercase mt-0.5 flex items-center gap-1">
+            <span className="text-[#08214D]/60 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase mt-0.5 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
               SELLER HUB
             </span>
@@ -298,22 +301,60 @@ export default function LandingPage() {
         </div>
 
         {/* Right Action CTA */}
-        <div className="flex items-center gap-3">
-          <Link
-            to="/login"
-            className="md:hidden px-3.5 py-1.5 rounded-lg text-xs font-bold text-[#08214D] border border-slate-200"
-          >
-            Login
-          </Link>
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <Link
             to="/register"
-            className="px-5 py-2.5 rounded-xl text-xs font-extrabold text-[#051838] bg-gradient-to-r from-[#DFB743] via-[#F5D98B] to-[#E5C058] shadow-md shadow-[#DFB743]/25 hover:shadow-lg hover:shadow-[#DFB743]/35 hover:scale-[1.03] active:scale-[0.98] transition-all cursor-pointer flex items-center gap-1.5 border border-[#DFB743]/40"
+            className="px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-extrabold text-[#051838] bg-gradient-to-r from-[#DFB743] via-[#F5D98B] to-[#E5C058] shadow-md shadow-[#DFB743]/25 hover:shadow-lg transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 border border-[#DFB743]/40 whitespace-nowrap"
           >
-            <HiOutlineSparkles className="w-4 h-4 text-[#051838]" />
-            Become a Seller
+            <HiOutlineSparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#051838] shrink-0" />
+            <span>Become a Seller</span>
           </Link>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-1.5 sm:p-2 rounded-lg text-[#08214D] hover:bg-slate-100 transition-colors shrink-0"
+            aria-label="Toggle Navigation Menu"
+          >
+            {mobileMenuOpen ? <HiOutlineX className="w-6 h-6" /> : <HiOutlineMenu className="w-6 h-6" />}
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Navigation Drawer */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed top-[55px] left-0 right-0 z-40 bg-white border-b border-slate-200 p-4 space-y-3 shadow-lg animate-in slide-in-from-top duration-200">
+          <button
+            onClick={() => { scrollToSection('benefits'); setMobileMenuOpen(false); }}
+            className="block w-full text-left py-2 text-sm font-bold text-slate-700 hover:text-[#08214D]"
+          >
+            BENEFITS
+          </button>
+          <button
+            onClick={() => { scrollToSection('how-it-works'); setMobileMenuOpen(false); }}
+            className="block w-full text-left py-2 text-sm font-bold text-slate-700 hover:text-[#08214D]"
+          >
+            HOW IT WORKS
+          </button>
+          <button
+            onClick={() => { scrollToSection('testimonials'); setMobileMenuOpen(false); }}
+            className="block w-full text-left py-2 text-sm font-bold text-slate-700 hover:text-[#08214D]"
+          >
+            STORIES
+          </button>
+          <button
+            onClick={() => { scrollToSection('faq'); setMobileMenuOpen(false); }}
+            className="block w-full text-left py-2 text-sm font-bold text-slate-700 hover:text-[#08214D]"
+          >
+            FAQ
+          </button>
+          <Link
+            to="/login"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block w-full text-center py-2.5 rounded-xl bg-slate-100 font-bold text-sm text-[#08214D]"
+          >
+            SELLER LOGIN
+          </Link>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="pt-28 pb-16 md:pt-32 md:pb-20 px-4 md:px-12 bg-gradient-to-b from-[#FFFDF8] via-[#FFFBF2] to-[#F8FAFC] relative overflow-hidden">
@@ -391,63 +432,63 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4"
+                className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-4"
               >
                 {/* Stat 1 */}
-                <div className="bg-white p-3 rounded-2xl border border-slate-200/90 shadow-xs flex items-center gap-2.5 hover:shadow-md hover:border-[#DFB743]/40 transition-all">
-                  <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100 flex-shrink-0">
-                    <FaStore className="w-4 h-4 text-[#B45309]" />
+                <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-slate-200/90 shadow-xs flex items-center gap-2 sm:gap-2.5 hover:shadow-md hover:border-[#DFB743]/40 transition-all min-w-0">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100 shrink-0">
+                    <FaStore className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#B45309]" />
                   </div>
-                  <div>
-                    <p className="text-sm sm:text-base font-black text-[#08214D] leading-tight">
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-base font-black text-[#08214D] leading-tight truncate">
                       {stats.totalSellers}+
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 leading-tight">
+                    <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 leading-tight truncate">
                       Active Sellers
                     </p>
                   </div>
                 </div>
 
                 {/* Stat 2 */}
-                <div className="bg-white p-3 rounded-2xl border border-slate-200/90 shadow-xs flex items-center gap-2.5 hover:shadow-md hover:border-[#DFB743]/40 transition-all">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 flex-shrink-0">
-                    <HiOutlineClipboardList className="w-4.5 h-4.5 text-[#1E3A8A]" />
+                <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-slate-200/90 shadow-xs flex items-center gap-2 sm:gap-2.5 hover:shadow-md hover:border-[#DFB743]/40 transition-all min-w-0">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 shrink-0">
+                    <HiOutlineClipboardList className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#1E3A8A]" />
                   </div>
-                  <div>
-                    <p className="text-sm sm:text-base font-black text-[#08214D] leading-tight">
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-base font-black text-[#08214D] leading-tight truncate">
                       {stats.totalProducts}+
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 leading-tight">
+                    <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 leading-tight truncate">
                       Products Listed
                     </p>
                   </div>
                 </div>
 
                 {/* Stat 3 */}
-                <div className="bg-white p-3 rounded-2xl border border-slate-200/90 shadow-xs flex items-center gap-2.5 hover:shadow-md hover:border-[#DFB743]/40 transition-all">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 flex-shrink-0">
-                    <HiOutlineCurrencyRupee className="w-4.5 h-4.5 text-emerald-700" />
+                <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-slate-200/90 shadow-xs flex items-center gap-2 sm:gap-2.5 hover:shadow-md hover:border-[#DFB743]/40 transition-all min-w-0">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 shrink-0">
+                    <HiOutlineCurrencyRupee className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-emerald-700" />
                   </div>
-                  <div>
-                    <p className="text-sm sm:text-base font-black text-[#08214D] leading-tight">
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-base font-black text-[#08214D] leading-tight truncate">
                       ₹100Cr+
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 leading-tight">
+                    <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 leading-tight truncate">
                       Monthly Sales
                     </p>
                   </div>
                 </div>
 
                 {/* Stat 4 */}
-                <div className="bg-white p-3 rounded-2xl border border-slate-200/90 shadow-xs flex items-center gap-2.5 hover:shadow-md hover:border-[#DFB743]/40 transition-all">
-                  <div className="w-9 h-9 rounded-xl bg-[#DFB743]/15 text-[#051838] flex items-center justify-center border border-[#DFB743]/30 flex-shrink-0">
-                    <FaStar className="w-4 h-4 text-[#D97706]" />
+                <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-slate-200/90 shadow-xs flex items-center gap-2 sm:gap-2.5 hover:shadow-md hover:border-[#DFB743]/40 transition-all min-w-0">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#DFB743]/15 text-[#051838] flex items-center justify-center border border-[#DFB743]/30 shrink-0">
+                    <FaStar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#D97706]" />
                   </div>
-                  <div>
-                    <p className="text-sm sm:text-base font-black text-[#08214D] leading-tight">
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-base font-black text-[#08214D] leading-tight truncate">
                       4.8 ★
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 leading-tight">
+                    <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 leading-tight truncate">
                       Seller Rating
                     </p>
                   </div>
@@ -456,7 +497,7 @@ export default function LandingPage() {
             </div>
 
             {/* Right Side Illustration Image with Animated Floating Stat Cards */}
-            <div className="md:col-span-6 relative flex justify-center items-center z-10 mt-4 md:mt-0">
+            <div className="md:col-span-6 relative flex justify-center items-center z-10 mt-6 md:mt-0">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] h-[85%] bg-gradient-to-tr from-[#FDF8EA] via-[#FDE68A]/30 to-transparent blur-[60px] rounded-full pointer-events-none -z-10"></div>
 
               {/* Clean Illustration Container */}
@@ -472,23 +513,23 @@ export default function LandingPage() {
                   className="w-full h-auto max-w-lg lg:max-w-xl object-contain rounded-2xl drop-shadow-md"
                 />
 
-                {/* Animated Floating Card 1: Total Revenue Graphic Card (Fixed NaN fallback) */}
+                {/* Animated Floating Card 1: Total Revenue Graphic Card */}
                 <motion.div
                   animate={{ y: [0, -8, 0] }}
                   transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
-                  className="absolute -top-3 right-2 sm:right-6 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 z-20"
+                  className="absolute -top-3 right-1 sm:right-6 bg-white/95 backdrop-blur-md p-2.5 sm:p-3.5 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2 sm:gap-3 z-20 scale-90 sm:scale-100 origin-top-right"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold border border-emerald-100">
-                    <FaChartLine className="w-5 h-5 text-emerald-600" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold border border-emerald-100 shrink-0">
+                    <FaChartLine className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-1.5">
-                      <p className="text-xs font-bold text-slate-400">Total Sales Revenue</p>
-                      <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">
+                    <div className="flex items-center gap-1">
+                      <p className="text-[10px] sm:text-xs font-bold text-slate-400">Total Sales Revenue</p>
+                      <span className="text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">
                         +18.4%
                       </span>
                     </div>
-                    <p className="text-base font-black text-[#08214D]">
+                    <p className="text-xs sm:text-base font-black text-[#08214D]">
                       {formattedRevenue}
                     </p>
                   </div>
@@ -498,14 +539,14 @@ export default function LandingPage() {
                 <motion.div
                   animate={{ y: [0, 8, 0] }}
                   transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut', delay: 0.5 }}
-                  className="absolute -bottom-4 left-2 sm:left-6 bg-[#08214D] text-white p-3.5 rounded-2xl shadow-xl border border-[#DFB743]/40 flex items-center gap-3 z-20"
+                  className="absolute -bottom-4 left-1 sm:left-6 bg-[#08214D] text-white p-2.5 sm:p-3.5 rounded-2xl shadow-xl border border-[#DFB743]/40 flex items-center gap-2 sm:gap-3 z-20 scale-90 sm:scale-100 origin-bottom-left"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#DFB743] to-[#C29B27] text-[#051838] flex items-center justify-center font-black shadow-sm">
-                    <FaPercentage className="w-4 h-4 text-[#051838]" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#DFB743] to-[#C29B27] text-[#051838] flex items-center justify-center font-black shadow-sm shrink-0">
+                    <FaPercentage className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#051838]" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-[#DFB743]">0% Commission Fee</p>
-                    <p className="text-xs font-extrabold text-white">Keep 100% Profits</p>
+                    <p className="text-[10px] sm:text-xs font-bold text-[#DFB743]">0% Commission Fee</p>
+                    <p className="text-[11px] sm:text-xs font-extrabold text-white">Keep 100% Profits</p>
                   </div>
                 </motion.div>
               </motion.div>
@@ -517,64 +558,64 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="bg-[#08214D] text-white rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-xl border border-[#08214D]/40"
+            className="bg-[#08214D] text-white rounded-2xl md:rounded-3xl p-4 sm:p-6 shadow-xl border border-[#08214D]/40"
           >
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-2">
               {/* Feature 1 */}
-              <div className="flex items-center gap-3.5 pt-3 md:pt-0 md:px-4 first:px-0">
-                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#DFB743] flex-shrink-0 border border-white/10">
-                  <HiOutlineShieldCheck className="w-5 h-5 text-[#DFB743]" />
+              <div className="flex items-center gap-2.5 sm:gap-3.5 p-2 sm:p-0">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#DFB743] shrink-0 border border-white/10">
+                  <HiOutlineShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-[#DFB743]" />
                 </div>
-                <div>
-                  <h4 className="text-xs md:text-sm font-extrabold text-white tracking-tight">
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm font-extrabold text-white tracking-tight leading-tight truncate">
                     Secure & Reliable
                   </h4>
-                  <p className="text-[11px] text-slate-300 font-medium mt-0.5">
+                  <p className="text-[10px] sm:text-[11px] text-slate-300 font-medium mt-0.5 truncate">
                     100% Safe Transactions
                   </p>
                 </div>
               </div>
 
               {/* Feature 2 */}
-              <div className="flex items-center gap-3.5 pt-3 md:pt-0 md:px-4">
-                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#DFB743] flex-shrink-0 border border-white/10">
-                  <FaRocket className="w-4 h-4 text-[#DFB743]" />
+              <div className="flex items-center gap-2.5 sm:gap-3.5 p-2 sm:p-0">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#DFB743] shrink-0 border border-white/10">
+                  <FaRocket className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#DFB743]" />
                 </div>
-                <div>
-                  <h4 className="text-xs md:text-sm font-extrabold text-white tracking-tight">
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm font-extrabold text-white tracking-tight leading-tight truncate">
                     Easy Onboarding
                   </h4>
-                  <p className="text-[11px] text-slate-300 font-medium mt-0.5">
+                  <p className="text-[10px] sm:text-[11px] text-slate-300 font-medium mt-0.5 truncate">
                     Quick & Simple Process
                   </p>
                 </div>
               </div>
 
               {/* Feature 3 */}
-              <div className="flex items-center gap-3.5 pt-3 md:pt-0 md:px-4">
-                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#DFB743] flex-shrink-0 border border-white/10">
-                  <HiOutlineCreditCard className="w-5 h-5 text-[#DFB743]" />
+              <div className="flex items-center gap-2.5 sm:gap-3.5 p-2 sm:p-0">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#DFB743] shrink-0 border border-white/10">
+                  <HiOutlineCreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-[#DFB743]" />
                 </div>
-                <div>
-                  <h4 className="text-xs md:text-sm font-extrabold text-white tracking-tight">
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm font-extrabold text-white tracking-tight leading-tight truncate">
                     Timely Payments
                   </h4>
-                  <p className="text-[11px] text-slate-300 font-medium mt-0.5">
+                  <p className="text-[10px] sm:text-[11px] text-slate-300 font-medium mt-0.5 truncate">
                     Direct to Your Bank
                   </p>
                 </div>
               </div>
 
               {/* Feature 4 */}
-              <div className="flex items-center gap-3.5 pt-3 md:pt-0 md:px-4">
-                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#DFB743] flex-shrink-0 border border-white/10">
-                  <HiOutlineSupport className="w-5 h-5 text-[#DFB743]" />
+              <div className="flex items-center gap-2.5 sm:gap-3.5 p-2 sm:p-0">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#DFB743] shrink-0 border border-white/10">
+                  <HiOutlineSupport className="w-4 h-4 sm:w-5 sm:h-5 text-[#DFB743]" />
                 </div>
-                <div>
-                  <h4 className="text-xs md:text-sm font-extrabold text-white tracking-tight">
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm font-extrabold text-white tracking-tight leading-tight truncate">
                     24/7 Support
                   </h4>
-                  <p className="text-[11px] text-slate-300 font-medium mt-0.5">
+                  <p className="text-[10px] sm:text-[11px] text-slate-300 font-medium mt-0.5 truncate">
                     We're Here to Help
                   </p>
                 </div>

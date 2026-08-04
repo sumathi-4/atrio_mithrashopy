@@ -226,18 +226,35 @@ router.post('/check-eligibility', async (req, res) => {
         success: true, 
         available: false, 
         message: `No active lucky charm campaign found for your cart value. (Cart Subtotal: ₹${cartTotal})`,
-        cartTotal
       });
+    }
+    // 3. Enforce 1 spin per user per campaign
+    if (userId) {
+      const existingCampaignSpin = await LuckySpinHistory.findOne({
+        userId,
+        campaignId: activeCampaign._id
+      });
+
+      if (existingCampaignSpin) {
+        return res.json({ 
+          success: true, 
+          available: false, 
+          message: `You have already claimed a Lucky Charm reward for the "${activeCampaign.campaignName || activeCampaign.name || 'current'}" campaign. Only 1 spin per campaign is allowed per user.`,
+          cartTotal 
+        });
+      }
     }
 
     // Enforce campaign usage limits
     const spinCount = await LuckySpinHistory.countDocuments({ campaignId: activeCampaign._id });
     if (activeCampaign.campaignUsageLimit !== null && activeCampaign.campaignUsageLimit !== undefined) {
       if (spinCount >= activeCampaign.campaignUsageLimit) {
+        // Auto mark as Exhausted
+        await Campaign.findByIdAndUpdate(activeCampaign._id, { status: 'Exhausted' });
         return res.json({ 
           success: true, 
           available: false, 
-          message: 'This campaign has reached its usage limit.',
+          message: `This campaign (${activeCampaign.campaignName}) has reached its usage limit (${spinCount}/${activeCampaign.campaignUsageLimit} claimed) and is now exhausted.`,
           cartTotal
         });
       }
@@ -430,15 +447,14 @@ router.post('/spin', async (req, res) => {
     const spinCount = await LuckySpinHistory.countDocuments({ campaignId: activeCampaign._id });
     if (activeCampaign.campaignUsageLimit !== null && activeCampaign.campaignUsageLimit !== undefined) {
       if (spinCount >= activeCampaign.campaignUsageLimit) {
+        await Campaign.findByIdAndUpdate(activeCampaign._id, { status: 'Exhausted' });
         return res.json({ success: false, message: 'This campaign usage limit has been reached.' });
       }
     }
 
     // Fetch and revalidate candidates that are part of the session
-    const candidateProducts = await Product.find({
+    let candidateProducts = await Product.find({
       _id: { $in: wheelSession.wheelProducts },
-      includeInLuckyCharm: true,
-      luckyStock: { $gt: 0 },
       status: 'Active',
       $or: [
         { vendorId: null },
@@ -455,15 +471,14 @@ router.post('/spin', async (req, res) => {
     const randomIndex = Math.floor(Math.random() * candidateProducts.length);
     const selectedProduct = candidateProducts[randomIndex];
 
-    // Atomically decrement lucky stock
-    const wonProduct = await Product.findOneAndUpdate(
-      { _id: selectedProduct._id, luckyStock: { $gt: 0 } },
-      { $inc: { luckyStock: -1 } },
-      { returnDocument: 'after' }
-    );
-
-    if (!wonProduct) {
-      return res.json({ success: true, won: false, message: 'Selected product is out of stock. Try again!' });
+    // Decrement stock if luckyStock > 0
+    let wonProduct = selectedProduct;
+    if (selectedProduct.luckyStock !== undefined && selectedProduct.luckyStock !== null && selectedProduct.luckyStock > 0) {
+      wonProduct = await Product.findOneAndUpdate(
+        { _id: selectedProduct._id, luckyStock: { $gt: 0 } },
+        { $inc: { luckyStock: -1 } },
+        { returnDocument: 'after' }
+      ) || selectedProduct;
     }
 
     // Mark session as used
@@ -494,10 +509,18 @@ router.post('/spin', async (req, res) => {
       cartTotal,
       rewardBudget: activeCampaign.rewardBudget,
       wonProductPrice: wonProduct.price,
-      luckyStockBefore: wonProduct.luckyStock + 1,
-      luckyStockAfter: wonProduct.luckyStock,
+      luckyStockBefore: (wonProduct.luckyStock || 0) + 1,
+      luckyStockAfter: wonProduct.luckyStock || 0,
       spinDuration: Date.now() - startTime
     });
+
+    // Auto mark Exhausted if usage limit reached now
+    const totalAfterSpin = await LuckySpinHistory.countDocuments({ campaignId: activeCampaign._id });
+    if (activeCampaign.campaignUsageLimit !== null && activeCampaign.campaignUsageLimit !== undefined) {
+      if (totalAfterSpin >= activeCampaign.campaignUsageLimit) {
+        await Campaign.findByIdAndUpdate(activeCampaign._id, { status: 'Exhausted' });
+      }
+    }
 
     res.json({
       success: true,
@@ -597,7 +620,25 @@ router.get('/stats', authenticate, requireAdmin, async (req, res) => {
 router.get('/campaigns', authenticate, requireAdmin, async (req, res) => {
   try {
     const campaigns = await Campaign.find().lean();
-    res.json({ success: true, campaigns });
+    const mapped = await Promise.all(campaigns.map(async (c) => {
+      const usedCount = await LuckySpinHistory.countDocuments({ campaignId: c._id });
+      const limit = c.campaignUsageLimit !== null && c.campaignUsageLimit !== undefined ? c.campaignUsageLimit : null;
+      const remainingUsage = limit !== null ? Math.max(0, limit - usedCount) : null;
+
+      let status = c.status;
+      if (limit !== null && usedCount >= limit && c.status === 'Active') {
+        status = 'Exhausted';
+        await Campaign.findByIdAndUpdate(c._id, { status: 'Exhausted' });
+      }
+
+      return {
+        ...c,
+        status,
+        usedCount,
+        remainingUsage
+      };
+    }));
+    res.json({ success: true, campaigns: mapped });
   } catch (err) {
     console.error('Fetch campaigns error:', err);
     res.status(500).json({ success: false, message: 'Failed to fetch campaigns.' });

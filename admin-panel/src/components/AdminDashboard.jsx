@@ -5643,11 +5643,33 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
                                   <td style={{ padding: '13px 18px' }}>{c.maxOrderValue !== null && c.maxOrderValue !== undefined ? `₹${c.maxOrderValue}` : '—'}</td>
                                   <td style={{ padding: '13px 18px', fontWeight: 600 }}>₹{c.rewardBudget}</td>
                                   <td style={{ padding: '13px 18px' }}>{c.wheelProductCount}</td>
-                                  <td style={{ padding: '13px 18px' }}>{c.campaignUsageLimit !== null && c.campaignUsageLimit !== undefined ? c.campaignUsageLimit : 'Unlimited'}</td>
+                                  <td style={{ padding: '13px 18px', fontWeight: 600 }}>
+                                    {c.campaignUsageLimit !== null && c.campaignUsageLimit !== undefined ? (
+                                      <div>
+                                        <span style={{ color: (c.remainingUsage === 0 || c.status === 'Exhausted') ? '#ef4444' : '#1a237e', fontWeight: 700 }}>
+                                          {c.remainingUsage !== undefined && c.remainingUsage !== null ? `${c.remainingUsage} Left` : c.campaignUsageLimit}
+                                        </span>
+                                        <span style={{ fontSize: '0.73rem', color: '#666', display: 'block' }}>
+                                          ({c.usedCount || 0} / {c.campaignUsageLimit} used)
+                                        </span>
+                                      </div>
+                                    ) : (
+                                      <span style={{ color: '#666' }}>Unlimited</span>
+                                    )}
+                                  </td>
                                   <td style={{ padding: '13px 18px', color: '#666' }}>{new Date(c.startDate).toLocaleDateString()}</td>
                                   <td style={{ padding: '13px 18px', color: '#666' }}>{new Date(c.endDate).toLocaleDateString()}</td>
                                   <td style={{ padding: '13px 18px' }}>
-                                    <span style={{ padding: '3px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, backgroundColor: c.status === 'Active' ? '#eef6e6' : c.status === 'Completed' ? '#eef2fd' : '#fdf2f2', color: c.status === 'Active' ? '#16a34a' : c.status === 'Completed' ? '#2b87e3' : '#ef4444' }}>{c.status}</span>
+                                    <span style={{ 
+                                      padding: '3px 10px', 
+                                      borderRadius: '20px', 
+                                      fontSize: '0.75rem', 
+                                      fontWeight: 700, 
+                                      backgroundColor: c.status === 'Active' ? '#eef6e6' : c.status === 'Completed' ? '#eef2fd' : c.status === 'Exhausted' ? '#fff3cd' : '#fdf2f2', 
+                                      color: c.status === 'Active' ? '#16a34a' : c.status === 'Completed' ? '#2b87e3' : c.status === 'Exhausted' ? '#856404' : '#ef4444' 
+                                    }}>
+                                      {c.status}
+                                    </span>
                                   </td>
                                   <td style={{ padding: '13px 18px', textAlign: 'right' }}>
                                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>

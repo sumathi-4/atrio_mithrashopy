@@ -230,10 +230,12 @@ router.get('/all-vendor-products', async (req, res) => {
   }
 });
 
-// PUT /api/admin/products/:id/status — approve or reject a vendor product
-router.put('/products/:id/status', async (req, res) => {
+// PUT/PATCH /api/admin/products/:id/status — approve or reject a vendor product
+const handleProductStatusUpdate = async (req, res) => {
   try {
-    const productId = parseInt(req.params.id, 10);
+    const rawId = req.params.id;
+    const productId = parseInt(rawId, 10);
+    const query = !isNaN(productId) ? { $or: [{ id: productId }, { id: rawId }] } : { id: rawId };
     const { status, rejectReason, adminNotes } = req.body;
 
     if (!['Active', 'Rejected'].includes(status)) {
@@ -244,7 +246,7 @@ router.put('/products/:id/status', async (req, res) => {
     if (rejectReason !== undefined) update.rejectReason = rejectReason;
 
     const product = await Product.findOneAndUpdate(
-      { id: productId },
+      query,
       { $set: update },
       { returnDocument: 'after' }
     ).lean();
@@ -253,25 +255,29 @@ router.put('/products/:id/status', async (req, res) => {
 
     // Event-driven notification to vendor
     if (product.vendorId) {
-      if (status === 'Active') {
-        await notifyVendor(
-          product.vendorId, 'product_approved',
-          '✅ Product Approved',
-          `Your product "${product.name}" has been approved and is now live on the marketplace.`,
-          { productId, productName: product.name }
-        );
-      } else {
-        await notifyVendor(
-          product.vendorId, 'product_rejected',
-          '❌ Product Not Approved',
-          `Your product "${product.name}" was not approved. Reason: ${rejectReason || 'Not specified'}. ${adminNotes ? `Admin notes: ${adminNotes}` : ''} Please update the product and resubmit.`,
-          { productId, productName: product.name, rejectReason }
-        );
+      try {
+        if (status === 'Active') {
+          await notifyVendor(
+            product.vendorId, 'product_approved',
+            '✅ Product Approved',
+            `Your product "${product.name}" has been approved and is now live on the marketplace.`,
+            { productId: product.id, productName: product.name }
+          );
+        } else {
+          await notifyVendor(
+            product.vendorId, 'product_rejected',
+            '❌ Product Not Approved',
+            `Your product "${product.name}" was not approved. Reason: ${rejectReason || 'Not specified'}. ${adminNotes ? `Admin notes: ${adminNotes}` : ''} Please update the product and resubmit.`,
+            { productId: product.id, productName: product.name, rejectReason }
+          );
+        }
+      } catch (notifErr) {
+        console.error('Failed to notify vendor:', notifErr);
       }
 
       // Send product status update email to vendor
       try {
-        const vendorDoc = await Vendor.findOne({ id: product.vendorId }).lean();
+        const vendorDoc = await Vendor.findOne({ $or: [{ id: product.vendorId }, { id: String(product.vendorId) }] }).lean();
         if (vendorDoc && vendorDoc.email) {
           const { sendVendorProductApprovalEmail } = require('../services/emailService');
           await sendVendorProductApprovalEmail(vendorDoc.email, vendorDoc.businessName, product, status, rejectReason);
@@ -286,7 +292,10 @@ router.put('/products/:id/status', async (req, res) => {
     console.error('Admin update product status error:', err);
     return res.status(500).json({ success: false, message: 'Failed to update product status.' });
   }
-});
+};
+
+router.put('/products/:id/status', handleProductStatusUpdate);
+router.patch('/products/:id/status', handleProductStatusUpdate);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PLATFORM STATS (Admin dashboard overview)

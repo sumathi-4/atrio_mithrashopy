@@ -324,7 +324,8 @@ export const apiService = {
 
   async updateOrderStatus(id, status) {
     try {
-      const res = await apiRequest(`/api/orders/${encodeURIComponent(id)}`, 'PUT', { status });
+      const cleanId = String(id || '').replace(/^#/, '').trim();
+      const res = await apiRequest(`/api/orders/${encodeURIComponent(cleanId)}`, 'PUT', { status });
       return res.order;
     } catch (err) {
       if (isBackendReachable) throw err;

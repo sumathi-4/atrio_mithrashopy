@@ -80,8 +80,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                   className="w-9 h-9 rounded-xl object-cover shadow-md flex-shrink-0 border border-[#DFB743]/40"
                 />
               ) : (
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#DFB743] via-[#F5D98B] to-[#C29B27] flex items-center justify-center font-black text-[#051838] text-sm shadow-md flex-shrink-0">
-                  {getInitials(vendor?.ownerName || vendor?.businessName)}
+                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center p-1 shadow-md flex-shrink-0 border border-[#DFB743]/40">
+                  <img
+                    src={logoImg}
+                    alt="MithraShoppy Logo"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
               )}
               <div className="overflow-hidden">

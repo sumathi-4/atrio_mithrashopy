@@ -4,16 +4,21 @@ const { authenticate, requireAdmin } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-const formatAttributesForFrontend = (attributesArray) => {
-  const obj = {};
-  if (Array.isArray(attributesArray)) {
-    attributesArray.forEach(attr => {
+const formatAttributesForFrontend = (attributes) => {
+  if (!attributes) return {};
+  if (Array.isArray(attributes)) {
+    const obj = {};
+    attributes.forEach(attr => {
       if (attr && attr.key) {
         obj[attr.key] = attr.value;
       }
     });
+    return obj;
   }
-  return obj;
+  if (typeof attributes === 'object') {
+    return attributes;
+  }
+  return {};
 };
 
 const formatAttributesForDatabase = (attributesObj) => {
@@ -48,11 +53,6 @@ router.get('/', async (req, res) => {
     const filter = {};
     if (!isAdmin) {
       filter.status = 'Active';
-      filter.$or = [
-        { vendorId: null },
-        { vendorId: "" },
-        { vendorId: { $exists: false } }
-      ];
     }
 
     // Fetch raw products. Images are now stored as small path strings instead of huge base64.
@@ -94,11 +94,6 @@ router.get('/:id', async (req, res) => {
     const filter = { id };
     if (!isAdmin) {
       filter.status = 'Active';
-      filter.$or = [
-        { vendorId: null },
-        { vendorId: "" },
-        { vendorId: { $exists: false } }
-      ];
     }
 
     const rawProduct = await Product.findOne(filter).lean();

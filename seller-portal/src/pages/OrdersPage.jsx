@@ -121,7 +121,7 @@ export default function OrdersPage() {
                 <div className="flex items-start justify-between mb-4 pb-3 border-b border-slate-100">
                   <div>
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Order ID</span>
-                    <h3 className="font-black text-[#0B1A40] text-sm">#{o.id}</h3>
+                    <h3 className="font-black text-[#0B1A40] text-sm">#{String(o.id || '').replace(/^#+/, '')}</h3>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-[11px] font-black border ${badgeColors[o.status] || 'bg-slate-100 text-slate-700 border-slate-200'}`}>
                     {o.status}

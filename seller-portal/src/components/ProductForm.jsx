@@ -235,8 +235,8 @@ export default function ProductForm({
       const specsObj = {};
       const customObj = {};
 
-      const standardAttrKeys = (categoryConfig.attributes || []).map(a => a.toLowerCase());
-      const standardSpecKeys = (categoryConfig.specs || []).map(s => s.toLowerCase());
+      const standardAttrKeys = (categoryConfig.attributes || []).map(a => String(a || '').toLowerCase());
+      const standardSpecKeys = (categoryConfig.specs || []).map(s => String(s || '').toLowerCase());
 
       // SEO Fields
       setSeoMetaTitle(product.attributes.metaTitle || '');
@@ -311,7 +311,7 @@ export default function ProductForm({
       setDynamicAttributes(prev => {
         const attrsObj = {};
         (categoryConfig.attributes || []).forEach(attrName => {
-          const found = existingAttrsArray.find(a => a.key.toLowerCase() === attrName.toLowerCase());
+          const found = existingAttrsArray.find(a => a && a.key && String(a.key).toLowerCase() === String(attrName || '').toLowerCase());
           attrsObj[attrName] = prev[attrName] !== undefined ? prev[attrName] : (found ? found.value : '');
         });
         return attrsObj;
@@ -320,7 +320,7 @@ export default function ProductForm({
       setDynamicSpecs(prev => {
         const specsObj = {};
         (categoryConfig.specs || []).forEach(specName => {
-          const found = existingAttrsArray.find(a => a.key.toLowerCase() === specName.toLowerCase());
+          const found = existingAttrsArray.find(a => a && a.key && String(a.key).toLowerCase() === String(specName || '').toLowerCase());
           specsObj[specName] = prev[specName] !== undefined ? prev[specName] : (found ? found.value : '');
         });
         return specsObj;

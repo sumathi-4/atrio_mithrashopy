@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { v4: uuidv4 } = require('uuid');
+const mongoose = require('mongoose');
 const { Vendor, Product, Order, VendorNotification } = require('../db/database');
 const { authenticateVendor } = require('../middleware/authMiddleware');
 
@@ -637,9 +637,8 @@ router.get('/orders', authenticateVendor, async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PUT /api/vendors/orders/:id/status
-// ─────────────────────────────────────────────────────────────────────────────
-router.put('/orders/:id/status', authenticateVendor, async (req, res) => {
+// PUT & PATCH /api/vendors/orders/:id/status
+const handleVendorOrderStatusUpdate = async (req, res) => {
   try {
     const { status } = req.body;
     const validStatuses = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
@@ -647,8 +646,27 @@ router.put('/orders/:id/status', authenticateVendor, async (req, res) => {
       return res.status(400).json({ success: false, message: `Status must be one of: ${validStatuses.join(', ')}` });
     }
 
+    const rawParam = decodeURIComponent(req.params.id || '').trim();
+    const cleanId = rawParam.replace(/^#/, '').trim();
+
+    const possibleIds = Array.from(new Set([
+      rawParam,
+      cleanId,
+      `#${cleanId}`,
+      `%23${cleanId}`
+    ])).filter(Boolean);
+
+    // Build clean String-only Mongoose query (no ObjectId CastError!)
+    const orConditions = possibleIds.map(val => ({ id: String(val) }));
+
+    if (mongoose.Types.ObjectId.isValid(rawParam)) {
+      orConditions.push({ _id: rawParam });
+    }
+
+    const idFilter = { $or: orConditions };
+
     const order = await Order.findOneAndUpdate(
-      { id: req.params.id },
+      idFilter,
       { $set: { status } },
       { returnDocument: 'after' }
     ).lean();
@@ -683,7 +701,9 @@ router.put('/orders/:id/status', authenticateVendor, async (req, res) => {
 
       if (customerEmail) {
         const { sendOrderStatusEmail } = require('../services/emailService');
-        await sendOrderStatusEmail(customerEmail, customerName, order);
+        sendOrderStatusEmail(customerEmail, customerName, order).catch(mailErr => {
+          console.error('Failed to send order status email:', mailErr);
+        });
       } else {
         console.warn(`⚠️ Could not find customer email for order #${order.id}. Skipping notification.`);
       }
@@ -696,7 +716,37 @@ router.put('/orders/:id/status', authenticateVendor, async (req, res) => {
     console.error('Vendor update order status error:', err);
     return res.status(500).json({ success: false, message: 'Failed to update order status.' });
   }
-});
+};
+
+const handleVendorGetOrderStatus = async (req, res) => {
+  try {
+    const rawParam = decodeURIComponent(req.params.id || '').trim();
+    const cleanId = rawParam.replace(/^#/, '').trim();
+    const possibleIds = Array.from(new Set([
+      rawParam,
+      cleanId,
+      `#${cleanId}`,
+      `%23${cleanId}`
+    ])).filter(Boolean);
+
+    const orConditions = possibleIds.map(val => ({ id: String(val) }));
+    if (mongoose.Types.ObjectId.isValid(rawParam)) {
+      orConditions.push({ _id: rawParam });
+    }
+
+    const order = await Order.findOne({ $or: orConditions }).lean();
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found.' });
+
+    return res.json({ success: true, status: order.status, order });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Failed to fetch order status.' });
+  }
+};
+
+router.get('/orders/:id/status', authenticateVendor, handleVendorGetOrderStatus);
+router.put('/orders/:id/status', authenticateVendor, handleVendorOrderStatusUpdate);
+router.patch('/orders/:id/status', authenticateVendor, handleVendorOrderStatusUpdate);
+router.post('/orders/:id/status', authenticateVendor, handleVendorOrderStatusUpdate);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/vendors/analytics — Dashboard KPIs + charts

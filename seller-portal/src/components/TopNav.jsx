@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { clearAuth } from '../store/authSlice'
 import { HiOutlineBell, HiOutlineMenu, HiOutlineUser, HiOutlineLogout, HiOutlineCheckCircle } from 'react-icons/hi'
 import { motion, AnimatePresence } from 'framer-motion'
+import logoImg from '../assets/logo.png'
 
 const pageTitles = {
   '/dashboard': 'Dashboard',
@@ -114,8 +115,12 @@ const TopNav = ({ sidebarOpen, setSidebarOpen }) => {
                 className="w-8 h-8 rounded-xl object-cover shadow-xs flex-shrink-0 border border-slate-200"
               />
             ) : (
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#DFB743] via-[#F5D98B] to-[#C29B27] flex items-center justify-center text-xs font-black text-[#051838] shadow-xs">
-                {getInitials(vendor?.ownerName)}
+              <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center p-1 shadow-xs flex-shrink-0 border border-slate-200">
+                <img
+                  src={logoImg}
+                  alt="MithraShoppy Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
             )}
             <div className="hidden sm:block text-left">

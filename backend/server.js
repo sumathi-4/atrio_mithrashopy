@@ -1,20 +1,10 @@
 require('dotenv').config();
 
 process.on('uncaughtException', (err) => {
-  console.error('CRITICAL UNCAUGHT EXCEPTION:', err && err.stack ? err.stack : err);
-  process.stderr.write('', () => {
-    process.stdout.write('', () => {
-      process.exit(1);
-    });
-  });
+  console.error('UNCAUGHT EXCEPTION LOGGED (Server Kept Alive):', err && err.stack ? err.stack : err);
 });
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('CRITICAL UNHANDLED REJECTION:', reason && reason.stack ? reason.stack : reason);
-  process.stderr.write('', () => {
-    process.stdout.write('', () => {
-      process.exit(1);
-    });
-  });
+  console.error('UNHANDLED REJECTION LOGGED (Server Kept Alive):', reason && reason.stack ? reason.stack : reason);
 });
 
 const express = require('express');

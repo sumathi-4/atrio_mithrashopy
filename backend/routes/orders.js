@@ -40,8 +40,23 @@ if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
 
 async function decreaseProductStock(orderItems, productSummary) {
   try {
-    for (const item of orderItems) {
-      const dbProduct = await Product.findOne({ id: item.productId });
+    for (const item of (orderItems || [])) {
+      const targetId = item.productId !== undefined ? item.productId : item.id;
+      const numId = parseInt(targetId, 10);
+      const queryConditions = [];
+
+      if (targetId !== undefined && targetId !== null && targetId !== '') {
+        queryConditions.push({ id: targetId });
+        if (!isNaN(numId)) queryConditions.push({ id: numId });
+        if (typeof targetId === 'string' && targetId.length === 24) queryConditions.push({ _id: targetId });
+      }
+      if (item.name) {
+        queryConditions.push({ name: item.name });
+      }
+
+      if (queryConditions.length === 0) continue;
+
+      const dbProduct = await Product.findOne({ $or: queryConditions });
       if (dbProduct) {
         let updatedStock = Math.max(0, (dbProduct.stock || 0) - item.quantity);
         let updatedSales = (dbProduct.sales || 0) + item.quantity;
@@ -66,13 +81,14 @@ async function decreaseProductStock(orderItems, productSummary) {
         const isLowStock = updatedStock <= lowStockThreshold;
 
         await Product.updateOne(
-          { id: dbProduct.id },
+          { _id: dbProduct._id },
           { 
             $set: { 
               stock: updatedStock,
               sales: updatedSales,
               variants,
-              isLowStock
+              isLowStock,
+              status: dbProduct.status || 'Active'
             } 
           }
         );
@@ -80,19 +96,20 @@ async function decreaseProductStock(orderItems, productSummary) {
     }
 
     // Fallback legacy logic if no items array was passed (e.g. legacy client)
-    if (orderItems.length === 0 && productSummary) {
+    if ((!orderItems || orderItems.length === 0) && productSummary) {
       const matchedProd = await Product.findOne({ name: productSummary });
       if (matchedProd) {
         const updatedStock = Math.max(0, (matchedProd.stock || 1) - 1);
         const lowStockThreshold = matchedProd.lowStockThreshold || 5;
         const isLowStock = updatedStock <= lowStockThreshold;
         await Product.updateOne(
-          { id: matchedProd.id },
+          { _id: matchedProd._id },
           { 
             $set: { 
               sales: (matchedProd.sales || 0) + 1,
               stock: updatedStock,
-              isLowStock
+              isLowStock,
+              status: matchedProd.status || 'Active'
             } 
           }
         );
@@ -105,8 +122,23 @@ async function decreaseProductStock(orderItems, productSummary) {
 
 async function increaseProductStock(orderItems, productSummary) {
   try {
-    for (const item of orderItems) {
-      const dbProduct = await Product.findOne({ id: item.productId });
+    for (const item of (orderItems || [])) {
+      const targetId = item.productId !== undefined ? item.productId : item.id;
+      const numId = parseInt(targetId, 10);
+      const queryConditions = [];
+
+      if (targetId !== undefined && targetId !== null && targetId !== '') {
+        queryConditions.push({ id: targetId });
+        if (!isNaN(numId)) queryConditions.push({ id: numId });
+        if (typeof targetId === 'string' && targetId.length === 24) queryConditions.push({ _id: targetId });
+      }
+      if (item.name) {
+        queryConditions.push({ name: item.name });
+      }
+
+      if (queryConditions.length === 0) continue;
+
+      const dbProduct = await Product.findOne({ $or: queryConditions });
       if (dbProduct) {
         let updatedStock = (dbProduct.stock || 0) + item.quantity;
         let updatedSales = Math.max(0, (dbProduct.sales || 0) - item.quantity);
@@ -130,32 +162,34 @@ async function increaseProductStock(orderItems, productSummary) {
         const isLowStock = updatedStock <= lowStockThreshold;
 
         await Product.updateOne(
-          { id: dbProduct.id },
+          { _id: dbProduct._id },
           { 
             $set: { 
               stock: updatedStock,
               sales: updatedSales,
               variants,
-              isLowStock
+              isLowStock,
+              status: dbProduct.status || 'Active'
             } 
           }
         );
       }
     }
 
-    if (orderItems.length === 0 && productSummary) {
+    if ((!orderItems || orderItems.length === 0) && productSummary) {
       const matchedProd = await Product.findOne({ name: productSummary });
       if (matchedProd) {
         const updatedStock = (matchedProd.stock || 0) + 1;
         const lowStockThreshold = matchedProd.lowStockThreshold || 5;
         const isLowStock = updatedStock <= lowStockThreshold;
         await Product.updateOne(
-          { id: matchedProd.id },
+          { _id: matchedProd._id },
           { 
             $set: { 
               sales: Math.max(0, (matchedProd.sales || 0) - 1),
               stock: updatedStock,
-              isLowStock
+              isLowStock,
+              status: matchedProd.status || 'Active'
             } 
           }
         );
