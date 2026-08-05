@@ -73,18 +73,18 @@ const TopNav = ({ sidebarOpen, setSidebarOpen }) => {
 
       {/* Page Title & Subtitle */}
       <div>
-        <h1 className="text-base sm:text-lg font-black text-[#0B1A40] tracking-tight leading-none">
+        <h1 className="text-lg sm:text-xl font-bold text-[#0B1A40] tracking-tight leading-none">
           {getTitle()}
         </h1>
-        <p className="text-[11px] text-slate-400 font-semibold hidden sm:block mt-1">
-          Welcome back, <span className="text-[#0B1A40] font-extrabold">{vendor?.ownerName?.split(' ')[0] || 'Vendor'}</span>!
+        <p className="text-xs text-slate-500 font-normal hidden sm:block mt-1">
+          Welcome back, <span className="text-[#0B1A40] font-semibold">{vendor?.ownerName?.split(' ')[0] || 'Vendor'}</span>!
         </p>
       </div>
 
       {/* Right Action Icons */}
       <div className="ml-auto flex items-center gap-3">
         {/* Status Badge */}
-        <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-black">
+        <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
           <HiOutlineCheckCircle className="w-3.5 h-3.5" />
           <span>{vendor?.status || 'Approved'}</span>
         </div>

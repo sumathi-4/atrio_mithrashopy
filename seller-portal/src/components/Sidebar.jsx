@@ -62,10 +62,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             <div className="flex items-center gap-3">
               <img src={logoImg} alt="MithraShoppy Logo" className="w-9 h-9 object-contain drop-shadow-xs" />
               <div className="flex flex-col">
-                <span className="text-white font-black text-lg tracking-tight leading-none">
+                <span className="text-white font-bold text-lg tracking-tight leading-none">
                   Mithra<span className="text-[#DFB743]">Shoppy</span>
                 </span>
-                <span className="text-[#DFB743]/90 text-[9px] font-black tracking-widest uppercase mt-0.5">
+                <span className="text-[#DFB743]/90 text-[10px] font-semibold tracking-widest uppercase mt-0.5">
                   SELLER PORTAL
                 </span>
               </div>
@@ -89,10 +89,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 </div>
               )}
               <div className="overflow-hidden">
-                <p className="text-white text-xs font-black truncate">
+                <p className="text-white text-sm font-semibold truncate">
                   {vendor?.ownerName || 'Vendor'}
                 </p>
-                <p className="text-[11px] truncate font-semibold text-[#DFB743]">
+                <p className="text-xs truncate font-medium text-[#DFB743]">
                   {vendor?.businessName || 'Business'}
                 </p>
               </div>
@@ -109,9 +109,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                   if (window.innerWidth < 1024) setIsOpen(false)
                 }}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition-all duration-200 relative ${
+                  `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 relative ${
                     isActive
-                      ? 'text-[#DFB743] bg-gradient-to-r from-[#DFB743]/20 to-[#DFB743]/5 border-l-4 border-[#DFB743] shadow-inner'
+                      ? 'text-[#DFB743] font-bold bg-[#DFB743]/10 border-l-4 border-[#DFB743] shadow-inner'
                       : 'text-slate-300 hover:text-white hover:bg-white/5'
                   }`
                 }
@@ -119,7 +119,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 <Icon className="w-5 h-5 flex-shrink-0" />
                 <span>{label}</span>
                 {hasbadge && unreadCount > 0 && (
-                  <span className="ml-auto text-[10px] font-black rounded-full px-2 py-0.5 bg-red-500 text-white shadow-sm">
+                  <span className="ml-auto text-[10px] font-bold rounded-full px-2 py-0.5 bg-red-500 text-white shadow-sm">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
@@ -131,7 +131,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           <div className="px-3 pb-6 border-t border-white/10 pt-4">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold text-slate-300 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 cursor-pointer"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 cursor-pointer"
             >
               <HiOutlineLogout className="w-5 h-5 flex-shrink-0" />
               <span>Logout</span>

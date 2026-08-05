@@ -743,10 +743,43 @@ const handleVendorGetOrderStatus = async (req, res) => {
   }
 };
 
+const handleVendorPaymentStatusUpdate = async (req, res) => {
+  try {
+    const { paymentStatus } = req.body;
+    const validStatuses = ['Paid', 'Pending', 'Failed'];
+    if (!validStatuses.includes(paymentStatus)) {
+      return res.status(400).json({ success: false, message: `Payment status must be one of: ${validStatuses.join(', ')}` });
+    }
+
+    const rawParam = decodeURIComponent(req.params.id || '').trim();
+    const cleanId = rawParam.replace(/^#/, '').trim();
+    const possibleIds = Array.from(new Set([rawParam, cleanId, `#${cleanId}`, `%23${cleanId}`])).filter(Boolean);
+
+    const orConditions = possibleIds.map(val => ({ id: String(val) }));
+    if (mongoose.Types.ObjectId.isValid(rawParam)) {
+      orConditions.push({ _id: rawParam });
+    }
+
+    const order = await Order.findOneAndUpdate(
+      { $or: orConditions },
+      { $set: { paymentStatus } },
+      { returnDocument: 'after' }
+    ).lean();
+
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found.' });
+    return res.json({ success: true, order });
+  } catch (err) {
+    console.error('Vendor update payment status error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to update payment status.' });
+  }
+};
+
 router.get('/orders/:id/status', authenticateVendor, handleVendorGetOrderStatus);
 router.put('/orders/:id/status', authenticateVendor, handleVendorOrderStatusUpdate);
 router.patch('/orders/:id/status', authenticateVendor, handleVendorOrderStatusUpdate);
 router.post('/orders/:id/status', authenticateVendor, handleVendorOrderStatusUpdate);
+router.put('/orders/:id/payment-status', authenticateVendor, handleVendorPaymentStatusUpdate);
+router.patch('/orders/:id/payment-status', authenticateVendor, handleVendorPaymentStatusUpdate);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/vendors/analytics — Dashboard KPIs + charts

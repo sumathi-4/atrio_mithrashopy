@@ -57,51 +57,49 @@ export default function NotificationsPage() {
   const getIcon = (type) => {
     switch (type) {
       case 'vendor_approved':
-        return <HiOutlineCheckCircle className="w-5 h-5 text-emerald-600" />
-      case 'vendor_rejected':
-        return <HiOutlineXCircle className="w-5 h-5 text-rose-600" />
       case 'product_approved':
-        return <HiOutlineCube className="w-5 h-5 text-emerald-600" />
+        return <HiOutlineCheckCircle className="w-5 h-5 text-[#047857]" />
+      case 'vendor_rejected':
       case 'product_rejected':
-        return <HiOutlineCube className="w-5 h-5 text-rose-600" />
+        return <HiOutlineXCircle className="w-5 h-5 text-[#BE123C]" />
       case 'new_order':
-        return <HiOutlineShoppingCart className="w-5 h-5 text-blue-600" />
+        return <HiOutlineShoppingCart className="w-5 h-5 text-[#1D4ED8]" />
       case 'low_stock':
-        return <HiOutlineExclamation className="w-5 h-5 text-[#DFB743]" />
+        return <HiOutlineExclamation className="w-5 h-5 text-[#B45309]" />
       default:
-        return <HiOutlineInformationCircle className="w-5 h-5 text-slate-600" />
+        return <HiOutlineInformationCircle className="w-5 h-5 text-[#0B1A40]" />
     }
   }
 
-  const getBg = (type) => {
+  const getIconContainerBg = (type) => {
     switch (type) {
       case 'vendor_approved':
       case 'product_approved':
-        return 'bg-emerald-50'
+        return 'bg-[#ECFDF5] border-[#A7F3D0]'
       case 'vendor_rejected':
       case 'product_rejected':
-        return 'bg-rose-50'
+        return 'bg-[#FFE4E6] border-[#FECDD3]'
       case 'new_order':
-        return 'bg-blue-50'
+        return 'bg-[#EFF6FF] border-[#BFDBFE]'
       case 'low_stock':
-        return 'bg-amber-50'
+        return 'bg-[#FFFBEB] border-[#FDE68A]'
       default:
-        return 'bg-slate-50'
+        return 'bg-slate-100 border-slate-200'
     }
   }
 
   return (
     <div className="space-y-6 font-sans antialiased max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/95 backdrop-blur-md p-6 rounded-[28px] border border-slate-100 shadow-xl shadow-slate-200/40">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#0B1A40] tracking-tight">Notifications</h1>
-          <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-1">Stay updated with approvals, order placements and system alerts.</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0B1A40] tracking-tight">System Notifications</h1>
+          <p className="text-xs sm:text-sm font-normal text-slate-500 mt-1">Stay informed on product approvals, new customer orders and inventory status alerts.</p>
         </div>
         {notifications.some(n => !n.isRead) && (
           <button
             onClick={handleMarkAllRead}
-            className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-black text-[#0B1A40] bg-white hover:bg-slate-50 transition-colors shadow-xs cursor-pointer"
+            className="px-4 py-2.5 border border-[#DFB743]/50 rounded-2xl text-xs font-semibold text-[#0B1A40] bg-[#FFFDF5] hover:bg-[#DFB743] hover:text-[#051838] transition-all shadow-xs cursor-pointer shrink-0"
           >
             Mark all as read
           </button>
@@ -109,20 +107,20 @@ export default function NotificationsPage() {
       </div>
 
       {error && (
-        <div className="bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-2xl text-xs font-bold">
+        <div className="bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-2xl text-xs font-medium shadow-sm">
           ⚠️ {error}
         </div>
       )}
 
       {loading ? (
-        <div className="text-center py-20 text-slate-400 text-xs font-bold">Loading notifications...</div>
+        <div className="text-center py-20 text-slate-500 text-xs font-medium">Loading notifications feed...</div>
       ) : notifications.length === 0 ? (
         <div className="text-center py-16 bg-white/95 backdrop-blur-md rounded-[28px] border border-slate-100 shadow-xl shadow-slate-200/50">
-          <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#DFB743] flex items-center justify-center text-3xl mx-auto mb-3 border border-amber-100">
+          <div className="w-16 h-16 rounded-2xl bg-[#FFFBEB] text-[#DFB743] flex items-center justify-center text-3xl mx-auto mb-3 border border-[#FDE68A] shadow-xs">
             <HiOutlineBell className="w-8 h-8 text-[#DFB743]" />
           </div>
-          <h3 className="text-lg font-black text-[#0B1A40] mb-1">All caught up!</h3>
-          <p className="text-xs font-semibold text-slate-400">No new notifications at this time.</p>
+          <h3 className="text-lg font-extrabold text-[#0B1A40] mb-1">All caught up!</h3>
+          <p className="text-xs font-normal text-slate-500">No unread or pending notifications at this time.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -130,37 +128,41 @@ export default function NotificationsPage() {
             <div
               key={n._id}
               onClick={() => handleMarkRead(n._id, n.isRead)}
-              className={`p-5 rounded-[24px] border transition-all cursor-pointer flex gap-4 items-start ${
-                n.isRead
-                  ? 'bg-white/90 border-slate-100 hover:bg-slate-50/70 shadow-sm'
-                  : 'bg-amber-50/30 border-amber-200/70 shadow-md hover:bg-amber-50/50'
+              className={`p-5 rounded-[22px] border-2 transition-all cursor-pointer flex gap-4 items-start shadow-sm hover:shadow-md ${
+                !n.isRead
+                  ? 'bg-[#FFFDF7] border-[#DFB743] shadow-md hover:bg-[#FFFBF0]'
+                  : 'bg-white border-slate-200/80 hover:bg-slate-50/80'
               }`}
             >
-              <div className={`p-3 rounded-2xl shrink-0 ${getBg(n.type)} shadow-xs`}>
+              <div className={`w-11 h-11 rounded-2xl shrink-0 border flex items-center justify-center ${getIconContainerBg(n.type)} shadow-xs`}>
                 {getIcon(n.type)}
               </div>
               <div className="flex-1 space-y-1">
-                <div className="flex justify-between items-start gap-2">
-                  <h4 className={`text-sm font-black ${!n.isRead ? 'text-[#0B1A40]' : 'text-slate-700'}`}>{n.title}</h4>
-                  <span className="text-[10px] font-bold text-slate-400 shrink-0">
+                <div className="flex justify-between items-center gap-2">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm sm:text-base font-bold text-[#0B1A40] tracking-tight">{n.title}</h4>
+                    {!n.isRead && (
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#DFB743] shrink-0 shadow-xs" title="Unread" />
+                    )}
+                  </div>
+                  <span className="text-xs font-normal text-slate-400 shrink-0">
                     {n.createdAt ? new Date(n.createdAt).toLocaleDateString('en-IN', {
                       month: 'short',
                       day: 'numeric',
                       hour: 'numeric',
                       minute: 'numeric',
-                    }) : ''}
+                    }) : 'Just now'}
                   </span>
                 </div>
-                <p className="text-xs font-semibold text-slate-500 leading-relaxed">{n.message}</p>
+                <p className="text-xs sm:text-sm font-medium text-slate-700 leading-relaxed">
+                  {n.message}
+                </p>
                 {n.metadata?.rejectReason && (
-                  <div className="mt-2 text-xs bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-xl font-bold">
-                    Rejection Reason: {n.metadata.rejectReason}
-                  </div>
+                  <p className="text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 p-2.5 rounded-xl mt-2">
+                    Reason: {n.metadata.rejectReason}
+                  </p>
                 )}
               </div>
-              {!n.isRead && (
-                <div className="w-2.5 h-2.5 rounded-full bg-[#DFB743] mt-2 shrink-0 shadow-xs" />
-              )}
             </div>
           ))}
         </div>

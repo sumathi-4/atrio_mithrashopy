@@ -34,6 +34,10 @@ export const updateOrderStatus = (id, status) => {
   const cleanId = String(id || '').replace(/^#/, '').trim()
   return api.put(`/api/vendors/orders/${encodeURIComponent(cleanId)}/status`, { status })
 }
+export const updatePaymentStatus = (id, paymentStatus) => {
+  const cleanId = String(id || '').replace(/^#/, '').trim()
+  return api.put(`/api/vendors/orders/${encodeURIComponent(cleanId)}/payment-status`, { paymentStatus })
+}
 export const changeVendorPassword = (data) => api.put('/api/vendors/change-password', data)
 export const getVendorProfile = () => api.get('/api/vendors/profile')
 export const updateVendorProfile = (data) => api.put('/api/vendors/profile', data)

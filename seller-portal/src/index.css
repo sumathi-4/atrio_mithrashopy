@@ -165,13 +165,58 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(223, 183, 67, 0.15);
+  box-shadow: 0 0 0 3px rgba(223, 183, 67, 0.2);
 }
 
-/* Accordion animation */
-.accordion-content {
-  overflow: hidden;
-  transition: max-height 0.3s ease, opacity 0.3s ease;
+/* Card utilities inspired by Image 1 */
+.navy-gold-card {
+  background: linear-gradient(135deg, #0B1A40 0%, #06122E 100%);
+  border: 1px solid rgba(223, 183, 67, 0.6);
+  box-shadow: 0 12px 30px rgba(11, 26, 64, 0.15);
+  color: #FFFFFF;
+}
+
+.navy-gold-card .card-title {
+  color: #DFB743;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.navy-gold-card .card-value {
+  color: #DFB743;
+  font-weight: 900;
+}
+
+/* Table utilities inspired by Image 2 */
+.mithra-table-header {
+  background-color: #0B1A40 !important;
+  color: #DFB743 !important;
+}
+
+.mithra-table-header th {
+  color: #DFB743 !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Glassmorphism cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 16px 32px -8px rgba(11, 26, 64, 0.06);
+}
+
+.glass-card-hover {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 40px -10px rgba(11, 26, 64, 0.1);
 }
 
 /* ===================================================================

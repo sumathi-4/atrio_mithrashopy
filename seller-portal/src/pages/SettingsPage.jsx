@@ -45,105 +45,109 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6 font-sans antialiased max-w-3xl mx-auto">
-      {/* Header */}
-      <div>
+      {/* Header Banner */}
+      <div className="bg-white/95 backdrop-blur-md p-6 rounded-[28px] border border-slate-100 shadow-xl shadow-slate-200/40">
         <h1 className="text-2xl sm:text-3xl font-black text-[#0B1A40] tracking-tight">Account Settings</h1>
-        <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-1">Manage authentication credentials, status badges and account deletion.</p>
+        <p className="text-xs sm:text-sm font-extrabold text-slate-400 mt-1">Manage authentication credentials, account status indicators and password security.</p>
       </div>
 
       {toast && (
-        <div className={`p-4 rounded-2xl text-xs font-bold border ${
+        <div className={`p-4 rounded-2xl text-xs font-bold border shadow-sm ${
           toast.type === 'error' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200'
         }`}>
           {toast.msg}
         </div>
       )}
 
-      {/* Account Info Section */}
-      <div className="bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-[28px] border border-slate-100 shadow-2xl shadow-slate-200/60 space-y-5">
+      {/* Account Credentials Card - Exact Image 4 Styling */}
+      <div className="bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-[28px] border border-slate-100 shadow-2xl shadow-slate-200/60 space-y-6">
         <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-          <div className="p-2.5 bg-emerald-50 rounded-2xl border border-emerald-100 text-emerald-600 shadow-xs">
-            <HiOutlineShieldCheck className="w-5 h-5 text-emerald-600" />
+          <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-100 text-emerald-600 shadow-xs">
+            <HiOutlineShieldCheck className="w-6 h-6 text-emerald-600" />
           </div>
-          <h2 className="text-base font-black text-[#0B1A40]">Account Credentials</h2>
+          <h2 className="text-lg font-black text-[#0B1A40]">Account Credentials</h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] font-black uppercase tracking-wider text-slate-400">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div>
-            <span>Login Email</span>
-            <p className="font-bold text-[#0B1A40] lowercase text-xs mt-1.5">{vendor.email || 'N/A'}</p>
+            <span className="text-xs font-extrabold uppercase tracking-wider text-[#B48B1E] block mb-1">LOGIN EMAIL</span>
+            <p className="font-bold text-[#0B1A40] lowercase text-sm sm:text-base">{vendor.email || 'seller@mithrashoppy.com'}</p>
           </div>
           <div>
-            <span>Account Status</span>
-            <div className="mt-1.5">
-              <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-[11px] font-black">
-                {vendor.status || 'Active'}
+            <span className="text-xs font-extrabold uppercase tracking-wider text-[#B48B1E] block mb-1">ACCOUNT STATUS</span>
+            <div className="mt-1">
+              <span className="bg-[#D1FAE5] text-[#047857] border border-[#6EE7B7] px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-2xs">
+                {vendor.status || 'APPROVED'}
               </span>
             </div>
           </div>
           <div>
-            <span>Joined Date</span>
-            <p className="font-bold text-[#0B1A40] text-xs mt-1.5">
-              {vendor.createdAt ? new Date(vendor.createdAt).toLocaleDateString('en-IN', { dateStyle: 'medium' }) : 'June 2026'}
+            <span className="text-xs font-extrabold uppercase tracking-wider text-[#B48B1E] block mb-1">JOINED DATE</span>
+            <p className="font-bold text-[#0B1A40] text-sm sm:text-base uppercase tracking-wide">
+              {vendor.createdAt ? new Date(vendor.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric', day: 'numeric' }).toUpperCase() : '1 AUG 2026'}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Change Password Section */}
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-[28px] border border-slate-100 shadow-2xl shadow-slate-200/60 space-y-5">
+      {/* Change Password Card - Exact Image 4 Styling */}
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-[28px] border border-slate-100 shadow-2xl shadow-slate-200/60 space-y-6">
         <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-          <div className="p-2.5 bg-blue-50 rounded-2xl border border-blue-100 text-blue-600 shadow-xs">
-            <HiOutlineKey className="w-5 h-5 text-blue-600" />
+          <div className="p-3 bg-blue-50 rounded-2xl border border-blue-100 text-blue-600 shadow-xs">
+            <HiOutlineKey className="w-6 h-6 text-blue-600" />
           </div>
-          <h2 className="text-base font-black text-[#0B1A40]">Change Password</h2>
+          <h2 className="text-lg font-bold text-[#0B1A40]">Change Password</h2>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2">Current Password</label>
+            <label className="block text-xs font-extrabold text-[#B48B1E] uppercase tracking-wider mb-1.5">
+              CURRENT PASSWORD
+            </label>
             <input
               type="password"
               placeholder="••••••••"
               {...register('currentPassword', { required: 'Current password is required' })}
-              className="w-full max-w-md px-4 py-3 bg-slate-50/70 border border-slate-200/80 rounded-2xl text-xs font-bold text-[#0B1A40] focus:outline-none focus:border-[#DFB743] focus:bg-white transition-all"
+              className="w-full px-4 py-3 bg-white border border-slate-300 rounded-2xl text-sm font-semibold text-[#0B1A40] placeholder-slate-400 focus:outline-none focus:border-[#DFB743] transition-all shadow-xs"
             />
-            {errors.currentPassword && <p className="text-rose-600 text-xs font-bold mt-1">{errors.currentPassword.message}</p>}
+            {errors.currentPassword && <p className="text-xs font-bold text-rose-500 mt-1">{errors.currentPassword.message}</p>}
           </div>
 
           <div>
-            <label className="block text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2">New Password</label>
+            <label className="block text-xs font-extrabold text-[#B48B1E] uppercase tracking-wider mb-1.5">
+              NEW PASSWORD
+            </label>
             <input
               type="password"
               placeholder="At least 6 characters"
-              {...register('newPassword', {
-                required: 'New password is required',
-                minLength: { value: 6, message: 'Password must be at least 6 characters' }
-              })}
-              className="w-full max-w-md px-4 py-3 bg-slate-50/70 border border-slate-200/80 rounded-2xl text-xs font-bold text-[#0B1A40] focus:outline-none focus:border-[#DFB743] focus:bg-white transition-all"
+              {...register('newPassword', { required: 'New password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
+              className="w-full px-4 py-3 bg-white border border-slate-300 rounded-2xl text-sm font-semibold text-[#0B1A40] placeholder-slate-400 focus:outline-none focus:border-[#DFB743] transition-all shadow-xs"
             />
-            {errors.newPassword && <p className="text-rose-600 text-xs font-bold mt-1">{errors.newPassword.message}</p>}
+            {errors.newPassword && <p className="text-xs font-bold text-rose-500 mt-1">{errors.newPassword.message}</p>}
           </div>
 
           <div>
-            <label className="block text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2">Confirm New Password</label>
+            <label className="block text-xs font-extrabold text-[#B48B1E] uppercase tracking-wider mb-1.5">
+              CONFIRM NEW PASSWORD
+            </label>
             <input
               type="password"
               placeholder="••••••••"
-              {...register('confirmPassword', { required: 'Please confirm your new password' })}
-              className="w-full max-w-md px-4 py-3 bg-slate-50/70 border border-slate-200/80 rounded-2xl text-xs font-bold text-[#0B1A40] focus:outline-none focus:border-[#DFB743] focus:bg-white transition-all"
+              {...register('confirmPassword', { required: 'Please confirm password' })}
+              className="w-full px-4 py-3 bg-white border border-slate-300 rounded-2xl text-sm font-semibold text-[#0B1A40] placeholder-slate-400 focus:outline-none focus:border-[#DFB743] transition-all shadow-xs"
             />
-            {errors.confirmPassword && <p className="text-rose-600 text-xs font-bold mt-1">{errors.confirmPassword.message}</p>}
+            {errors.confirmPassword && <p className="text-xs font-bold text-rose-500 mt-1">{errors.confirmPassword.message}</p>}
           </div>
         </div>
 
-        <div className="pt-4 border-t border-slate-100">
+        {/* Gold CTA Button matching Image 4 */}
+        <div className="pt-2">
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-3 rounded-2xl font-black text-xs text-[#051838] bg-gradient-to-r from-[#DFB743] via-[#F5D98B] to-[#E5C058] shadow-lg shadow-[#DFB743]/25 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+            className="px-8 py-3.5 rounded-2xl text-xs sm:text-sm font-black text-[#051838] bg-gradient-to-r from-[#DFB743] via-[#F5D98B] to-[#E5C058] shadow-lg shadow-[#DFB743]/30 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all border border-[#DFB743]/50 cursor-pointer disabled:opacity-50"
           >
-            {loading ? 'Updating...' : 'Update Password'}
+            {loading ? 'Updating Password...' : 'Update Password'}
           </button>
         </div>
       </form>
