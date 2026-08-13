@@ -3475,8 +3475,8 @@ ul {
   max-width: 1300px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: 1.3fr 1fr 1fr 1.1fr;
+  gap: 36px;
   align-items: start;
 }
 

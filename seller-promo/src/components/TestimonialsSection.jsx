@@ -44,50 +44,43 @@ export default function TestimonialsSection() {
     return () => clearInterval(timer)
   }, [])
 
-  // Video Autoplay WITH AUDIO when entering section viewport
+  // Video Autoplay WITH AUDIO when entering section & STOP completely when scrolling away
   useEffect(() => {
     const videoEl = videoRef.current
     if (!videoEl) return
 
-    const handleUserGesture = () => {
-      if (videoEl) {
-        videoEl.muted = false
-        videoEl.play().catch(() => {})
-      }
-    }
+    videoEl.muted = false
+    videoEl.volume = 1.0
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Attempt playing WITH audio (unmuted)
+            // ENTERING SECTION: Play video with unmuted audio
             videoEl.muted = false
-            const playPromise = videoEl.play()
-
-            if (playPromise !== undefined) {
-              playPromise.catch(() => {
-                // If browser blocks unmuted autoplay prior to user interaction, fallback to muted play
-                videoEl.muted = true
-                videoEl.play().catch(() => {})
-
-                // Unmute automatically on first click/interaction
-                window.addEventListener('click', handleUserGesture, { once: true })
-                window.addEventListener('touchstart', handleUserGesture, { once: true })
-              })
-            }
+            videoEl.volume = 1.0
+            videoEl.play().catch(() => {
+              // If initial unmuted play is held by browser autoplay policy, retry muted then unmute
+              videoEl.muted = true
+              videoEl.play().catch(() => {})
+            })
           } else {
+            // SCROLLING AWAY TO OTHER SECTIONS: Immediately pause and stop audio completely
             videoEl.pause()
+            videoEl.currentTime = 0
           }
         })
       },
-      { threshold: 0.35 }
+      { threshold: 0.25 } // Triggers as soon as 25% of section enters/leaves viewport
     )
 
     observer.observe(videoEl)
+
     return () => {
       observer.disconnect()
-      window.removeEventListener('click', handleUserGesture)
-      window.removeEventListener('touchstart', handleUserGesture)
+      if (videoEl) {
+        videoEl.pause()
+      }
     }
   }, [])
 
@@ -150,7 +143,7 @@ export default function TestimonialsSection() {
                         </div>
                       </div>
 
-                      <span className="font-mono text-xs font-black text-[#DFB743] bg-white/10 border border-[#DFB743]/40 px-3 py-1 rounded-full shrink-0">
+                      <span className="font-mono text-xs font-black text-[#DFB743] bg-[#DFB743]/10 border border-[#DFB743]/40 px-3 py-1 rounded-full shrink-0">
                         {item.salesGrowth}
                       </span>
                     </div>
@@ -178,7 +171,7 @@ export default function TestimonialsSection() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Video Player Unmuted Playback */}
+          {/* RIGHT COLUMN: Video Player Unmuted Auto-Play on Viewport & Stop on Exit */}
           <div className="lg:col-span-6">
             <div className="w-full rounded-3xl overflow-hidden glass-panel border-2 border-[#DFB743]/60 shadow-2xl gold-glow relative">
               

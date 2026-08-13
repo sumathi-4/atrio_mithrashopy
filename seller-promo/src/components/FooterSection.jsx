@@ -1,11 +1,10 @@
 import React from 'react'
-import { getSellerPortalUrl, scrollToSection } from '../utils/navigation'
+import { getSellerPortalUrl, getUserStorefrontUrl, scrollToSection } from '../utils/navigation'
 import { MEDIA } from '../utils/cloudinary'
 
-const storefrontUrl = 'https://mithrashopy-frontend.onrender.com'
-
-export default function FooterSection({ sellerPortalUrl }) {
+export default function FooterSection({ sellerPortalUrl, userStorefrontUrl }) {
   const activePortalUrl = sellerPortalUrl || getSellerPortalUrl()
+  const activeStorefrontUrl = userStorefrontUrl || getUserStorefrontUrl()
   const sellerLoginUrl = `${activePortalUrl}/login`
   const sellerRegisterUrl = `${activePortalUrl}/register`
 
@@ -62,7 +61,7 @@ export default function FooterSection({ sellerPortalUrl }) {
             </h3>
             <ul className="space-y-2.5 text-sm font-semibold text-slate-700">
               <li>
-                <a href={storefrontUrl} target="_blank" rel="noopener noreferrer" aria-label="Visit main customer storefront website" className="hover:text-[#B3871E] transition-colors flex items-center gap-1.5 font-bold text-slate-900">
+                <a href={activeStorefrontUrl} target="_blank" rel="noopener noreferrer" aria-label="Visit main customer storefront website" className="hover:text-[#B3871E] transition-colors flex items-center gap-1.5 font-bold text-slate-900">
                   <span>Visit Customer Storefront</span>
                   <svg className="w-4 h-4 text-[#B3871E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -98,7 +97,7 @@ export default function FooterSection({ sellerPortalUrl }) {
               Existing Seller Login
             </a>
             <span>•</span>
-            <a href={storefrontUrl} target="_blank" rel="noopener noreferrer" className="hover:text-[#B3871E] transition-colors font-semibold">
+            <a href={activeStorefrontUrl} target="_blank" rel="noopener noreferrer" className="hover:text-[#B3871E] transition-colors font-semibold">
               Main Storefront
             </a>
           </div>

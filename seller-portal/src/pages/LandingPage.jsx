@@ -1170,6 +1170,14 @@ export default function LandingPage() {
             >
               FAQ
             </button>
+            <a
+              href={import.meta.env.VITE_SELLER_PROMO_URL || 'http://localhost:5177'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#DFB743] hover:text-white font-bold transition-colors cursor-pointer"
+            >
+              Seller Promo Hub 🚀
+            </a>
           </div>
         </div>
       </footer>

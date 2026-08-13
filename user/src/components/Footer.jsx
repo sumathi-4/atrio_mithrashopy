@@ -209,6 +209,41 @@ export default function Footer({ authUser }) {
             </ul>
           </div>
 
+          {/* Sell With Us Column */}
+          <div className="footer-links-col">
+            <h4 className="footer-col-heading">
+              <span className="footer-col-heading-icon">
+                <Users size={14} />
+              </span>
+              Sell With Us
+            </h4>
+            <ul className="footer-nav-list">
+              <li>
+                <a
+                  href={import.meta.env.VITE_SELLER_PROMO_URL || 'http://localhost:5177'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-nav-link"
+                  style={{ color: '#DFB743', fontWeight: '700' }}
+                >
+                  <ChevronRight size={12} className="footer-nav-chevron" />
+                  Become a Seller (0% Commission) 🚀
+                </a>
+              </li>
+              <li>
+                <a
+                  href={import.meta.env.VITE_SELLER_PORTAL_URL || 'http://localhost:5176'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-nav-link"
+                >
+                  <ChevronRight size={12} className="footer-nav-chevron" />
+                  Seller Portal Login
+                </a>
+              </li>
+            </ul>
+          </div>
+
         </div>
       </div>
 
