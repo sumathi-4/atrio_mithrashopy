@@ -1,44 +1,45 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Banknote, BadgePercent, Users, Camera, UploadCloud, Headphones } from 'lucide-react'
+import { Users, Layers, ShieldCheck, BarChart3, Headphones, ArrowRight } from 'lucide-react'
 import { getSellerPortalUrl } from '../utils/navigation'
+import { MEDIA } from '../utils/cloudinary'
+import SectionReveal from './SectionReveal'
 
 const features = [
   {
-    icon: Banknote,
-    stat: '7-Day Direct Payouts',
-    title: 'Fast & Reliable Settlement',
-    description: 'Get automated weekly payouts directly into your bank account with zero payment delays.',
-  },
-  {
-    icon: BadgePercent,
-    stat: '0% Upfront Listing Fees',
-    title: 'Zero Financial Risk',
-    description: 'List unlimited products across multiple categories without paying any initial catalog fees.',
-  },
-  {
     icon: Users,
-    stat: 'High-Intent Premium Buyers',
-    title: 'Reach Ethnic & Gift Shoppers',
-    description: 'Connect directly with millions of verified customers looking for authentic Indian crafts & fashion.',
+    bg: 'bg-indigo-50 text-indigo-600',
+    border: 'border-indigo-100',
+    title: 'Reach More Customers',
+    description: 'Access millions of shoppers across India and grow your brand beyond boundaries.',
   },
   {
-    icon: Camera,
-    stat: 'Free Photography Guidance',
-    title: 'Professional Cataloging Help',
-    description: 'Access expert image guidelines and catalog optimization support to make your products stand out.',
+    icon: Layers,
+    bg: 'bg-emerald-50 text-emerald-600',
+    border: 'border-emerald-100',
+    title: 'Easy Product Management',
+    description: 'Add, edit and manage your products, inventory and prices with ease.',
   },
   {
-    icon: UploadCloud,
-    stat: 'Bulk Upload & Inventory Tools',
-    title: 'Effortless Store Management',
-    description: 'Import thousands of product SKUs seamlessly via CSV and sync stock in real time.',
+    icon: ShieldCheck,
+    bg: 'bg-teal-50 text-teal-600',
+    border: 'border-teal-100',
+    title: 'Secure Payments',
+    description: 'Safe, reliable and timely payments directly to your account.',
+  },
+  {
+    icon: BarChart3,
+    bg: 'bg-blue-50 text-blue-600',
+    border: 'border-blue-100',
+    title: 'Real-Time Analytics',
+    description: 'Track your sales, orders and performance with advanced real-time insights.',
   },
   {
     icon: Headphones,
-    stat: 'Dedicated Onboarding Manager',
-    title: '1-on-1 Personalized Support',
-    description: 'Get assigned a dedicated account specialist to assist you from signup to your very first sale.',
+    bg: 'bg-purple-50 text-purple-600',
+    border: 'border-purple-100',
+    title: 'Dedicated Support',
+    description: 'Get priority support from our seller success team whenever you need.',
   },
 ]
 
@@ -47,13 +48,13 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08, // ~80ms stagger
+      staggerChildren: 0.1,
     },
   },
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
@@ -65,78 +66,222 @@ export default function WhyUsSection({ sellerPortalUrl }) {
   const activePortalUrl = sellerPortalUrl || getSellerPortalUrl()
   const registerUrl = `${activePortalUrl}/register`
 
+  // Live countdown timer state (23 Days, 14 Hours, 48 Mins, 32 Secs)
+  const [timer, setTimer] = useState({ days: 23, hours: 14, mins: 48, secs: 32 })
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion) return
+
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev.secs > 0) return { ...prev, secs: prev.secs - 1 }
+        if (prev.mins > 0) return { ...prev, mins: 59, secs: 59 }
+        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, mins: 59, secs: 59 }
+        if (prev.days > 0) return { ...prev, days: prev.days - 1, hours: 23, mins: 59, secs: 59 }
+        return prev
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleExploreFeatures = (e) => {
+    e.preventDefault()
+    const target = document.getElementById('how-it-works')
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
-    <section id="why-us" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#FAF8F5] text-[#051838] relative overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block text-xs font-bold text-[#B48B1E] uppercase tracking-widest bg-[#FFFBEB] border border-[#FDE68A] px-4 py-1.5 rounded-full mb-3 shadow-xs">
-            Why Partner With Us
-          </span>
-          <h2 className="font-serif text-3xl sm:text-5xl font-extrabold text-[#0B1A40] tracking-tight leading-tight mb-4">
-            Why Sellers Choose <span className="gold-gradient-text">MithraShoppy</span>
-          </h2>
-          <p className="font-sans text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
-            Everything you need to showcase your authentic products, scale sales, and build a flourishing brand across India.
-          </p>
+    <SectionReveal
+      id="why-us"
+      watermark="WHY SELL"
+      className="py-20 lg:py-28 px-4 sm:px-6 lg:px-12 bg-[#FAF8F5] text-slate-900 border-b border-slate-200/60 overflow-hidden"
+    >
+      <div className="max-w-[1400px] mx-auto space-y-16">
+        
+        {/* Top Part: 2-Column Why Choose MithraShoppy Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          
+          {/* Left Column: Heading, Subtitle & Action Button (Cols 4) */}
+          <div className="lg:col-span-4 space-y-5 text-left">
+            <span className="font-mono text-xs sm:text-sm font-black uppercase tracking-widest text-[#B3871E] block">
+              WHY SELL ON MITHRASHOPPY?
+            </span>
+
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.18]">
+              Everything You Need to Grow Your Business
+            </h2>
+
+            <p className="font-sans text-base sm:text-lg text-slate-600 font-medium leading-relaxed max-w-md">
+              Powerful tools and features designed to help you scale faster and smarter.
+            </p>
+
+            <div className="pt-2">
+              <a
+                href="#how-it-works"
+                onClick={handleExploreFeatures}
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-white hover:bg-[#F5F0E6] text-slate-900 font-bold text-sm sm:text-base rounded-2xl border border-[#DFB743]/60 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-102 active:scale-98 cursor-pointer"
+              >
+                <span>Explore All Features</span>
+                <ArrowRight className="w-4 h-4 text-[#B3871E]" />
+              </a>
+            </div>
+          </div>
+
+          {/* Right Column: 5 Cards Grid Row (Cols 8) */}
+          <div className="lg:col-span-8 w-full">
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+              className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 sm:gap-5"
+            >
+              {features.map((feature, idx) => {
+                const Icon = feature.icon
+                return (
+                  <motion.div
+                    key={idx}
+                    variants={itemVariants}
+                    className="bg-white rounded-3xl p-6 border border-slate-100/80 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between h-full group"
+                  >
+                    <div>
+                      {/* Icon Circle */}
+                      <div className={`w-13 h-13 rounded-full ${feature.bg} flex items-center justify-center mb-6 shadow-xs group-hover:scale-110 transition-transform duration-300`}>
+                        <Icon className="w-6 h-6 stroke-[2.2]" />
+                      </div>
+
+                      {/* Card Title */}
+                      <h3 className="font-sans text-base font-extrabold text-slate-900 tracking-tight leading-snug mb-2 group-hover:text-[#B3871E] transition-colors">
+                        {feature.title}
+                      </h3>
+
+                      {/* Card Description */}
+                      <p className="font-sans text-xs sm:text-sm font-medium text-slate-500 leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </motion.div>
+          </div>
+
         </div>
 
-        {/* 6-Card Responsive Grid with Framer Motion Stagger */}
+        {/* Bottom Part: 0% COMMISSION Limited Time Offer Banner (Matching Reference Image) */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-14"
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="w-full bg-gradient-to-r from-[#FFF5DC] via-[#FFF9EC] to-[#FFF5DD] border border-[#F6E5B8] rounded-3xl p-6 sm:p-10 shadow-lg relative overflow-hidden"
         >
-          {features.map((item, index) => {
-            const Icon = item.icon
-            return (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                whileHover={{ y: -6, boxShadow: '0 20px 35px -10px rgba(11, 26, 64, 0.12)' }}
-                className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-md transition-all duration-300 flex flex-col justify-between group"
-              >
-                <div>
-                  {/* Icon Header */}
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#FFFBEB] via-[#FEF3C7] to-[#FDE68A] border border-[#DFB743]/40 flex items-center justify-center text-[#051838] mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="w-7 h-7 stroke-[2]" />
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            {/* Left: 3D Gold 0% Gift Box Graphic (Cols 4) */}
+            <div className="lg:col-span-4 flex justify-center lg:justify-start items-center">
+              <div className="relative w-48 sm:w-60 md:w-72 aspect-square flex items-center justify-center">
+                <img
+                  src={MEDIA.GOLD_0_PERCENT}
+                  alt="3D Gold 0% Commission Gift Box"
+                  className="w-full h-full object-contain drop-shadow-xl hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+            </div>
 
-                  {/* Bold Stat / Claim */}
-                  <div className="inline-block text-xs font-extrabold text-[#047857] bg-[#E6F4EA] border border-[#A7F3D0] px-3 py-1 rounded-full uppercase tracking-wider mb-2">
-                    {item.stat}
-                  </div>
+            {/* Middle: Text Information (Cols 4) */}
+            <div className="lg:col-span-4 text-center lg:text-left space-y-3">
+              <span className="font-mono text-xs font-bold text-[#C2931F] uppercase tracking-widest block">
+                LIMITED TIME OFFER
+              </span>
 
-                  {/* Card Title */}
-                  <h3 className="font-sans text-xl font-bold text-[#0B1A40] tracking-tight mb-2">
-                    {item.title}
-                  </h3>
+              <h3 className="font-serif text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                0% COMMISSION
+              </h3>
 
-                  {/* One-line description */}
-                  <p className="font-sans text-sm text-slate-600 font-normal leading-relaxed">
-                    {item.description}
-                  </p>
+              <p className="font-sans text-xs sm:text-sm font-medium text-slate-600 leading-relaxed max-w-md mx-auto lg:mx-0">
+                Start selling with zero commission for a limited time and keep 100% of your earnings!
+              </p>
+            </div>
+
+            {/* Right: Live Countdown Card + Action Button (Cols 4) */}
+            <div className="lg:col-span-4 w-full">
+              <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-md border border-slate-100/90 text-center space-y-5">
+                
+                {/* Timer Header */}
+                <div className="flex items-center justify-center gap-2">
+                  <span className="h-[1px] w-6 bg-slate-200" />
+                  <span className="font-sans text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    Offer Ends In
+                  </span>
+                  <span className="h-[1px] w-6 bg-slate-200" />
                 </div>
-              </motion.div>
-            )
-          })}
+
+                {/* 4 Timer Boxes (Days, Hours, Mins, Secs) */}
+                <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                  {/* Days */}
+                  <div className="bg-[#FFFDF7] border border-amber-100 rounded-xl p-2.5 sm:p-3 text-center shadow-2xs">
+                    <div className="font-mono text-lg sm:text-2xl font-black text-slate-900 leading-none mb-1">
+                      {String(timer.days).padStart(2, '0')}
+                    </div>
+                    <div className="font-sans text-[10px] sm:text-xs font-semibold text-slate-500 uppercase">
+                      Days
+                    </div>
+                  </div>
+
+                  {/* Hours */}
+                  <div className="bg-[#FFFDF7] border border-amber-100 rounded-xl p-2.5 sm:p-3 text-center shadow-2xs">
+                    <div className="font-mono text-lg sm:text-2xl font-black text-slate-900 leading-none mb-1">
+                      {String(timer.hours).padStart(2, '0')}
+                    </div>
+                    <div className="font-sans text-[10px] sm:text-xs font-semibold text-slate-500 uppercase">
+                      Hours
+                    </div>
+                  </div>
+
+                  {/* Mins */}
+                  <div className="bg-[#FFFDF7] border border-amber-100 rounded-xl p-2.5 sm:p-3 text-center shadow-2xs">
+                    <div className="font-mono text-lg sm:text-2xl font-black text-slate-900 leading-none mb-1">
+                      {String(timer.mins).padStart(2, '0')}
+                    </div>
+                    <div className="font-sans text-[10px] sm:text-xs font-semibold text-slate-500 uppercase">
+                      Mins
+                    </div>
+                  </div>
+
+                  {/* Secs */}
+                  <div className="bg-[#FFFDF7] border border-amber-100 rounded-xl p-2.5 sm:p-3 text-center shadow-2xs">
+                    <div className="font-mono text-lg sm:text-2xl font-black text-slate-900 leading-none mb-1">
+                      {String(timer.secs).padStart(2, '0')}
+                    </div>
+                    <div className="font-sans text-[10px] sm:text-xs font-semibold text-slate-500 uppercase">
+                      Secs
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA Button */}
+                <a
+                  href={registerUrl}
+                  target="_top"
+                  rel="noopener noreferrer"
+                  className="w-full py-3.5 bg-[#06122E] hover:bg-[#0B1A40] text-white font-extrabold text-sm sm:text-base rounded-xl border border-[#06122E] shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Start Selling Now</span>
+                  <ArrowRight className="w-4 h-4 text-[#DFB743]" />
+                </a>
+
+              </div>
+            </div>
+
+          </div>
         </motion.div>
 
-        {/* Section Bottom CTA Link */}
-        <div className="text-center">
-          <a
-            href={registerUrl}
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#0B1A40] hover:bg-[#051838] text-[#DFB743] font-bold text-sm sm:text-base rounded-2xl transition-all shadow-lg hover:scale-105 active:scale-95 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#DFB743]"
-          >
-            <span>Start Selling With 0% Commission</span>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </a>
-        </div>
       </div>
-    </section>
+    </SectionReveal>
   )
 }

@@ -1,77 +1,108 @@
-import React from 'react'
-import { ShieldCheck, Truck, FileText, Headphones } from 'lucide-react'
+import React, { useState, useEffect, useRef } from 'react'
+import SectionReveal from './SectionReveal'
 
-const badges = [
-  {
-    icon: ShieldCheck,
-    title: 'Secure Payments',
-    subtitle: 'Direct 7-Day Bank Settlements',
-  },
-  {
-    icon: Truck,
-    title: 'Pan-India Delivery',
-    subtitle: 'Reaching 29,000+ Pincodes',
-  },
-  {
-    icon: FileText,
-    title: 'GST Assisted Onboarding',
-    subtitle: 'Hassle-Free Registration Support',
-  },
-  {
-    icon: Headphones,
-    title: 'Dedicated Seller Support',
-    subtitle: '1-on-1 Account Management',
-  },
-]
+// Custom count-up hook with IntersectionObserver & prefers-reduced-motion check
+function useCountUp(end, duration = 1600) {
+  const [count, setCount] = useState(0)
+  const elementRef = useRef(null)
+  const hasAnimated = useRef(false)
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion) {
+      setCount(end)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries
+        if (entry.isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true
+          let startTime = null
+          const animate = (timestamp) => {
+            if (!startTime) startTime = timestamp
+            const progress = Math.min((timestamp - startTime) / duration, 1)
+            const easeProgress = 1 - Math.pow(1 - progress, 3) // ease-out cubic
+            setCount(Math.floor(easeProgress * end))
+            if (progress < 1) {
+              requestAnimationFrame(animate)
+            } else {
+              setCount(end)
+            }
+          }
+          requestAnimationFrame(animate)
+        }
+      },
+      { threshold: 0.15 }
+    )
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [end, duration])
+
+  return { count, ref: elementRef }
+}
 
 export default function TrustStripSection() {
-  return (
-    <section id="trust-strip" className="relative bg-[#061432] text-white border-y border-[#DFB743]/30 py-4 overflow-hidden shadow-inner">
-      {/* Desktop View: Static Row */}
-      <div className="hidden md:flex max-w-7xl mx-auto px-6 items-center justify-between gap-6">
-        {badges.map((badge, idx) => {
-          const Icon = badge.icon
-          return (
-            <div key={idx} className="flex items-center gap-3.5 group">
-              <div className="w-10 h-10 rounded-xl bg-white/10 border border-[#DFB743]/40 flex items-center justify-center text-[#DFB743] shrink-0 group-hover:bg-[#DFB743] group-hover:text-[#051838] transition-all duration-300 shadow-md">
-                <Icon className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-sans text-sm font-bold text-white tracking-tight leading-tight">
-                  {badge.title}
-                </h4>
-                <p className="font-sans text-xs font-normal text-slate-300">
-                  {badge.subtitle}
-                </p>
-              </div>
-            </div>
-          )
-        })}
-      </div>
+  const stat1 = useCountUp(500)
+  const stat2 = useCountUp(10000)
+  const stat3 = useCountUp(50)
+  const stat4 = useCountUp(7) // Updated from 3 Days to 7 Days
 
-      {/* Mobile View: Horizontal Auto-Scroll Marquee */}
-      <div className="md:hidden w-full overflow-hidden">
-        <div className="animate-marquee flex items-center gap-8">
-          {[...badges, ...badges].map((badge, idx) => {
-            const Icon = badge.icon
-            return (
-              <div key={idx} className="flex items-center gap-3 shrink-0 px-2">
-                <div className="w-9 h-9 rounded-lg bg-white/10 border border-[#DFB743]/40 flex items-center justify-center text-[#DFB743] shrink-0">
-                  <Icon className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-sans text-xs font-bold text-white tracking-tight leading-tight">
-                    {badge.title}
-                  </h4>
-                  <p className="font-sans text-[11px] font-normal text-slate-300 whitespace-nowrap">
-                    {badge.subtitle}
-                  </p>
-                </div>
-              </div>
-            )
-          })}
+  return (
+    <SectionReveal
+      id="trust-strip"
+      watermark="STATS"
+      className="relative bg-[#081638] text-white border-y border-white/10 py-10 lg:py-12 overflow-hidden shadow-2xl z-20"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Live Count-Up Metrics Section (Zero PAN-INDIA Badges Row) */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 sm:p-8 rounded-3xl bg-[#06122E]/90 border border-white/15 backdrop-blur-md shadow-2xl gold-glow">
+          {/* Stat 1: Active Buyers */}
+          <div ref={stat1.ref} className="text-center p-2">
+            <div className="font-mono text-2xl sm:text-4xl font-black text-[#DFB743] tracking-tight mb-1">
+              {stat1.count >= 500 ? '500K+' : `${stat1.count}K+`}
+            </div>
+            <div className="font-sans text-xs sm:text-sm font-semibold text-slate-300 uppercase tracking-wider">
+              Active Buyers
+            </div>
+          </div>
+
+          {/* Stat 2: Sellers Onboarded */}
+          <div ref={stat2.ref} className="text-center p-2 border-l border-white/10">
+            <div className="font-mono text-2xl sm:text-4xl font-black text-white tracking-tight mb-1">
+              {stat2.count.toLocaleString('en-IN')}+
+            </div>
+            <div className="font-sans text-xs sm:text-sm font-semibold text-slate-300 uppercase tracking-wider">
+              Sellers Onboarded
+            </div>
+          </div>
+
+          {/* Stat 3: Product Categories */}
+          <div ref={stat3.ref} className="text-center p-2 border-l border-white/10">
+            <div className="font-mono text-2xl sm:text-4xl font-black text-[#DFB743] tracking-tight mb-1">
+              {stat3.count}+
+            </div>
+            <div className="font-sans text-xs sm:text-sm font-semibold text-slate-300 uppercase tracking-wider">
+              Product Categories
+            </div>
+          </div>
+
+          {/* Stat 4: Avg. Payout Days (7 Days) */}
+          <div ref={stat4.ref} className="text-center p-2 border-l border-white/10">
+            <div className="font-mono text-2xl sm:text-4xl font-black text-white tracking-tight mb-1">
+              {stat4.count} Days
+            </div>
+            <div className="font-sans text-xs sm:text-sm font-semibold text-slate-300 uppercase tracking-wider">
+              Avg. Payout Days
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </SectionReveal>
   )
 }

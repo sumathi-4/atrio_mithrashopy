@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { MEDIA } from '../utils/cloudinary'
+import SectionReveal from './SectionReveal'
 
 const testimonials = [
   {
@@ -6,192 +8,217 @@ const testimonials = [
     name: 'Priya Sharma',
     storeName: 'Jaipur Crafts & Ethnic Hub',
     location: 'Jaipur, Rajasthan',
-    photo: '/testimonials/seller1.jpg',
+    photo: MEDIA.TESTIMONIAL_SELLER_1,
     quote: '"MithraShoppy transformed our boutique into a nationwide brand with 7-day payouts and zero listing fees!"',
     salesGrowth: '3.4x Revenue Growth',
-    hasVideo: true,
-    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
   },
   {
     id: 2,
     name: 'Rajesh Varma',
     storeName: 'Varma Handlooms & Sarees',
     location: 'Varanasi, Uttar Pradesh',
-    photo: '/testimonials/seller2.jpg',
+    photo: MEDIA.TESTIMONIAL_SELLER_2,
     quote: '"The dedicated account manager helped us upload 500+ SKUs in one afternoon. Our orders doubled in 30 days."',
     salesGrowth: '₹4.5L/Month Sales',
-    hasVideo: true,
-    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
   },
   {
     id: 3,
     name: 'Ananya Roy',
     storeName: 'Artisan Krafts Studio',
     location: 'Kolkata, West Bengal',
-    photo: '/testimonials/seller3.jpg',
+    photo: MEDIA.TESTIMONIAL_SELLER_3,
     quote: '"Free photography guidance and bulk upload tools made catalog management completely seamless for our team."',
     salesGrowth: '500+ Orders Shipped',
-    hasVideo: true,
-    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
   },
 ]
 
 export default function TestimonialsSection() {
-  const [selectedVideo, setSelectedVideo] = useState(null)
-  const carouselRef = useRef(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const videoRef = useRef(null)
 
-  // Listen for Escape key to close video modal for accessibility
+  // Auto-advance testimonials cards every 5 seconds
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && selectedVideo) {
-        setSelectedVideo(null)
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % testimonials.length)
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [])
+
+  // Video Autoplay WITH AUDIO when entering section viewport
+  useEffect(() => {
+    const videoEl = videoRef.current
+    if (!videoEl) return
+
+    const handleUserGesture = () => {
+      if (videoEl) {
+        videoEl.muted = false
+        videoEl.play().catch(() => {})
       }
     }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedVideo])
 
-  const scrollCarousel = (direction) => {
-    if (carouselRef.current) {
-      const scrollAmount = carouselRef.current.clientWidth * 0.8
-      carouselRef.current.scrollBy({
-        left: direction === 'next' ? scrollAmount : -scrollAmount,
-        behavior: 'smooth',
-      })
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Attempt playing WITH audio (unmuted)
+            videoEl.muted = false
+            const playPromise = videoEl.play()
+
+            if (playPromise !== undefined) {
+              playPromise.catch(() => {
+                // If browser blocks unmuted autoplay prior to user interaction, fallback to muted play
+                videoEl.muted = true
+                videoEl.play().catch(() => {})
+
+                // Unmute automatically on first click/interaction
+                window.addEventListener('click', handleUserGesture, { once: true })
+                window.addEventListener('touchstart', handleUserGesture, { once: true })
+              })
+            }
+          } else {
+            videoEl.pause()
+          }
+        })
+      },
+      { threshold: 0.35 }
+    )
+
+    observer.observe(videoEl)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('click', handleUserGesture)
+      window.removeEventListener('touchstart', handleUserGesture)
     }
-  }
+  }, [])
 
   return (
-    <section id="testimonials" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#0B1A40] text-white relative">
+    <SectionReveal
+      id="testimonials"
+      className="py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-[#081638] text-white relative overflow-hidden border-b border-white/10"
+    >
       <div className="max-w-7xl mx-auto">
+        
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div>
-            <span className="inline-block text-xs font-bold text-[#DFB743] uppercase tracking-widest bg-white/10 border border-[#DFB743]/40 px-4 py-1.5 rounded-full mb-3 shadow-xs">
-              Seller Success Stories
-            </span>
-            <h2 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              Hear From Our <span className="gold-gradient-text">Sellers</span>
-            </h2>
-          </div>
+        <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+          <span className="inline-block text-xs font-bold text-[#DFB743] uppercase tracking-widest bg-white/10 border border-[#DFB743]/40 px-4 py-1.5 rounded-full shadow-2xs">
+            Real Merchant Success Stories
+          </span>
 
-          {/* Desktop Arrow Navigation */}
-          <div className="hidden sm:flex items-center gap-3">
-            <button
-              onClick={() => scrollCarousel('prev')}
-              className="w-12 h-12 rounded-2xl bg-white/10 hover:bg-[#DFB743] hover:text-[#051838] border border-white/20 flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md focus-visible:outline-2 focus-visible:outline-[#DFB743]"
-              aria-label="Scroll to previous seller testimonial card"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={() => scrollCarousel('next')}
-              className="w-12 h-12 rounded-2xl bg-white/10 hover:bg-[#DFB743] hover:text-[#051838] border border-white/20 flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md focus-visible:outline-2 focus-visible:outline-[#DFB743]"
-              aria-label="Scroll to next seller testimonial card"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+            Loved by Sellers Across <span className="gold-gradient-text">India</span>
+          </h2>
+
+          <p className="font-sans text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
+            See how authentic Indian artisans and store owners scale nationwide with 0% commission.
+          </p>
         </div>
 
-        {/* 3-Card Carousel (Swipeable Overflow on Mobile, Desktop Nav) */}
-        <div
-          ref={carouselRef}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-none"
-        >
-          {testimonials.map((item) => (
-            <div
-              key={item.id}
-              className="snap-center shrink-0 w-full bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md flex flex-col justify-between hover:border-[#DFB743]/60 transition-all duration-300 shadow-xl"
-            >
-              {/* Photo & Video Overlay Thumbnail */}
-              <div className="relative w-full h-56 rounded-2xl overflow-hidden mb-6 bg-slate-900 border border-white/10 group">
-                <img
-                  src={item.photo}
-                  alt={`Portrait photograph of ${item.name}, seller at ${item.storeName}`}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1A40]/90 via-transparent to-transparent" />
-
-                {/* Optional Video Play Button Overlay */}
-                {item.hasVideo && (
-                  <button
-                    onClick={() => setSelectedVideo(item.videoUrl)}
-                    className="absolute inset-0 m-auto w-14 h-14 rounded-full bg-[#DFB743] text-[#051838] flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-white"
-                    aria-label={`Watch video story of seller ${item.name}`}
+        {/* 2-Column Side-by-Side Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+          
+          {/* LEFT COLUMN: Merchant Success Cards Carousel */}
+          <div className="lg:col-span-6 space-y-6">
+            <div className="space-y-4">
+              {testimonials.map((item, idx) => {
+                const isActive = activeIndex === idx
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => setActiveIndex(idx)}
+                    className={`p-6 rounded-3xl transition-all duration-300 cursor-pointer border ${
+                      isActive
+                        ? 'bg-[#0B1A40] border-2 border-[#DFB743] shadow-2xl gold-glow scale-102'
+                        : 'bg-[#06122E] border-slate-700/60 hover:border-[#DFB743]/50 hover:bg-[#0A1B46]'
+                    }`}
                   >
-                    <svg className="w-7 h-7 ml-1 fill-current" viewBox="0 0 20 20" aria-hidden="true">
-                      <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                    </svg>
-                  </button>
-                )}
+                    <div className="flex items-center justify-between gap-4 mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-[#DFB743]/60 bg-slate-900 shrink-0">
+                          <img
+                            src={item.photo}
+                            alt={`Photo of ${item.name}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-sans text-base font-extrabold text-white tracking-tight">
+                            {item.name}
+                          </h3>
+                          <p className="font-sans text-xs text-slate-300">
+                            {item.storeName} · <span className="text-slate-400">{item.location}</span>
+                          </p>
+                        </div>
+                      </div>
 
-                {/* Sales Growth Badge */}
-                <div className="absolute bottom-3 left-3 bg-[#0B1A40]/90 border border-[#DFB743]/50 text-[#DFB743] text-xs font-bold px-3 py-1 rounded-full backdrop-blur-md">
-                  {item.salesGrowth}
-                </div>
-              </div>
+                      <span className="font-mono text-xs font-black text-[#DFB743] bg-white/10 border border-[#DFB743]/40 px-3 py-1 rounded-full shrink-0">
+                        {item.salesGrowth}
+                      </span>
+                    </div>
 
-              {/* Quote Content */}
-              <div className="space-y-4 flex-1 flex flex-col justify-between">
-                <p className="font-sans text-base sm:text-lg text-slate-200 italic font-normal leading-relaxed">
-                  {item.quote}
-                </p>
-
-                <div className="pt-4 border-t border-white/10">
-                  <h3 className="font-sans text-lg font-bold text-white tracking-tight">
-                    {item.name}
-                  </h3>
-                  <p className="font-sans text-xs text-[#DFB743] font-medium">
-                    {item.storeName} • <span className="text-slate-400">{item.location}</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Video Modal Player */}
-      {selectedVideo && (
-        <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Seller story video modal"
-        >
-          <div className="relative bg-[#0B1A40] border-2 border-[#DFB743] rounded-3xl overflow-hidden max-w-3xl w-full shadow-2xl">
-            {/* Modal Header */}
-            <div className="p-4 bg-[#061432] flex items-center justify-between border-b border-white/10">
-              <span className="font-bold text-sm text-[#DFB743]">Seller Story Video</span>
-              <button
-                onClick={() => setSelectedVideo(null)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-[#DFB743]"
-                aria-label="Close video player modal"
-              >
-                ✕
-              </button>
+                    <p className="font-serif italic text-sm text-slate-200 leading-relaxed">
+                      {item.quote}
+                    </p>
+                  </div>
+                )
+              })}
             </div>
 
-            {/* Video Container */}
-            <div className="aspect-video bg-black">
-              <video
-                src={selectedVideo}
-                controls
-                autoPlay
-                className="w-full h-full object-contain"
-              >
-                Your browser does not support HTML5 video playback.
-              </video>
+            {/* Slide Pagination Dots */}
+            <div className="flex items-center justify-center gap-2 pt-2">
+              {testimonials.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveIndex(idx)}
+                  aria-label={`Switch to testimonial ${idx + 1}`}
+                  className={`h-2 rounded-full transition-all cursor-pointer ${
+                    activeIndex === idx ? 'w-8 bg-[#DFB743]' : 'w-2 bg-white/20 hover:bg-white/40'
+                  }`}
+                />
+              ))}
             </div>
           </div>
+
+          {/* RIGHT COLUMN: Video Player Unmuted Playback */}
+          <div className="lg:col-span-6">
+            <div className="w-full rounded-3xl overflow-hidden glass-panel border-2 border-[#DFB743]/60 shadow-2xl gold-glow relative">
+              
+              {/* Video Browser Header Bar */}
+              <div className="bg-[#0B1A40] px-4 py-3 border-b border-white/15 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block" />
+                  <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
+                  <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block" />
+                </div>
+                
+                {/* Pill Badge: VERIFIED STORY */}
+                <div className="flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/40 px-3.5 py-1 rounded-full">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="font-mono text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                    VERIFIED STORY
+                  </span>
+                </div>
+              </div>
+
+              {/* Video Player Container */}
+              <div className="relative bg-slate-950 aspect-video overflow-hidden">
+                <video
+                  ref={videoRef}
+                  src="/testimonial-video.mp4"
+                  controls
+                  loop
+                  playsInline
+                  className="w-full h-full object-cover"
+                >
+                  Your browser does not support HTML5 video playback.
+                </video>
+              </div>
+
+            </div>
+          </div>
+
         </div>
-      )}
-    </section>
+
+      </div>
+    </SectionReveal>
   )
 }
