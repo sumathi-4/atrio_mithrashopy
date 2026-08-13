@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
@@ -24,6 +24,15 @@ const ProtectedRoute = ({ children }) => {
   return <Layout>{children}</Layout>
 }
 
+// Redirect Component for /seller-promo route
+function SellerPromoRedirect() {
+  useEffect(() => {
+    const promoUrl = import.meta.env.VITE_SELLER_PROMO_URL || 'http://localhost:5177'
+    window.location.href = promoUrl
+  }, [])
+  return null
+}
+
 function App() {
   return (
     <Routes>
@@ -32,6 +41,9 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      
+      {/* Route to open Seller Promo site when typing /seller-promo in URL */}
+      <Route path="/seller-promo" element={<SellerPromoRedirect />} />
 
       {/* Private/Protected Routes wrapped in Layout */}
       <Route
@@ -107,7 +119,7 @@ function App() {
         }
       />
 
-      {/* Fallback Route */}
+      {/* Fallback redirect */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

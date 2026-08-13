@@ -100,6 +100,11 @@ function App() {
   useEffect(() => {
     const checkPath = () => {
       const path = window.location.pathname.toLowerCase();
+      if (path.includes('/seller-promo') || path.includes('/sellerpromo')) {
+        const promoUrl = import.meta.env.VITE_SELLER_PROMO_URL || 'http://localhost:5177';
+        window.location.href = promoUrl;
+        return;
+      }
       if (path.includes('/account')) {
         setCurrentView('account');
       } else if (path.includes('/shop')) {
