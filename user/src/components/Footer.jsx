@@ -53,7 +53,7 @@ const isActive = (linkPath, currentPath) => {
   return false;
 };
 
-export default function Footer({ authUser }) {
+export default function Footer({ authUser, onNavigate }) {
   const [settings, setSettings] = useState({
     storeName: 'MithiraShopy',
   });
@@ -220,9 +220,16 @@ export default function Footer({ authUser }) {
             <ul className="footer-nav-list">
               <li>
                 <a
-                  href={import.meta.env.VITE_SELLER_PROMO_URL || 'http://localhost:5177'}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/seller-promo"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onNavigate) {
+                      onNavigate('/seller-promo');
+                    } else {
+                      navigate('/seller-promo');
+                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                   className="footer-nav-link"
                   style={{ color: '#DFB743', fontWeight: '700' }}
                 >

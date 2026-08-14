@@ -29,3 +29,8 @@ dist-ssr
 
 # Scratch logs
 backend/scratch/
+
+# Zip Archives
+*.zip
+user.zip
+seller-promo.zip

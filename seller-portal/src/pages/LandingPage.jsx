@@ -1171,7 +1171,7 @@ export default function LandingPage() {
               FAQ
             </button>
             <a
-              href={import.meta.env.VITE_SELLER_PROMO_URL || 'http://localhost:5177'}
+              href={import.meta.env.VITE_SELLER_PROMO_URL || `${import.meta.env.VITE_USER_STOREFRONT_URL || 'http://localhost:5173'}/seller-promo`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#DFB743] hover:text-white font-bold transition-colors cursor-pointer"

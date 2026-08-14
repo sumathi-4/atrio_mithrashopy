@@ -27,8 +27,8 @@ const ProtectedRoute = ({ children }) => {
 // Redirect Component for /seller-promo route
 function SellerPromoRedirect() {
   useEffect(() => {
-    const promoUrl = import.meta.env.VITE_SELLER_PROMO_URL || 'http://localhost:5177'
-    window.location.href = promoUrl
+    const userStorefrontUrl = import.meta.env.VITE_USER_STOREFRONT_URL || 'http://localhost:5173'
+    window.location.href = `${userStorefrontUrl}/seller-promo`
   }, [])
   return null
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import TrustBar from './components/TrustBar';
@@ -21,6 +21,8 @@ import { ToastProvider } from './components/ToastProvider';
 import { verifySession, getStoredUser, logout } from './services/authService';
 import CustomFeatureSection from './components/CustomFeatureSection';
 import { apiService } from './services/apiService';
+
+const SellerPromoPage = React.lazy(() => import('./features/seller-promo/SellerPromoPage'));
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -100,11 +102,6 @@ function App() {
   useEffect(() => {
     const checkPath = () => {
       const path = window.location.pathname.toLowerCase();
-      if (path.includes('/seller-promo') || path.includes('/sellerpromo')) {
-        const promoUrl = import.meta.env.VITE_SELLER_PROMO_URL || 'http://localhost:5177';
-        window.location.href = promoUrl;
-        return;
-      }
       if (path.includes('/account')) {
         setCurrentView('account');
       } else if (path.includes('/shop')) {
@@ -117,6 +114,8 @@ function App() {
         setCurrentView('celebrity');
       } else if (path.includes('/lucky-charms')) {
         setCurrentView('lucky-charms');
+      } else if (path.includes('/seller-promo') || path.includes('/sell-with-us') || path.includes('/sell')) {
+        setCurrentView('seller-promo');
       } else {
         setCurrentView('home');
       }
@@ -162,7 +161,7 @@ function App() {
 
   return (
     <ToastProvider>
-      {currentView !== 'admin' && currentView !== 'lucky-charms' && (
+      {currentView !== 'admin' && currentView !== 'lucky-charms' && currentView !== 'seller-promo' && (
         <Navbar authUser={authUser} setAuthUser={setAuthUser} onNavigate={handleNavigate} />
       )}
       {currentView === 'home' && (
@@ -187,6 +186,11 @@ function App() {
       {currentView === 'new-arrivals' && <NewArrivalsView />}
       {currentView === 'celebrity' && <CelebrityView />}
       {currentView === 'lucky-charms' && <LuckyCharmPage authUser={authUser} setAuthUser={setAuthUser} onNavigate={handleNavigate} />}
+      {currentView === 'seller-promo' && (
+        <Suspense fallback={<div>Loading...</div>}>
+          <SellerPromoPage />
+        </Suspense>
+      )}
       {currentView === 'account' && (
         <UserAccount
           authUser={authUser}
@@ -194,10 +198,8 @@ function App() {
           onNavigate={handleNavigate}
         />
       )}
-      {currentView !== 'lucky-charms' && <Footer />}
+      {currentView !== 'lucky-charms' && currentView !== 'seller-promo' && <Footer onNavigate={handleNavigate} />}
       <LuckyCharmModal />
-
-
 
       {/* ── Back to Top Button ───────────────────────────────────── */}
       {showBackTop && (
