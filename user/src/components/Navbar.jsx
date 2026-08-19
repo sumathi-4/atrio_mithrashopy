@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Search, Heart, User, ShoppingBag, ChevronDown, Menu, X, Eye, EyeOff, Shield, LogOut, LayoutDashboard, Shirt, BookOpen, Crown, Gift } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Search, Heart, User, ShoppingBag, ShoppingCart, ChevronDown, Menu, X, Eye, EyeOff, Shield, LogOut, LayoutDashboard, Shirt, BookOpen, Crown, Gift } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import { loginUser, registerUser, loginAdmin, logout as authLogout } from '../services/authService';
 import { apiService } from '../services/apiService';
@@ -24,26 +24,51 @@ const PROMO_CARDS = {
     title: 'Vegan Leather Planners',
     desc: 'Organize your days in luxury style.',
     image: imgStationery,
-    href: '/shop/stationery/journals'
+    href: '/shop/stationery'
   },
   GIFTS: {
-    tag: 'CURATED',
-    title: 'Luxury Festive Hampers',
-    desc: 'Exquisite return favors for guests.',
+    tag: 'EXCLUSIVE',
+    title: 'Custom Keepsake Boxes',
+    desc: 'Memorable gifts for loved ones.',
     image: imgGifts,
-    href: '/shop/gifts/return-gifts'
+    href: '/shop/gifts'
   },
   ACCESSORIES: {
-    tag: 'SPECIAL OFFER',
-    title: '24K Gold Plated Chokers',
-    desc: 'Royal elegance in every accent.',
+    tag: 'HOT DEALS',
+    title: 'Handcrafted Jewellery Set',
+    desc: 'Elevate your daily elegance.',
     image: imgAccessories,
-    href: '/shop/accessories/jewellery'
+    href: '/shop/accessories'
   }
 };
 
-export default function Navbar({ authUser, setAuthUser, onNavigate }) {
-  const [currentPath, setCurrentPath] = useState(window.location.pathname + window.location.hash + window.location.search);
+export default function Navbar({ authUser: propAuthUser, setAuthUser: propSetAuthUser, onNavigate }) {
+  const [authUser, setAuthUserLocal] = useState(() => {
+    if (propAuthUser) return propAuthUser;
+    try {
+      const stored = localStorage.getItem('mithira_auth_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    if (propAuthUser !== undefined) {
+      setAuthUserLocal(propAuthUser);
+    }
+  }, [propAuthUser]);
+
+  const updateAuthUser = (user) => {
+    setAuthUserLocal(user);
+    if (propSetAuthUser) {
+      propSetAuthUser(user);
+    }
+  };
+
+  const [currentPath, setCurrentPath] = useState(
+    () => window.location.pathname + window.location.hash + window.location.search
+  );
 
   useEffect(() => {
     const updatePath = () => {
@@ -106,12 +131,11 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
   const [showRegPwd, setShowRegPwd] = useState(false);
   const [regError, setRegError] = useState('');
 
-
-
   const [announcements, setAnnouncements] = useState([]);
 
   // ── Search state ──────────────────────────────────────────────────
   const [searchOpen, setSearchOpen] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [allProducts, setAllProductsSearch] = useState([]);
@@ -182,13 +206,85 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
     }).catch(console.error);
   }, []);
 
+  // Dynamic Popular Searches derived from MithraShoppy database
+  const popularSearchTags = useMemo(() => {
+    const tagsSet = new Set();
+
+    // 1. Extract categories and subcategories from categoriesList
+    if (Array.isArray(categoriesList) && categoriesList.length > 0) {
+      categoriesList.forEach(cat => {
+        if (cat.name && typeof cat.name === 'string') tagsSet.add(cat.name.trim());
+        if (Array.isArray(cat.subCategories)) {
+          cat.subCategories.forEach(sub => {
+            const subName = typeof sub === 'string' ? sub : sub?.name;
+            if (subName && typeof subName === 'string') tagsSet.add(subName.trim());
+          });
+        }
+      });
+    }
+
+    // 2. Extract subcategories, tags, keywords from allProducts
+    if (Array.isArray(allProducts) && allProducts.length > 0) {
+      allProducts.forEach(prod => {
+        if (prod.subCategory && typeof prod.subCategory === 'string') {
+          tagsSet.add(prod.subCategory.trim());
+        }
+        if (prod.category && typeof prod.category === 'string') {
+          const mainCat = prod.category.split('>')[0].trim();
+          if (mainCat) tagsSet.add(mainCat);
+        }
+
+        // Process product tags
+        if (Array.isArray(prod.tags)) {
+          prod.tags.forEach(t => {
+            if (typeof t === 'string' && t.trim()) tagsSet.add(t.trim());
+          });
+        } else if (typeof prod.tags === 'string' && prod.tags.trim()) {
+          prod.tags.split(',').forEach(t => {
+            if (t.trim()) tagsSet.add(t.trim());
+          });
+        }
+
+        // Process product keywords
+        if (Array.isArray(prod.keywords)) {
+          prod.keywords.forEach(k => {
+            if (typeof k === 'string' && k.trim()) tagsSet.add(k.trim());
+          });
+        }
+      });
+    }
+
+    // Filter out very short or numeric-only strings
+    let tagsList = Array.from(tagsSet).filter(t => t && t.length >= 3 && isNaN(t));
+
+    // Fallback if database hasn't finished loading or returns empty
+    if (tagsList.length === 0) {
+      tagsList = [
+        'Sarees',
+        'Kurtis',
+        'Silk Saree',
+        'Jewellery',
+        'Toys',
+        'Stationery',
+        'Gifts',
+        'Anarkali',
+        'Watches',
+        'Handbags',
+        'Churidar',
+        'Bangles'
+      ];
+    }
+
+    // Return top 14 unique items
+    return tagsList.slice(0, 14);
+  }, [allProducts, categoriesList]);
+
   // Close search on outside click
   useEffect(() => {
     const handleClick = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
         setSearchOpen(false);
-        setSearchQuery('');
-        setSearchResults([]);
+        setIsSearchFocused(false);
       }
     };
     document.addEventListener('mousedown', handleClick);
@@ -331,8 +427,17 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
     setSearchResults(filtered);
   };
 
+  const handlePopularSearchTagClick = (tag) => {
+    setSearchQuery(tag);
+    setIsSearchFocused(false);
+    setSearchOpen(false);
+    window.history.pushState({}, '', `/Shop?search=${encodeURIComponent(tag)}`);
+    window.dispatchEvent(new Event('popstate'));
+  };
+
   const handleSearchSelect = (prod) => {
     setSearchOpen(false);
+    setIsSearchFocused(false);
     setSearchQuery('');
     setSearchResults([]);
     const cat = (prod.category || '').split('>')[0].trim().toUpperCase();
@@ -345,9 +450,9 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
     const isClick = e && e.type === 'click';
     if ((isEnter || isClick || !e) && searchQuery.trim()) {
       setSearchOpen(false);
+      setIsSearchFocused(false);
       window.history.pushState({}, '', `/Shop?search=${encodeURIComponent(searchQuery.trim())}`);
       window.dispatchEvent(new Event('popstate'));
-      setSearchQuery('');
       setSearchResults([]);
     }
   };
@@ -356,6 +461,7 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
     e.preventDefault();
     window.history.pushState({}, '', path);
     window.dispatchEvent(new Event('popstate'));
+    window.scrollTo({ top: 0, behavior: 'instant' });
     setMobileMenuOpen(false);
   };
 
@@ -375,8 +481,25 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
     setUserLoginError('');
     try {
       const result = await loginUser({ email: userEmail, password: userPassword });
-      if (result.success) {
-        setAuthUser(result.user);
+      if (result.success && result.user) {
+        const userToSet = result.user;
+        updateAuthUser(userToSet);
+        localStorage.setItem('mithira_auth_user', JSON.stringify(userToSet));
+        
+        try {
+          const guestCartIds = JSON.parse(localStorage.getItem('mithira_guest_cart') || '[]');
+          const guestCartItems = JSON.parse(localStorage.getItem('mithira_guest_cart_items') || '[]');
+          if (guestCartIds.length > 0) {
+            apiService.syncCart(guestCartIds, guestCartItems).then(res => {
+              if (res) {
+                updateAuthUser({ ...userToSet, cart: res.cart, cartItems: res.cartItems });
+                localStorage.removeItem('mithira_guest_cart');
+                localStorage.removeItem('mithira_guest_cart_items');
+              }
+            }).catch(() => {});
+          }
+        } catch (_) {}
+
         closeModal();
         if (onNavigate) onNavigate('/');
       } else {
@@ -399,8 +522,25 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
     setRegError('');
     try {
       const result = await registerUser({ name: regName, email: regEmail, phone: regPhone, password: regPassword });
-      if (result.success) {
-        setAuthUser(result.user);
+      if (result.success && result.user) {
+        const userToSet = result.user;
+        updateAuthUser(userToSet);
+        localStorage.setItem('mithira_auth_user', JSON.stringify(userToSet));
+
+        try {
+          const guestCartIds = JSON.parse(localStorage.getItem('mithira_guest_cart') || '[]');
+          const guestCartItems = JSON.parse(localStorage.getItem('mithira_guest_cart_items') || '[]');
+          if (guestCartIds.length > 0) {
+            apiService.syncCart(guestCartIds, guestCartItems).then(res => {
+              if (res) {
+                updateAuthUser({ ...userToSet, cart: res.cart, cartItems: res.cartItems });
+                localStorage.removeItem('mithira_guest_cart');
+                localStorage.removeItem('mithira_guest_cart_items');
+              }
+            }).catch(() => {});
+          }
+        } catch (_) {}
+
         closeModal();
         if (onNavigate) onNavigate('/');
       } else {
@@ -413,12 +553,11 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
     }
   };
 
-
-
   const handleLogout = () => {
     authLogout();
-    setAuthUser(null);
+    updateAuthUser(null);
     setProfileDropdownOpen(false);
+    openModal('user');
     if (onNavigate) onNavigate('/');
   };
 
@@ -449,45 +588,73 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
 
           {/* Persistent Search Bar */}
           <div className="nav-search-wrapper persistent-search" ref={searchRef}>
-            <div className="nav-search-bar-meesho">
+            <div className={`nav-search-bar-meesho ${isSearchFocused ? 'focused' : ''}`}>
+              <Search size={18} className="nav-search-left-icon" onClick={handleSearchSubmit} />
               <input
                 type="text"
                 className="nav-search-input"
-                placeholder="Search for products, brands and more..."
+                placeholder="Try Saree, Kurti or Search by Product Code"
                 value={searchQuery}
-                onChange={handleSearchInput}
+                onFocus={() => setIsSearchFocused(true)}
+                onChange={(e) => {
+                  setIsSearchFocused(true);
+                  handleSearchInput(e);
+                }}
                 onKeyDown={handleSearchSubmit}
               />
               {searchQuery && (
-                <button className="nav-search-close" onClick={() => { setSearchQuery(''); setSearchResults([]); }}>
+                <button
+                  className="nav-search-close"
+                  onClick={() => { setSearchQuery(''); setSearchResults([]); }}
+                  aria-label="Clear search"
+                >
                   <X size={16} />
                 </button>
               )}
-              <button className="nav-search-btn-meesho" onClick={handleSearchSubmit} aria-label="Search">
-                <Search size={20} />
-              </button>
             </div>
-            {/* Live Search Dropdown */}
-            {searchResults.length > 0 && (
+
+            {/* Live Search & Popular Searches Dropdown */}
+            {isSearchFocused && (
               <div className="nav-search-dropdown-meesho">
-                {searchResults.map((prod, i) => (
-                  <div
-                    key={prod._id || prod.id || i}
-                    className="nav-search-result-item"
-                    onClick={() => handleSearchSelect(prod)}
-                  >
-                    <Search size={13} className="result-icon" />
-                    <div className="result-text">
-                      <span className="result-name">{prod.name || prod.title}</span>
-                      <span className="result-cat">{prod.category}</span>
+                {!searchQuery.trim() && (
+                  <div className="popular-searches-container">
+                    <h4 className="popular-searches-title">Popular Searches</h4>
+                    <div className="popular-searches-tags-grid">
+                      {popularSearchTags.map((tag, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          className="popular-search-tag-pill"
+                          onClick={() => handlePopularSearchTagClick(tag)}
+                        >
+                          {tag}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-            {searchQuery.trim().length >= 2 && searchResults.length === 0 && (
-              <div className="nav-search-dropdown-meesho">
-                <div className="nav-search-no-result">No products found for "{searchQuery}"</div>
+                )}
+
+                {searchQuery.trim() && searchResults.length > 0 && (
+                  <div className="search-results-list">
+                    {searchResults.map((prod, i) => (
+                      <div
+                        key={prod._id || prod.id || i}
+                        className="nav-search-result-item"
+                        onClick={() => handleSearchSelect(prod)}
+                      >
+                        <Search size={13} className="result-icon" />
+                        <div className="result-text">
+                          <span className="result-name">{prod.name || prod.title}</span>
+                          <span className="result-cat">{prod.category}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {searchQuery.trim().length >= 2 && searchResults.length === 0 && (
+                  <div className="nav-search-no-result">No products found for "{searchQuery}"</div>
+                )}
               </div>
             )}
           </div>
@@ -496,9 +663,10 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
           <div className="nav-actions-meesho">
             <a
               href={
-                window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                import.meta.env.VITE_SELLER_PORTAL_URL ||
+                (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
                   ? 'http://localhost:5176'
-                  : 'https://seller.mithrashopy.com'
+                  : 'https://seller.mithrashopy.com')
               }
               target="_blank"
               rel="noopener noreferrer"
@@ -513,61 +681,50 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
             </a>
             <span className="action-divider">|</span>
 
-            {/* Profile Stacked Button */}
+            {/* Profile / Login Stacked Button */}
             <div className="profile-dropdown-wrapper" ref={profileRef}>
               <button
                 className={`action-btn-stacked ${authUser ? 'logged-in' : ''}`}
-                aria-label="Account"
-                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                aria-label={authUser ? "Account" : "Login"}
+                onClick={() => {
+                  if (!authUser) {
+                    openModal('user');
+                  } else {
+                    setProfileDropdownOpen(!profileDropdownOpen);
+                  }
+                }}
               >
                 {authUser ? (
                   <div className="nav-user-avatar-meesho">{getInitials(authUser.name)}</div>
                 ) : (
-                  <User size={28} className="action-icon-meesho" />
+                  <User size={24} className="action-icon-meesho" />
                 )}
-                <span className="action-label-meesho">Profile</span>
+                <span className="action-label-meesho">
+                  {authUser ? (authUser.name?.split(' ')[0] || 'Profile') : 'Login'}
+                </span>
               </button>
 
-              {profileDropdownOpen && (
+              {authUser && profileDropdownOpen && (
                 <div className="profile-dropdown-menu">
-                  {authUser ? (
-                    <>
-                      <div className="pdm-user-header">
-                        <div className="pdm-user-avatar">{getInitials(authUser.name)}</div>
-                        <div className="pdm-user-info">
-                          <div className="pdm-user-name">{authUser.name}</div>
-                          <div className="pdm-user-email">{authUser.email}</div>
-                        </div>
-                      </div>
-                      <div className="pdm-divider" />
-                      <button
-                        className="pdm-item"
-                        onClick={() => { if (onNavigate) onNavigate('/account'); setProfileDropdownOpen(false); }}
-                      >
-                        <User size={15} />
-                        <span>My Account</span>
-                      </button>
-                      <button className="pdm-item pdm-logout" onClick={handleLogout}>
-                        <LogOut size={15} />
-                        <span>Logout</span>
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="pdm-welcome">
-                        <User size={22} />
-                        <div>
-                          <div className="pdm-welcome-title">Hello, Guest!</div>
-                          <div className="pdm-welcome-sub">Sign in to your account</div>
-                        </div>
-                      </div>
-                      <div className="pdm-divider" />
-                      <button className="pdm-item pdm-user-btn" onClick={() => openModal('user')}>
-                        <User size={15} />
-                        <span>Login / Register</span>
-                      </button>
-                    </>
-                  )}
+                  <div className="pdm-user-header">
+                    <div className="pdm-user-avatar">{getInitials(authUser.name)}</div>
+                    <div className="pdm-user-info">
+                      <div className="pdm-user-name">{authUser.name}</div>
+                      <div className="pdm-user-email">{authUser.email}</div>
+                    </div>
+                  </div>
+                  <div className="pdm-divider" />
+                  <button
+                    className="pdm-item"
+                    onClick={() => { if (onNavigate) onNavigate('/account'); setProfileDropdownOpen(false); }}
+                  >
+                    <User size={15} />
+                    <span>My Account</span>
+                  </button>
+                  <button className="pdm-item pdm-logout" onClick={handleLogout}>
+                    <LogOut size={15} />
+                    <span>Logout</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -576,13 +733,19 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
             <button
               className="action-btn-stacked"
               aria-label="Wishlist"
-              onClick={(e) => handleLinkClick(e, '/account?tab=wishlist')}
+              onClick={(e) => {
+                if (!authUser) {
+                  openModal('user');
+                } else {
+                  handleLinkClick(e, '/account?tab=wishlist');
+                }
+              }}
             >
               <div className="action-icon-wrapper-meesho">
-                <Heart size={28} className="action-icon-meesho" />
-                {(authUser ? (authUser.wishlist?.length || 0) : guestWishlistCount) > 0 && (
+                <Heart size={24} className="action-icon-meesho" />
+                {authUser && (authUser.wishlist?.length || 0) > 0 && (
                   <span className="action-badge-meesho">
-                    {authUser ? authUser.wishlist.length : guestWishlistCount}
+                    {authUser.wishlist.length}
                   </span>
                 )}
               </div>
@@ -593,13 +756,21 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
             <button
               className="action-btn-stacked"
               aria-label="Cart"
-              onClick={(e) => handleLinkClick(e, '/account?tab=cart')}
+              onClick={(e) => {
+                if (!authUser) {
+                  openModal('user');
+                } else {
+                  handleLinkClick(e, '/account?tab=cart');
+                }
+              }}
             >
               <div className="action-icon-wrapper-meesho">
-                <ShoppingBag size={28} className="action-icon-meesho" />
-                <span className="action-badge-meesho">
-                  {authUser ? (authUser.cart?.length || 0) : guestCartCount}
-                </span>
+                <ShoppingCart size={24} className="action-icon-meesho" />
+                {authUser && (authUser.cart?.length || 0) > 0 && (
+                  <span className="action-badge-meesho cart-badge-pink">
+                    {authUser.cart.length}
+                  </span>
+                )}
               </div>
               <span className="action-label-meesho">Cart</span>
             </button>
@@ -632,62 +803,41 @@ export default function Navbar({ authUser, setAuthUser, onNavigate }) {
                   {/* Mega Menu container */}
                   {group.subcategories && group.subcategories.length > 0 && (
                     <div className="mega-menu-overlay">
-                      <div className="mega-menu-split-container">
-                        <div className="mega-menu-grid-4col">
-                          {/* Columns 1-3: Subcategories */}
-                          <div className="mega-menu-links-group">
-                            {group.subcategories.map((sub) => (
-                              <div className="mega-menu-column" key={sub.key}>
-                                <a
-                                  href={`/shop/${group.key.toLowerCase()}/${sub.dbName.toLowerCase().replace(/\s+/g, '-')}`}
-                                  className="mega-menu-column-heading"
-                                  onClick={(e) => handleLinkClick(e, `/shop/${group.key.toLowerCase()}/${sub.dbName.toLowerCase().replace(/\s+/g, '-')}`)}
-                                >
-                                  {sub.label}
-                                </a>
-                                {sub.children && sub.children.length > 0 && (
-                                  <ul className="mega-menu-column-list">
-                                    {sub.children.map((child) => (
+                      <div className="mega-menu-split-container" style={{ padding: '28px 36px', width: '100%' }}>
+                        <div className="mega-menu-links-group" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '32px 40px', width: '100%' }}>
+                          {group.subcategories.map((sub) => (
+                            <div className="mega-menu-column" key={sub.key}>
+                              <a
+                                href={`/shop/${group.key.toLowerCase()}/${sub.dbName.toLowerCase().replace(/\s+/g, '-')}`}
+                                className="mega-menu-column-heading"
+                                onClick={(e) => handleLinkClick(e, `/shop/${group.key.toLowerCase()}/${sub.dbName.toLowerCase().replace(/\s+/g, '-')}`)}
+                              >
+                                {sub.label ? sub.label.toUpperCase() : ''}
+                              </a>
+                              {sub.children && sub.children.length > 0 && (
+                                <ul className="mega-menu-column-list">
+                                  {sub.children.map((child) => {
+                                    const rawLabel = child.label || '';
+                                    let formattedLabel = rawLabel.trim();
+                                    if (formattedLabel.toLowerCase() === 'duppata') formattedLabel = 'Dupatta';
+                                    else if (formattedLabel.toLowerCase() === 'formal suites') formattedLabel = 'Formal Suits';
+                                    else formattedLabel = formattedLabel.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+
+                                    return (
                                       <li key={child.key} className="mega-menu-item">
                                         <a
                                           href={`/shop/${group.key.toLowerCase()}/${child.dbName.toLowerCase().replace(/\s+/g, '-')}`}
                                           onClick={(e) => handleLinkClick(e, `/shop/${group.key.toLowerCase()}/${child.dbName.toLowerCase().replace(/\s+/g, '-')}`)}
                                         >
-                                          {child.label}
+                                          {formattedLabel}
                                         </a>
                                       </li>
-                                    ))}
-                                  </ul>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Column 4: Promo Card */}
-                          {PROMO_CARDS[group.key] && (() => {
-                            const promo = PROMO_CARDS[group.key];
-                            return (
-                              <div className="mega-menu-promo-col">
-                                <div className="mega-menu-promo-card">
-                                  <div className="promo-badge">{promo.tag}</div>
-                                  <div className="promo-img-wrap">
-                                    <img src={promo.image} alt={promo.title} className="promo-img" />
-                                  </div>
-                                  <div className="promo-info">
-                                    <h4 className="promo-title">{promo.title}</h4>
-                                    <p className="promo-desc">{promo.desc}</p>
-                                    <a
-                                      href={promo.href}
-                                      className="promo-link"
-                                      onClick={(e) => handleLinkClick(e, promo.href)}
-                                    >
-                                      Shop Now &rarr;
-                                    </a>
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })()}
+                                    );
+                                  })}
+                                </ul>
+                              )}
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>

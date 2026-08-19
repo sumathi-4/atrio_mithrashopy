@@ -933,7 +933,7 @@ export default function NewArrivalsView() {
 
       let loaded = null;
       if (!hasUrlFilters) {
-        loaded = loadPersistentFilters();
+        clearPersistentFilters();
       }
 
       if (loaded) {
@@ -1350,14 +1350,6 @@ export default function NewArrivalsView() {
     
     return (
       <div className="flat-category-checklist-container">
-        <input 
-          type="text"
-          className="category-list-search"
-          placeholder="Search categories..."
-          value={categorySearchQuery}
-          onChange={(e) => setCategorySearchQuery(e.target.value)}
-        />
-        
         <div className="filter-category-list-m3">
           {displayed.length > 0 ? (
             displayed.map(catName => {
@@ -1869,37 +1861,21 @@ export default function NewArrivalsView() {
                       </div>
 
                       <div className="clothing-info-section">
-                        <div className="clothing-brand-row">
-                          <span className="clothing-brand-name">{simBrandName}</span>
-                          <div className="clothing-stock-badge">
-                            <span className={simInStock ? 'stock-status-in' : 'stock-status-out'}>{simInStock ? 'In Stock' : 'Out of Stock'}</span>
-                          </div>
-                        </div>
-
                         <h4 className="clothing-product-title">{simProd.title}</h4>
+
+                        <div className="clothing-price-box">
+                          <span className="clothing-selling-price">₹{simPriceNum.toLocaleString()}</span>
+                          {simOriginalPriceNum > simPriceNum && (
+                            <span className="clothing-original-price">₹{simOriginalPriceNum.toLocaleString()}</span>
+                          )}
+                        </div>
 
                         <div className="clothing-rating-badge-container">
                           <div className="clothing-rating-pill-green">
                             <span>{(simProd.rating || 5).toFixed(1)}</span>
                             <span className="rating-star-icon">★</span>
-                            <span className="rating-divider">|</span>
-                            <span className="rating-count">{simProd.reviews || 0}</span>
                           </div>
-                        </div>
-
-                        <div className="clothing-price-and-action">
-                          <div className="clothing-price-box">
-                            <span className="clothing-selling-price">₹{simPriceNum.toLocaleString()}</span>
-                            {simOriginalPriceNum > simPriceNum && (
-                              <span className="clothing-original-price">₹{simOriginalPriceNum.toLocaleString()}</span>
-                            )}
-                          </div>
-                          <button 
-                            className={`clothing-card-add-cart-btn ${isSimInCart ? 'in-cart' : ''}`}
-                            onClick={(e) => { e.stopPropagation(); toggleCart(simProd.id, simProd.title); }}
-                          >
-                            {isSimInCart ? "IN CART" : "ADD TO CART"}
-                          </button>
+                          <span className="rating-count-text">{simProd.reviews || 5} Reviews</span>
                         </div>
                       </div>
                     </div>
@@ -1923,19 +1899,6 @@ export default function NewArrivalsView() {
         </button>
       </div>
 
-      <div className="filter-block-m3">
-        <span className="filter-label-m3">SEARCH</span>
-        <div className="filter-search-box-m3">
-          <span className="search-icon-m3">🔍</span>
-          <input
-            type="text"
-            className="filter-search-input-m3"
-            placeholder="Search arrivals..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </div>
 
       <div className="unified-filters-card">
         
@@ -2329,39 +2292,21 @@ export default function NewArrivalsView() {
                           </div>
 
                           <div className="clothing-info-section">
-                            <div className="clothing-brand-row">
-                              <span className="clothing-brand-name">{brandName}</span>
-                              <div className="clothing-stock-badge">
-                                <span className={inStock ? 'stock-status-in' : 'stock-status-out'}>
-                                  {inStock ? "In Stock" : "Out of Stock"}
-                                </span>
-                              </div>
-                            </div>
-
                             <h4 className="clothing-product-title">{prod.title}</h4>
+
+                            <div className="clothing-price-box">
+                              <span className="clothing-selling-price">₹{priceNum.toLocaleString()}</span>
+                              {originalPriceNum > priceNum && (
+                                <span className="clothing-original-price">₹{originalPriceNum.toLocaleString()}</span>
+                              )}
+                            </div>
 
                             <div className="clothing-rating-badge-container">
                               <div className="clothing-rating-pill-green">
                                 <span>{(prod.rating || 5).toFixed(1)}</span>
                                 <span className="rating-star-icon">★</span>
-                                <span className="rating-divider">|</span>
-                                <span className="rating-count">{prod.reviews || 0}</span>
                               </div>
-                            </div>
-
-                            <div className="clothing-price-and-action">
-                              <div className="clothing-price-box">
-                                <span className="clothing-selling-price">₹{priceNum.toLocaleString()}</span>
-                                {originalPriceNum > priceNum && (
-                                  <span className="clothing-original-price">₹{originalPriceNum.toLocaleString()}</span>
-                                )}
-                              </div>
-                              <button 
-                                className={`clothing-card-add-cart-btn ${isInCart ? 'in-cart' : ''}`}
-                                onClick={(e) => { e.stopPropagation(); toggleCart(prod.id, prod.title); }}
-                              >
-                                {isInCart ? "IN CART" : "ADD TO CART"}
-                              </button>
+                              <span className="rating-count-text">{prod.reviews || 5} Reviews</span>
                             </div>
                           </div>
                         </div>

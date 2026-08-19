@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Shirt, BookOpen, Gift, Crown, Star, Tag, Users } from 'lucide-react';
+import { ChevronRight, Shirt, BookOpen, Gift, Crown, Star, Tag, Users, ShoppingBag, UserCheck, Store } from 'lucide-react';
 import { apiService } from '../services/apiService';
 import newsletterGiftsImg from '../assets/newsletter_gifts.png';
 import newsletterPerfumeImg from '../assets/newsletter_perfume.png';
@@ -22,6 +22,56 @@ const RazorpayBadge = () => (
     </svg>
   </span>
 );
+
+// ─── Default Real Categories Fallback Group ─────────────
+const DEFAULT_CLOUD_GROUPS = [
+  {
+    title: 'CLOTHING & ETHNIC WEAR',
+    tags: [
+      { name: 'All Clothing', path: '/shop/clothing' },
+      { name: 'Sarees', path: '/shop?category=Clothing&search=Saree' },
+      { name: 'Kurtas & Kurtis', path: '/shop?category=Clothing&search=Kurti' },
+      { name: 'Ethnic Wear', path: '/shop?category=Clothing&search=Ethnic' },
+      { name: "Men's Wear", path: '/shop?category=Clothing&search=Men' },
+      { name: "Kids Clothing", path: '/shop?category=Clothing&search=Kids' },
+      { name: 'Frocks & Gowns', path: '/shop?category=Clothing&search=Frock' },
+      { name: 'T-Shirts & Tops', path: '/shop?category=Clothing&search=T-Shirt' },
+      { name: 'Suits', path: '/shop?category=Clothing&search=Suit' }
+    ]
+  },
+  {
+    title: 'STATIONERY & OFFICE',
+    tags: [
+      { name: 'All Stationery', path: '/shop/stationery' },
+      { name: 'Journals & Notebooks', path: '/shop?category=Stationery&search=Notebook' },
+      { name: 'Diaries', path: '/shop?category=Stationery&search=Diary' },
+      { name: 'Pens & Art Supplies', path: '/shop?category=Stationery&search=Pen' },
+      { name: 'Desk Organizers', path: '/shop?category=Stationery&search=Organizer' },
+      { name: 'Papercrafts', path: '/shop?category=Stationery&search=Papercraft' }
+    ]
+  },
+  {
+    title: 'GIFTS & CELEBRATIONS',
+    tags: [
+      { name: 'All Gifts', path: '/shop/gifts' },
+      { name: 'Gift Hampers', path: '/shop?category=Gifts&search=Hamper' },
+      { name: 'Personalized Gifts', path: '/shop?category=Gifts&search=Personalized' },
+      { name: 'Festive Decor', path: '/shop?category=Gifts&search=Decor' },
+      { name: 'Gift Sets', path: '/shop?category=Gifts&search=Gift' },
+      { name: 'Voucher Offers', path: '/offers' }
+    ]
+  },
+  {
+    title: 'ACCESSORIES & JEWELLERY',
+    tags: [
+      { name: 'All Accessories', path: '/shop/accessories' },
+      { name: 'Jewellery & Necklaces', path: '/shop?category=Accessories&search=Jewellery' },
+      { name: 'Hair Accessories', path: '/shop?category=Accessories&search=Hair' },
+      { name: 'Bags & Totes', path: '/shop?category=Accessories&search=Bag' },
+      { name: 'Earrings & Jhumkas', path: '/shop?category=Accessories&search=Earring' }
+    ]
+  }
+];
 
 // ─── SHOP links — real routes only ───────────────────────
 const SHOP_LINKS = [
@@ -58,6 +108,7 @@ export default function Footer({ authUser, onNavigate }) {
     storeName: 'MithiraShopy',
   });
   const [currentPath, setCurrentPath] = useState(window.location.pathname + window.location.search);
+  const [cloudGroups, setCloudGroups] = useState(DEFAULT_CLOUD_GROUPS);
 
   // Track current path for active link highlighting
   useEffect(() => {
@@ -72,6 +123,61 @@ export default function Footer({ authUser, onNavigate }) {
         setSettings({ storeName: data.storeName || 'MithiraShopy' });
       }
     }).catch(() => {});
+
+    // Dynamically build category tag cloud strictly from real database subcategories (matching Navbar)
+    apiService.getCategories().then(dbCategories => {
+      if (Array.isArray(dbCategories) && dbCategories.length > 0) {
+        const activeCats = dbCategories.filter(c => c.name && c.name !== '—' && c.status !== 'Inactive');
+
+        // Helper to check if a category belongs to a root parent family
+        const isUnderRoot = (cat, rootName) => {
+          let curr = cat;
+          const visited = new Set();
+          while (curr && curr.parent && curr.parent !== '—' && !visited.has(curr.name)) {
+            visited.add(curr.name);
+            const pLower = curr.parent.toLowerCase().trim();
+            const rLower = rootName.toLowerCase().trim();
+            if (pLower === rLower || pLower.includes(rLower)) return true;
+            curr = activeCats.find(c => c.name.toLowerCase().trim() === pLower);
+          }
+          return false;
+        };
+
+        // Extract ONLY real subcategories (categories that have a parent in db)
+        const getSubTagsForRoot = (rootNames) => {
+          const tags = [];
+          activeCats.forEach(cat => {
+            const hasParent = cat.parent && cat.parent !== '—';
+            if (hasParent) {
+              const belongs = rootNames.some(r => isUnderRoot(cat, r));
+              if (belongs) {
+                const name = cat.name.trim();
+                if (!tags.some(t => t.name.toLowerCase() === name.toLowerCase())) {
+                  tags.push({
+                    name: name,
+                    path: `/shop?search=${encodeURIComponent(name)}`
+                  });
+                }
+              }
+            }
+          });
+          return tags;
+        };
+
+        const clothingTags = getSubTagsForRoot(['Clothing', 'Women', 'Men', 'Kids']);
+        const stationeryTags = getSubTagsForRoot(['Stationery']);
+        const giftsTags = getSubTagsForRoot(['Gifts']);
+        const accessoriesTags = getSubTagsForRoot(['Accessories', 'Jewellery']);
+
+        const dynamicGroups = [];
+        if (clothingTags.length > 0) dynamicGroups.push({ title: 'CLOTHING & ETHNIC WEAR', tags: clothingTags });
+        if (stationeryTags.length > 0) dynamicGroups.push({ title: 'STATIONERY & OFFICE', tags: stationeryTags });
+        if (giftsTags.length > 0) dynamicGroups.push({ title: 'GIFTS & CELEBRATIONS', tags: giftsTags });
+        if (accessoriesTags.length > 0) dynamicGroups.push({ title: 'ACCESSORIES & JEWELLERY', tags: accessoriesTags });
+
+        setCloudGroups(dynamicGroups);
+      }
+    }).catch(console.error);
   }, []);
 
   const handleSubscribe = (e) => {
@@ -100,35 +206,36 @@ export default function Footer({ authUser, onNavigate }) {
   return (
     <footer className="footer-area">
 
-      {/* ─── Newsletter Banner (UNTOUCHED) ─────────────────── */}
-      <div className="newsletter-banner">
-        <div className="newsletter-content-wrapper">
-          <div className="newsletter-side-img-container left-side">
-            <img src={newsletterGiftsImg} alt="Gifts and offers" className="newsletter-side-img" />
-          </div>
-          <div className="newsletter-center-content">
-            <h3 className="newsletter-title">Stay Updated</h3>
-            <p className="newsletter-subtitle">Subscribe to get special offers, new arrivals &amp; more</p>
-            <form className="newsletter-form" onSubmit={handleSubscribe}>
-              <div className="newsletter-input-group">
-                <input
-                  type="email"
-                  placeholder="Enter your email address"
-                  required
-                  className="newsletter-input"
-                />
-                <button type="submit" className="newsletter-btn">SUBSCRIBE</button>
+      {/* ─── Main Footer Section (Tag Cloud INSIDE Footer Main) ─── */}
+      <div className="footer-main">
+
+        {/* AJIO-Style Category Keyword Tag Cloud Section */}
+        <div className="footer-category-cloud-section">
+          <div className="footer-category-cloud-inner">
+            {cloudGroups.map((catGroup, idx) => (
+              <div key={idx} className="footer-cloud-group">
+                <h4 className="footer-cloud-group-title">{catGroup.title}</h4>
+                <div className="footer-cloud-tags-row">
+                  {catGroup.tags.map((tag, tagIdx) => (
+                    <a
+                      key={tagIdx}
+                      href={tag.path}
+                      className="footer-cloud-tag-pill"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(tag.path);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                    >
+                      {tag.name}
+                    </a>
+                  ))}
+                </div>
               </div>
-            </form>
-          </div>
-          <div className="newsletter-side-img-container right-side">
-            <img src={newsletterPerfumeImg} alt="Premium products" className="newsletter-side-img" />
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* ─── Main Footer Columns ─────────────────────────── */}
-      <div className="footer-main">
         <div className="footer-main-inner">
 
           {/* Brand Column */}
@@ -149,14 +256,7 @@ export default function Footer({ authUser, onNavigate }) {
           {/* Shop Column */}
           <div className="footer-links-col">
             <h4 className="footer-col-heading">
-              <span className="footer-col-heading-icon">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                  <line x1="3" y1="6" x2="21" y2="6"/>
-                  <path d="M16 10a4 4 0 0 1-8 0"/>
-                </svg>
-              </span>
-              Shop
+              <span>SHOP</span>
             </h4>
             <ul className="footer-nav-list">
               {SHOP_LINKS.map(link => {
@@ -181,13 +281,7 @@ export default function Footer({ authUser, onNavigate }) {
           {/* My Account Column */}
           <div className="footer-links-col">
             <h4 className="footer-col-heading">
-              <span className="footer-col-heading-icon">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
-                </svg>
-              </span>
-              My Account
+              <span>MY ACCOUNT</span>
             </h4>
             <ul className="footer-nav-list">
               {ACCOUNT_LINKS.map(link => {
@@ -212,21 +306,18 @@ export default function Footer({ authUser, onNavigate }) {
           {/* Sell With Us Column */}
           <div className="footer-links-col">
             <h4 className="footer-col-heading">
-              <span className="footer-col-heading-icon">
-                <Users size={14} />
-              </span>
-              Sell With Us
+              <span>SELL WITH US</span>
             </h4>
             <ul className="footer-nav-list">
               <li>
                 <a
-                  href="/seller-promo"
+                  href="/seller-portal"
                   onClick={(e) => {
                     e.preventDefault();
                     if (onNavigate) {
-                      onNavigate('/seller-promo');
+                      onNavigate('/seller-portal');
                     } else {
-                      navigate('/seller-promo');
+                      navigate('/seller-portal');
                     }
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}

@@ -7,24 +7,58 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const TOKEN_KEY = 'mithira_auth_token';
 const USER_KEY  = 'mithira_auth_user';
 
+export function normalizeUser(user) {
+  if (!user) return null;
+  return {
+    ...user,
+    cart: Array.isArray(user.cart) ? user.cart : [],
+    cartItems: Array.isArray(user.cartItems) ? user.cartItems : [],
+    wishlist: Array.isArray(user.wishlist) ? user.wishlist : [],
+    addresses: Array.isArray(user.addresses) ? user.addresses : []
+  };
+}
+
 export function saveSession(token, user) {
-  localStorage.setItem(TOKEN_KEY, token);
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
+  try {
+    const normalized = normalizeUser(user);
+    localStorage.setItem(TOKEN_KEY, token);
+    const sanitizedUser = { ...normalized };
+    if (sanitizedUser.profileImage && sanitizedUser.profileImage.length > 500) {
+      delete sanitizedUser.profileImage;
+    }
+    localStorage.setItem(USER_KEY, JSON.stringify(sanitizedUser));
+  } catch (err) {
+    console.warn('localStorage quota warning in saveSession, cleaning cache:', err);
+    try {
+      localStorage.removeItem('mithira_cached_products');
+      localStorage.removeItem('mithra_admin_products');
+      localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(USER_KEY, JSON.stringify(normalizeUser(user)));
+    } catch (_) {}
+  }
 }
 
 export function clearSession() {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem('mithra_auth_token');
+    localStorage.removeItem('mithra_auth_user');
+  } catch (_) {}
 }
 
 export function getStoredToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  try {
+    return localStorage.getItem(TOKEN_KEY) || localStorage.getItem('mithra_auth_token');
+  } catch {
+    return null;
+  }
 }
 
 export function getStoredUser() {
   try {
-    const raw = localStorage.getItem(USER_KEY);
-    return raw ? JSON.parse(raw) : null;
+    const raw = localStorage.getItem(USER_KEY) || localStorage.getItem('mithra_auth_user');
+    return raw ? normalizeUser(JSON.parse(raw)) : null;
   } catch {
     return null;
   }
@@ -59,11 +93,12 @@ export async function registerUser({ name, email, phone, password }) {
     body: JSON.stringify({ name, email, phone, password }),
   });
 
+  const user = normalizeUser(data.user);
   if (ok && data.token) {
-    saveSession(data.token, data.user);
+    saveSession(data.token, user);
   }
 
-  return { success: ok && data.success, message: data.message, user: data.user };
+  return { success: ok && data.success, message: data.message, user };
 }
 
 /**
@@ -75,11 +110,12 @@ export async function loginUser({ email, password }) {
     body: JSON.stringify({ email, password }),
   });
 
+  const user = normalizeUser(data.user);
   if (ok && data.token) {
-    saveSession(data.token, data.user);
+    saveSession(data.token, user);
   }
 
-  return { success: ok && data.success, message: data.message, user: data.user };
+  return { success: ok && data.success, message: data.message, user };
 }
 
 /**
@@ -91,11 +127,12 @@ export async function loginAdmin({ email, password }) {
     body: JSON.stringify({ email, password }),
   });
 
+  const user = normalizeUser(data.user);
   if (ok && data.token) {
-    saveSession(data.token, data.user);
+    saveSession(data.token, user);
   }
 
-  return { success: ok && data.success, message: data.message, user: data.user };
+  return { success: ok && data.success, message: data.message, user };
 }
 
 export async function verifySession() {
@@ -103,17 +140,18 @@ export async function verifySession() {
   if (!token) return null;
 
   try {
-    const { ok, data } = await apiFetch('/api/auth/me');
-    if (ok && data.success) {
-      // Update stored user with fresh data
-      localStorage.setItem(USER_KEY, JSON.stringify(data.user));
-      return data.user;
+    const { ok, status, data } = await apiFetch('/api/auth/me');
+    if (ok && data && data.success) {
+      const user = normalizeUser(data.user);
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
+      return user;
     }
-    // Token is invalid/expired — clear session
-    clearSession();
-    return null;
+    if (status === 401 || status === 403) {
+      clearSession();
+      return null;
+    }
+    return getStoredUser();
   } catch (err) {
-    // Network error — preserve existing session rather than logging the user out
     console.warn('verifySession network error, preserving local session:', err);
     return getStoredUser();
   }

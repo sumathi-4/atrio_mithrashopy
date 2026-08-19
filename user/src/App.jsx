@@ -18,7 +18,7 @@ import UserAccount from './components/UserAccount';
 import LuckyCharmModal from './components/LuckyCharmModal';
 import LuckyCharmPage from './components/LuckyCharmPage';
 import { ToastProvider } from './components/ToastProvider';
-import { verifySession, getStoredUser, logout } from './services/authService';
+import { verifySession, getStoredUser, getStoredToken, logout } from './services/authService';
 import CustomFeatureSection from './components/CustomFeatureSection';
 import { apiService } from './services/apiService';
 
@@ -44,6 +44,8 @@ function App() {
       }
     };
     fetchFeatures();
+    // Background prefetch products for instant loading
+    apiService.getProducts().catch(() => {});
 
     const handleUpdate = () => fetchFeatures();
     window.addEventListener('mithira_features_update', handleUpdate);
@@ -65,9 +67,9 @@ function App() {
       case 'exclusive_products':
         return <ProductsSection key="exclusive_products" authUser={authUser} setAuthUser={setAuthUser} />;
       case 'celebrity_collection':
-        return <CelebrityCollection key="celebrity_collection" />;
+        return null;
       case 'why_choose_us':
-        return <WhyChooseUs key="why_choose_us" />;
+        return null;
       default:
         return (
           <CustomFeatureSection
@@ -83,17 +85,18 @@ function App() {
   // ── Restore session on page load ──────────────────────────────────
   useEffect(() => {
     const storedUser = getStoredUser();
-    if (storedUser) {
+    const token = getStoredToken();
+    if (storedUser && token) {
       setAuthUser(storedUser);
       verifySession().then((freshUser) => {
         if (freshUser) {
           setAuthUser(freshUser);
-        } else {
+        } else if (!getStoredToken()) {
           setAuthUser(null);
-          logout();
         }
       }).finally(() => setSessionChecked(true));
     } else {
+      setAuthUser(null);
       setSessionChecked(true);
     }
   }, []);
@@ -114,7 +117,7 @@ function App() {
         setCurrentView('celebrity');
       } else if (path.includes('/lucky-charms')) {
         setCurrentView('lucky-charms');
-      } else if (path.includes('/seller-promo') || path.includes('/sell-with-us') || path.includes('/sell')) {
+      } else if (path.includes('/seller-portal') || path.includes('/seller-promo') || path.includes('/sell-with-us') || path.includes('/sell')) {
         setCurrentView('seller-promo');
       } else {
         setCurrentView('home');
@@ -124,6 +127,30 @@ function App() {
     window.addEventListener('popstate', checkPath);
     return () => window.removeEventListener('popstate', checkPath);
   }, []);
+
+  // ── Auto-popup Login Modal when visiting /account unauthenticated ──
+  useEffect(() => {
+    if (sessionChecked && !authUser && currentView === 'account') {
+      const timer = setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('mithira_open_auth_modal', { detail: { type: 'user' } }));
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [sessionChecked, authUser, currentView]);
+
+  // ── 1-Minute Automated Login Reminder Popup for Guest Browsing ──
+  useEffect(() => {
+    if (sessionChecked && !authUser) {
+      const hasShownReminder = sessionStorage.getItem('mithira_login_reminder_shown');
+      if (!hasShownReminder) {
+        const timer = setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('mithira_open_auth_modal', { detail: { type: 'user' } }));
+          sessionStorage.setItem('mithira_login_reminder_shown', 'true');
+        }, 60000); // 1 minute (60 seconds)
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [sessionChecked, authUser]);
 
   // ── Scroll hash handling ──────────────────────────────────────────
   useEffect(() => {

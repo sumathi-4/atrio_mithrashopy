@@ -1,32 +1,51 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { apiService } from '../services/apiService';
-import imgClothing from '../assets/sbc_clothing.png';
-import imgStationery from '../assets/sbc_stationery.png';
-import imgGifts from '../assets/sbc_gifts.png';
-import imgAccessories from '../assets/sbc_accessories.png';
-import imgKids from '../assets/hero_kids.jpg';
+import imgAccessories from '../assets/cat_accessories.jpg';
+import imgHandcrafts from '../assets/cat_handcrafts.jpg';
+import imgStationery from '../assets/cat_stationery.jpg';
+import imgWomenOfficewear from '../assets/cat_women_officewear.jpg';
+import imgGirlsDress from '../assets/cat_girls_dress.jpg';
+import imgEthnicWear from '../assets/cat_ethnic_wear.jpg';
+import imgSarees from '../assets/cat_sarees.jpg';
+import imgMenwear from '../assets/cat_menwear.jpg';
 
 // Default images mapped to category names (case-insensitive)
 const DEFAULT_IMAGES = {
-  clothing:              imgClothing,
-  stationery:            imgStationery,
-  gifts:                 imgGifts,
-  accessories:           imgAccessories,
+  clothing: imgWomenOfficewear,
+  'women officewear': imgWomenOfficewear,
+  women: imgWomenOfficewear,
+  stationery: imgStationery,
+  gifts: imgHandcrafts,
+  handcrafts: imgHandcrafts,
+  accessories: imgAccessories,
   'accessories & fancy': imgAccessories,
-  fancy:                 imgAccessories,
-  kids:                  imgKids,
+  fancy: imgAccessories,
+  'girls dress': imgGirlsDress,
+  girls: imgGirlsDress,
+  kids: imgGirlsDress,
+  'ethnic wear': imgEthnicWear,
+  ethnic: imgEthnicWear,
+  sarees: imgSarees,
+  saree: imgSarees,
+  menwear: imgMenwear,
+  men: imgMenwear,
+  'mens wear': imgMenwear,
 };
 
-// Fallback list when backend is offline
+// Fallback category list containing all 8 top categories with identical 3D card design
 const FALLBACK_CATEGORIES = [
-  { name: 'Clothing',            image: imgClothing    },
-  { name: 'Stationery',          image: imgStationery  },
-  { name: 'Gifts',               image: imgGifts       },
-  { name: 'Accessories & Fancy', image: imgAccessories },
+  { name: 'Clothing', image: imgWomenOfficewear },
+  { name: 'Stationery', image: imgStationery },
+  { name: 'Gifts', image: imgHandcrafts },
+  { name: 'Accessories', image: imgAccessories },
+  { name: 'Girls Dress', image: imgGirlsDress },
+  { name: 'Ethnic Wear', image: imgEthnicWear },
+  { name: 'Sarees', image: imgSarees },
+  { name: 'Menwear', image: imgMenwear },
 ];
 
 const resolveCategoryImage = (imageVal, key) => {
-  if (!imageVal) return DEFAULT_IMAGES[key] || imgClothing;
+  if (!imageVal) return DEFAULT_IMAGES[key] || imgWomenOfficewear;
   const str = String(imageVal).toLowerCase();
   const isReal = str.startsWith('http') || str.startsWith('/') || str.startsWith('data:') || /\.(jpg|jpeg|png|webp|gif|svg|avif)(\?|$)/.test(str);
   
@@ -38,13 +57,13 @@ const resolveCategoryImage = (imageVal, key) => {
     }
     return imageVal;
   }
-  return DEFAULT_IMAGES[key] || imgClothing;
+  return DEFAULT_IMAGES[key] || imgWomenOfficewear;
 };
 
 export default function CategoryCards() {
   const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
-  const [loading, setLoading]       = useState(true);
-  const stripRef                    = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const stripRef = useRef(null);
 
   useEffect(() => {
     apiService
@@ -57,46 +76,55 @@ export default function CategoryCards() {
               c.status === 'Active' &&
               c.showInCategories !== false
           );
-          if (roots.length > 0) {
-            setCategories(
-              roots.map((c) => {
-                const key = c.name.toLowerCase();
-                return {
-                  name:  c.name,
-                  image: resolveCategoryImage(c.image, key),
-                };
-              })
+          
+          const dbCategories = roots.map((c) => {
+            const key = c.name.toLowerCase().trim();
+            return {
+              name: c.name,
+              image: resolveCategoryImage(c.image, key),
+            };
+          });
+
+          // Merge: Start with DB categories, then append missing FALLBACK_CATEGORIES
+          const merged = [...dbCategories];
+          FALLBACK_CATEGORIES.forEach((fallback) => {
+            const exists = merged.some(
+              (item) => item.name.toLowerCase().trim() === fallback.name.toLowerCase().trim()
             );
-          }
+            if (!exists) {
+              merged.push(fallback);
+            }
+          });
+
+          setCategories(merged);
         }
       })
-      .catch(() => {/* keep fallback */})
-      .finally(() => setLoading(false));
+      .catch(() => {/* keep fallback */});
   }, []);
+
+  useEffect(() => {
+    if (stripRef.current) {
+      stripRef.current.scrollLeft = 0;
+    }
+  }, [categories]);
 
   const handleClick = (catName) => {
     window.history.pushState({}, '', `/shop/${catName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`);
     window.dispatchEvent(new Event('popstate'));
   };
 
-  const scrollLeft  = () => stripRef.current?.scrollBy({ left: -320, behavior: 'smooth' });
-  const scrollRight = () => stripRef.current?.scrollBy({ left:  320, behavior: 'smooth' });
+  const scrollLeft = () => stripRef.current?.scrollBy({ left: -320, behavior: 'smooth' });
+  const scrollRight = () => stripRef.current?.scrollBy({ left: 320, behavior: 'smooth' });
 
   return (
     <section id="categories" className="sbc-section">
-      {/* ── Section Header ── */}
-      <div className="sbc-header">
-        <h2 className="sbc-title">Shop by Top Categories</h2>
-        <p className="sbc-subtitle">Explore our top categories and find your perfect style</p>
-      </div>
-
       {/* ── Scroll Strip ── */}
       <div className="sbc-strip-wrapper">
-        <button className="sbc-arrow sbc-arrow-left"  onClick={scrollLeft}  aria-label="Scroll left">&#8249;</button>
+        <button className="sbc-arrow sbc-arrow-left" onClick={scrollLeft} aria-label="Scroll left">&#8249;</button>
 
         <div className="sbc-strip" ref={stripRef}>
           {loading
-            ? Array.from({ length: 4 }).map((_, i) => (
+            ? Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="sbc-card sbc-skeleton" />
               ))
             : categories.map((cat, i) => (
@@ -128,3 +156,5 @@ export default function CategoryCards() {
     </section>
   );
 }
+
+

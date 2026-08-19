@@ -1,8 +1,11 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/mithirashopy";
-mongoose.connect(MONGODB_URI).then(async () => {
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mithirashopy";
+mongoose.connect(MONGODB_URI, {
+	serverSelectionTimeoutMS: 3000,
+	connectTimeoutMS: 3000
+}).then(async () => {
 	console.log("✅ Connected to MongoDB successfully");
 	try {
 		// Skip dropping the database to persist products and categories across restarts
@@ -29,9 +32,9 @@ mongoose.connect(MONGODB_URI).then(async () => {
 			]
 		}, { $set: { approvalStatus: "Rejected" } });
 	} catch (dbErr) {
-		console.error("❌ Error dropping database:", dbErr);
+		console.error("❌ Error seeding/updating database:", dbErr);
 	}
-}).catch((err) => console.error("❌ MongoDB connection error:", err));
+}).catch((err) => console.error("❌ MongoDB connection error (Backend using offline memory fallback):", err.message));
 // ─── Schemas & Models ────────────────────────────────────────────────────────
 const AddressSchema = new mongoose.Schema({
 	id: {
@@ -120,7 +123,7 @@ const UserSchema = new mongoose.Schema({
 	},
 	cartItems: [{
 		productId: {
-			type: Number,
+			type: mongoose.Schema.Types.Mixed,
 			required: true
 		},
 		variant: {
@@ -137,7 +140,7 @@ const UserSchema = new mongoose.Schema({
 		default: []
 	},
 	wishlistItems: [{ productId: {
-		type: Number,
+		type: mongoose.Schema.Types.Mixed,
 		required: true
 	} }],
 	addresses: {

@@ -2,11 +2,11 @@ import React from 'react';
 import { Star, Sparkles, Banknote, Tag, Shield } from 'lucide-react';
 
 const TRUST_ITEMS = [
-  { icon: <Star size={24} />, title: 'Premium Quality', sub: 'Handpicked Collections' },
-  { icon: <Sparkles size={24} />, title: 'Exclusive Category', sub: 'Curated Choices' },
-  { icon: <Banknote size={24} />, title: 'Cash on Delivery', sub: 'COD Available' },
-  { icon: <Tag size={24} />, title: 'Lowest Price', sub: 'Best Price Guaranteed' },
-  { icon: <Shield size={24} />, title: 'Secure Payment', sub: '100% Safe & Encrypted' },
+  { icon: <Star size={22} strokeWidth={1.8} />, title: 'PREMIUM QUALITY', sub: 'Handpicked Collections' },
+  { icon: <Sparkles size={22} strokeWidth={1.8} />, title: 'EXCLUSIVE CATEGORY', sub: 'Curated Choices' },
+  { icon: <Banknote size={22} strokeWidth={1.8} />, title: 'CASH ON DELIVERY', sub: 'COD Available' },
+  { icon: <Tag size={22} strokeWidth={1.8} />, title: 'LOWEST PRICE', sub: 'Best Price Guaranteed' },
+  { icon: <Shield size={22} strokeWidth={1.8} />, title: 'SECURE PAYMENT', sub: '100% Safe & Encrypted' },
 ];
 
 export default function TrustBar() {
@@ -29,3 +29,4 @@ export default function TrustBar() {
     </div>
   );
 }
+

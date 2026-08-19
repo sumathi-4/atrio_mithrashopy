@@ -43,6 +43,12 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
   const [copiedUpi, setCopiedUpi] = useState(false);
 
   useEffect(() => {
+    if (!authUser) {
+      window.dispatchEvent(new CustomEvent('mithira_open_auth_modal', { detail: { type: 'user' } }));
+    }
+  }, [authUser]);
+
+  useEffect(() => {
     apiService.getSettings().then(settings => {
       if (settings) {
         const loaded = {
@@ -123,15 +129,17 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
 
   // Geolocation and session management effect
   useEffect(() => {
-    // Get live location
-    fetch('https://ipapi.co/json/')
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 2000);
+    fetch('https://ipapi.co/json/', { signal: controller.signal })
       .then(res => res.json())
       .then(data => {
         if (data && data.city && data.country_name) {
           setCurrentLocation(`${data.city}, ${data.country_name}`);
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => clearTimeout(timer));
   }, []);
 
   const [sessionToken, setSessionToken] = useState(() => {
@@ -275,6 +283,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
     localStorage.removeItem('mithira_auth_token');
     localStorage.removeItem('mithira_auth_user');
     setAuthUser(null);
+    window.dispatchEvent(new CustomEvent('mithira_open_auth_modal', { detail: { type: 'user' } }));
     if (onNavigate) onNavigate('/');
   };
 
@@ -753,27 +762,36 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
   useEffect(() => {
     let ordersPollInterval;
     if (authUser) {
-      apiService.getAddresses().then(data => {
-        if (data) {
-          setAddresses(data);
-        }
-      });
-      apiService.getOrders().then(list => {
-        if (list) {
-          setUserOrders(list);
+      // Parallelize all account requests for maximum performance
+      Promise.all([
+        apiService.getAddresses().catch(() => null),
+        apiService.getOrders().catch(() => null),
+        apiService.getMyClaims().catch(() => null),
+        apiService.getMyReviews().catch(() => null),
+        apiService.getMe().catch(() => null)
+      ]).then(([addrData, ordersList, claimsData, reviewsData, userData]) => {
+        if (addrData) setAddresses(addrData);
+        if (ordersList) {
+          setUserOrders(ordersList);
           const params = new URLSearchParams(window.location.search);
           const orderId = params.get('orderId');
           if (orderId) {
-            const match = list.find(o => String(o.id) === String(orderId));
+            const match = ordersList.find(o => String(o.id) === String(orderId));
             if (match) {
               setSelectedOrderDetails(match);
               setShowOrderDetailsModal(true);
             }
           }
         }
+        if (claimsData) setMyClaims(claimsData);
+        if (reviewsData) setMyReviews(reviewsData);
+        if (userData && setAuthUser) {
+          setAuthUser(userData);
+          localStorage.setItem('mithira_auth_user', JSON.stringify(userData));
+        }
       });
 
-      // Poll for order updates every 10 seconds to sync vendor status updates automatically
+      // Poll for order updates every 15 seconds to sync vendor status updates automatically
       ordersPollInterval = setInterval(() => {
         apiService.getOrders().then(list => {
           if (list) {
@@ -787,24 +805,7 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
             });
           }
         }).catch(err => console.warn('Order polling error:', err));
-      }, 10000);
-
-      apiService.getMyClaims().then(claims => {
-        if (claims) {
-          setMyClaims(claims);
-        }
-      });
-      apiService.getMyReviews().then(reviews => {
-        if (reviews) {
-          setMyReviews(reviews);
-        }
-      });
-      apiService.getMe().then(user => {
-        if (user && setAuthUser) {
-          setAuthUser(user);
-          localStorage.setItem('mithira_auth_user', JSON.stringify(user));
-        }
-      });
+      }, 15000);
     } else {
       setAddresses([]);
       setUserOrders([]);
@@ -850,7 +851,11 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
     const handleLocalUpdate = () => refreshReviews();
     window.addEventListener('mithira_reviews_updated', handleLocalUpdate);
 
-    const interval = setInterval(refreshReviews, 4000);
+    const interval = setInterval(() => {
+      if (typeof document === 'undefined' || !document.hidden) {
+        refreshReviews();
+      }
+    }, 15000);
 
     return () => {
       channel.close();
@@ -1844,6 +1849,29 @@ export default function UserAccount({ authUser, setAuthUser, onNavigate }) {
       );
     });
   };
+
+  if (!authUser) {
+    return (
+      <div className="user-account-login-redirect-container" style={{ padding: '80px 20px', textAlign: 'center', minHeight: '65vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
+        <div style={{ background: '#ffffff', padding: '48px 36px', borderRadius: '16px', boxShadow: '0 10px 35px rgba(0,0,0,0.06)', maxWidth: '440px', width: '100%', border: '1px solid #e2e8f0' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#e0e7ff', color: '#051838', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <User size={32} />
+          </div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#051838', marginBottom: '10px' }}>Sign in to your account</h2>
+          <p style={{ color: '#64748b', fontSize: '0.98rem', marginBottom: '28px', lineHeight: '1.5' }}>
+            Please log in to view your profile, manage your orders, access your wishlist, and track purchases.
+          </p>
+          <button 
+            className="login-redirect-btn"
+            style={{ width: '100%', padding: '14px', background: '#051838', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: '600', fontSize: '1.05rem', cursor: 'pointer', transition: 'all 0.2s ease' }}
+            onClick={() => window.dispatchEvent(new CustomEvent('mithira_open_auth_modal', { detail: { type: 'user' } }))}
+          >
+            Log In / Register
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="ua-account-page">

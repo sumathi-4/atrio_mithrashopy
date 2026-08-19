@@ -5,6 +5,8 @@ import { apiService } from '../services/apiService';
 import { categoryConfigService } from '../services/categoryConfigService';
 import clothingUser1 from '../assets/clothing_user_1.jpg';
 import clothingUser2 from '../assets/clothing_user_2.jpg';
+import campaignBannerImg from '../assets/campaign_fashion_sale_banner.jpg';
+import spinWinBannerImg from '../assets/spin_win_banner.jpg';
 import { useToast } from './ToastProvider';
 import { resolveProductImage, resolveProductGallery, isRealImg } from '../utils/imageHelper';
 import { COLOR_MAP, getColorHex, getValuesForFilter, getFilterOptions, applyDynamicFilters, getProductBadge, getMergedFiltersForPath, setCategoryConfigsCache } from '../utils/filterUtils';
@@ -300,8 +302,9 @@ export default function ProductsSection({ authUser, setAuthUser }) {
   const toggleCart = (id, title, size = null, color = null) => {
     let updated;
     let updatedItems = [];
-    if (cart.includes(id)) {
-      updated = cart.filter(item => item !== id);
+    const isInCart = cart.some(item => String(item) === String(id));
+    if (isInCart) {
+      updated = cart.filter(item => String(item) !== String(id));
       addToast({ message: `Removed from cart`, type: 'cart' });
     } else {
       updated = [...cart, id];
@@ -310,18 +313,18 @@ export default function ProductsSection({ authUser, setAuthUser }) {
     setCart(updated);
 
     const prevItems = authUser ? (authUser.cartItems || []) : (JSON.parse(localStorage.getItem('mithira_guest_cart_items') || '[]'));
-    const isRemoving = !updated.includes(id);
+    const isRemoving = isInCart;
 
     if (isRemoving) {
-      updatedItems = prevItems.filter(item => item.productId !== id);
+      updatedItems = prevItems.filter(item => String(item.productId) !== String(id));
     } else {
-      const prod = productsList.find(p => p.id === id || String(p.id) === String(id));
+      const prod = productsList.find(p => p.id === id || String(p.id) === String(id) || String(p._id) === String(id));
       const selectedVariant = getSelectedVariant(prod, color, size);
       const variantId = selectedVariant ? (selectedVariant._id || selectedVariant.id || '') : null;
       const rawSku = selectedVariant ? selectedVariant.sku : null;
       const sku = rawSku && rawSku.includes('||') ? rawSku.split('||')[0] : rawSku;
 
-      updatedItems = [...prevItems.filter(item => item.productId !== id), {
+      updatedItems = [...prevItems.filter(item => String(item.productId) !== String(id)), {
         productId: id,
         quantity: 1,
         variant: { size, color, variantId, sku }
@@ -362,8 +365,9 @@ export default function ProductsSection({ authUser, setAuthUser }) {
 
   const toggleWishlist = (id) => {
     let updated;
-    if (wishlist.includes(id)) {
-      updated = wishlist.filter(item => item !== id);
+    const isWishlisted = wishlist.some(item => String(item) === String(id));
+    if (isWishlisted) {
+      updated = wishlist.filter(item => String(item) !== String(id));
       addToast({ message: 'Removed from wishlist', type: 'wishlist' });
     } else {
       updated = [...wishlist, id];
@@ -476,7 +480,7 @@ export default function ProductsSection({ authUser, setAuthUser }) {
 
       let loaded = null;
       if (!hasUrlFilters) {
-        loaded = loadPersistentFilters();
+        clearPersistentFilters();
       }
 
       if (loaded) {
@@ -490,7 +494,21 @@ export default function ProductsSection({ authUser, setAuthUser }) {
         if (loaded.filterBestSellers !== undefined) setFilterBestSellers(loaded.filterBestSellers);
         if (loaded.filterOffers !== undefined) setFilterOffers(loaded.filterOffers);
         if (loaded.activeFilters !== undefined) setActiveFilters(loaded.activeFilters);
-      } else if (hasUrlFilters) {
+      } else {
+        setSearchQuery('');
+        setMaxPrice(10000);
+        setShowInStock(true);
+        setShowOutOfStock(true);
+        setSelectedRatings([]);
+        setSelectedDiscounts([]);
+        setSelectedSubcategories([]);
+        setFilterNewArrivals(false);
+        setFilterBestSellers(false);
+        setFilterOffers(false);
+        setActiveFilters({});
+      }
+
+      if (hasUrlFilters) {
 
         // Parse dynamic filters
         const dynamicFilters = {};
@@ -726,14 +744,6 @@ export default function ProductsSection({ authUser, setAuthUser }) {
     
     return (
       <div className="flat-category-checklist-container">
-        <input 
-          type="text"
-          className="category-list-search"
-          placeholder="Search categories..."
-          value={categorySearchQuery}
-          onChange={(e) => setCategorySearchQuery(e.target.value)}
-        />
-        
         <div className="filter-category-list-m3">
           {displayed.length > 0 ? (
             displayed.map(catName => {
@@ -894,14 +904,218 @@ export default function ProductsSection({ authUser, setAuthUser }) {
   return (
     <div className="products-section-outer">
       
+      {/* 2. NEW ARRIVALS (Full-width layout with auto-scroll marquee/carousel themed in premium gold and royal blue) */}
+      <section id="new-arrivals" className="new-arrivals-section full-width-arrivals-section theme-gold-blue">
+
+        <div className="section-container full-width-container">
+
+          <div className="section-header">
+            <h2 className="section-title">New Arrivals</h2>
+          </div>
+
+          {/* Infinite Marquee Slider Layout */}
+          <div className="new-arrivals-carousel-container">
+            <div className="new-arrivals-carousel-viewport">
+              <div className="new-arrivals-carousel-track">
+                {(() => {
+                  const dbNewArrivals = productsList.filter(p => p.isNewArrival);
+                  const finalNewArrivals = dbNewArrivals;
+                  // Duplicate the array 3 times to ensure infinite smooth marquee scrolling across all screen widths
+                  const marqueeItems = [...finalNewArrivals, ...finalNewArrivals, ...finalNewArrivals];
+                  
+                  return marqueeItems.map((product, idx) => {
+                    const isWishlisted = wishlist.some(wId => String(wId) === String(product.id) || String(wId) === String(product._id));
+                    const isInCart = cart.some(cId => String(cId) === String(product.id) || String(cId) === String(product._id));
+                    
+                    const originalPriceNum = product.originalPrice ? parseFloat(String(product.originalPrice).replace(/[^0-9.]/g, '')) : 0;
+                    const priceNum = parseFloat(String(product.price).replace(/[^0-9.]/g, '')) || 0;
+                    const discountPercentage = (originalPriceNum && originalPriceNum > priceNum) 
+                      ? Math.round(((originalPriceNum - priceNum) / originalPriceNum) * 100)
+                      : (product.discount && parseFloat(String(product.discount)) <= 100 
+                          ? Math.round(parseFloat(String(product.discount))) 
+                          : 0);
+                    
+                    const brandName = product.brand || 'Mithira Collection';
+                    const inStock = product.stock !== undefined ? product.stock > 0 : true;
+
+                    return (
+                      <div 
+                        key={`${product.id}-${idx}`} 
+                        className="clothing-product-card theme-clothing new-arrival-card animate-fade-in-up"
+                        onClick={() => handleProductClick(product)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <div className="clothing-img-wrapper" onClick={(e) => { e.stopPropagation(); handleProductClick(product); }}>
+                          {/* Badge Logic */}
+                          {(() => {
+                            const badgeInfo = getProductBadge(product, discountPercentage);
+                            if (!badgeInfo) return null;
+                            if (badgeInfo.type === 'NEW') {
+                              return <div className="clothing-new-badge">NEW</div>;
+                            } else if (badgeInfo.type === 'DISCOUNT') {
+                              return <div className="clothing-discount-badge">{badgeInfo.text}</div>;
+                            }
+                            return null;
+                          })()}
+                          
+                          {/* Wishlist float button (top-right of image) */}
+                          <button 
+                            className={`clothing-wishlist-float-btn ${isWishlisted ? 'active' : ''}`}
+                            onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
+                            aria-label="Add to Wishlist"
+                          >
+                            <Heart size={15} fill={isWishlisted ? "currentColor" : "none"} />
+                          </button>
+
+                          <img src={product.image} alt={product.title} className="clothing-img" />
+
+                          {/* Image Hover Overlay */}
+                          <div className="clothing-hover-overlay">
+                            <button 
+                              className={`clothing-hover-action-btn hover-wishlist-btn ${isWishlisted ? 'active' : ''}`}
+                              onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
+                              title="Add to Wishlist"
+                            >
+                              <Heart size={16} fill={isWishlisted ? "currentColor" : "none"} />
+                            </button>
+                            <button 
+                              className="clothing-hover-action-btn hover-quickview-btn"
+                              onClick={(e) => { e.stopPropagation(); handleQuickViewClick(product); }}
+                              title="Quick View"
+                            >
+                              <Eye size={16} />
+                            </button>
+                            <button 
+                              className={`clothing-hover-action-btn hover-cart-btn ${isInCart ? 'in-cart' : ''}`}
+                              onClick={(e) => { e.stopPropagation(); toggleCart(product.id, product.title); }}
+                              title="Add to Cart"
+                            >
+                              <ShoppingCart size={16} />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="clothing-info-section">
+                          <h4 className="clothing-product-title" onClick={() => handleProductClick(product)}>
+                            {product.title}
+                          </h4>
+
+                          <div className="clothing-price-box">
+                            <span className="clothing-selling-price">
+                              {String(product.price).startsWith('₹') ? product.price : `₹${product.price}`}
+                            </span>
+                            {product.originalPrice && (
+                              <span className="clothing-original-price">
+                                {String(product.originalPrice).startsWith('₹') ? product.originalPrice : `₹${product.originalPrice}`}
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="clothing-rating-badge-container">
+                            <div className="clothing-rating-pill-green">
+                              <span>{(product.rating || 5).toFixed(1)}</span>
+                              <span className="rating-star-icon">★</span>
+                            </div>
+                            <span className="rating-count-text">{product.reviews || 5} Reviews</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+            </div>
+          </div>
+
+          <div className="section-footer-btn">
+            <button 
+              className="view-all-btn flex-center"
+              onClick={() => handleNavigation('/NewArrivals')}
+            >
+              View All Products
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      {/* CAMPAIGN BANNER SECTION (Below New Arrivals) */}
+      <section className="campaign-banner-section" style={{ width: '100%', margin: '24px 0 10px', padding: '0 20px' }}>
+        <div
+          className="campaign-banner-wrapper"
+          onClick={() => handleNavigation('/Shop?discount=70')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') handleNavigation('/Shop?discount=70');
+          }}
+          aria-label="Fashion Sale Up To 70% Off - Elegant Essentials"
+          style={{
+            maxWidth: '1280px',
+            margin: '0 auto',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.15)',
+            cursor: 'pointer',
+            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 16px 40px rgba(0, 0, 0, 0.2)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.15)';
+          }}
+        >
+          <img
+            src={`${campaignBannerImg}?v=1`}
+            alt="Fashion Sale Up To 70% Off - Elegant Essentials"
+            style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
+          />
+        </div>
+      </section>
+
+      {/* SPIN & WIN HORIZONTAL STRIP CAMPAIGN BANNER */}
+      <section className="spin-win-banner-section" style={{ width: '100%', margin: '6px 0 32px', padding: 0, overflow: 'hidden' }}>
+        <div
+          className="spin-win-banner-wrapper"
+          onClick={() => handleNavigation('/lucky-charms')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') handleNavigation('/lucky-charms');
+          }}
+          aria-label="Spin. Win. Shop. Repeat. - Try Your Luck"
+          style={{
+            width: '100%',
+            maxWidth: '100%',
+            margin: '0 auto',
+            borderRadius: '0px',
+            overflow: 'hidden',
+            boxShadow: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'opacity 0.3s ease',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.opacity = '0.95';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.opacity = '1';
+          }}
+        >
+          <img
+            src={`${spinWinBannerImg}?v=9`}
+            alt="Spin. Win. Shop. Repeat. - Try Your Luck"
+            style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover', objectPosition: 'center' }}
+          />
+        </div>
+      </section>
+
       {/* 1. EXCLUSIVE PRODUCTS SECTION (Full Width, Left-hand Sidebar filters matching image3) */}
       <section id="offers" className="trending-products-section full-width-section-m3">
         <div className="section-container-full-m3">
-          
-          <div className="section-header">
-            <h2 className="section-title">Exclusive Products</h2>
-            <p className="section-subtitle">Top Trends &amp; Curated Hot Deals</p>
-          </div>
 
           {/* Toggle Button Row for Collapsing Sidebar */}
           <div className="filters-toggle-row-m3" style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '20px' }}>
@@ -931,20 +1145,6 @@ export default function ProductsSection({ authUser, setAuthUser }) {
                 </button>
               </div>
 
-              {/* Search Block */}
-              <div className="filter-block-m3">
-                <span className="filter-label-m3">SEARCH</span>
-                <div className="filter-search-box-m3">
-                  <span className="search-icon-m3">🔍</span>
-                  <input
-                    type="text"
-                    className="filter-search-input-m3"
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
 
               <div className="unified-filters-card">
                 {/* 1. Category Accordion (default open) */}
@@ -1166,8 +1366,8 @@ export default function ProductsSection({ authUser, setAuthUser }) {
               ) : (
                 <div className="products-grid exclusive-four-grid">
                   {displayProducts.map((product) => {
-                    const isWishlisted = wishlist.includes(product.id);
-                    const isInCart = cart.includes(product.id);
+                    const isWishlisted = wishlist.some(wId => String(wId) === String(product.id) || String(wId) === String(product._id));
+                    const isInCart = cart.some(cId => String(cId) === String(product.id) || String(cId) === String(product._id));
                     
                     const originalPriceNum = product.originalPrice ? parseFloat(String(product.originalPrice).replace(/[^0-9.]/g, '')) : 0;
                     const priceNum = parseFloat(String(product.price).replace(/[^0-9.]/g, '')) || 0;
@@ -1238,47 +1438,27 @@ export default function ProductsSection({ authUser, setAuthUser }) {
                         </div>
 
                         <div className="clothing-info-section">
-                          <div className="clothing-brand-row">
-                            <span className="clothing-brand-name">{brandName}</span>
-                            <div className="clothing-stock-badge">
-                              {inStock ? (
-                                <span className="stock-status-in">In Stock</span>
-                              ) : (
-                                <span className="stock-status-out">Out of Stock</span>
-                              )}
-                            </div>
-                          </div>
-
                           <h4 className="clothing-product-title" onClick={() => handleProductClick(product)}>
                             {product.title}
                           </h4>
+
+                          <div className="clothing-price-box">
+                            <span className="clothing-selling-price">
+                              {String(product.price).startsWith('₹') ? product.price : `₹${product.price}`}
+                            </span>
+                            {product.originalPrice && (
+                              <span className="clothing-original-price">
+                                {String(product.originalPrice).startsWith('₹') ? product.originalPrice : `₹${product.originalPrice}`}
+                              </span>
+                            )}
+                          </div>
 
                           <div className="clothing-rating-badge-container">
                             <div className="clothing-rating-pill-green">
                               <span>{(product.rating || 5).toFixed(1)}</span>
                               <span className="rating-star-icon">★</span>
-                              <span className="rating-divider">|</span>
-                              <span className="rating-count">{product.reviews || 0}</span>
                             </div>
-                          </div>
-
-                          <div className="clothing-price-and-action">
-                            <div className="clothing-price-box">
-                              <span className="clothing-selling-price">
-                                {String(product.price).startsWith('₹') ? product.price : `₹${product.price}`}
-                              </span>
-                              {product.originalPrice && (
-                                <span className="clothing-original-price">
-                                  {String(product.originalPrice).startsWith('₹') ? product.originalPrice : `₹${product.originalPrice}`}
-                                </span>
-                              )}
-                            </div>
-                            <button 
-                              className={`clothing-card-add-cart-btn ${isInCart ? 'in-cart' : ''}`}
-                              onClick={(e) => { e.stopPropagation(); toggleCart(product.id, product.title); }}
-                            >
-                              {isInCart ? "IN CART" : "ADD TO CART"}
-                            </button>
+                            <span className="rating-count-text">{product.reviews || 5} Reviews</span>
                           </div>
                         </div>
                       </div>
@@ -1299,162 +1479,6 @@ export default function ProductsSection({ authUser, setAuthUser }) {
 
         </div>
       </section>
-
-      {/* 2. NEW ARRIVALS (Full-width layout with auto-scroll marquee/carousel themed in premium gold and royal blue) */}
-      <section id="new-arrivals" className="new-arrivals-section full-width-arrivals-section theme-gold-blue">
-
-        <div className="section-container full-width-container">
-
-          <div className="section-header">
-            <svg className="section-star-icon" viewBox="0 0 40 40" style={{ width: '40px', height: '40px', fill: 'var(--gold-accent)', marginBottom: '10px' }}>
-              <path d="M 20,0 L 25,15 L 40,20 L 25,25 L 20,40 L 15,25 L 0,20 L 15,15 Z" />
-            </svg>
-            <h2 className="section-title">New Arrivals</h2>
-            <p className="section-subtitle">Exhibition of Brighter Premium Collections</p>
-          </div>
-
-          {/* Infinite Marquee Slider Layout */}
-          <div className="new-arrivals-carousel-container">
-            <div className="new-arrivals-carousel-viewport">
-              <div className="new-arrivals-carousel-track">
-                {(() => {
-                  const dbNewArrivals = productsList.filter(p => p.isNewArrival);
-                  const finalNewArrivals = dbNewArrivals;
-                  // Duplicate the array 3 times to ensure infinite smooth marquee scrolling across all screen widths
-                  const marqueeItems = [...finalNewArrivals, ...finalNewArrivals, ...finalNewArrivals];
-                  
-                  return marqueeItems.map((product, idx) => {
-                    const isWishlisted = wishlist.includes(product.id);
-                    const isInCart = cart.includes(product.id);
-                    
-                    const originalPriceNum = product.originalPrice ? parseFloat(String(product.originalPrice).replace(/[^0-9.]/g, '')) : 0;
-                    const priceNum = parseFloat(String(product.price).replace(/[^0-9.]/g, '')) || 0;
-                    const discountPercentage = (originalPriceNum && originalPriceNum > priceNum) 
-                      ? Math.round(((originalPriceNum - priceNum) / originalPriceNum) * 100)
-                      : (product.discount && parseFloat(String(product.discount)) <= 100 
-                          ? Math.round(parseFloat(String(product.discount))) 
-                          : 0);
-                    
-                    const brandName = product.brand || 'Mithira Collection';
-                    const inStock = product.stock !== undefined ? product.stock > 0 : true;
-
-                    return (
-                      <div 
-                        key={`${product.id}-${idx}`} 
-                        className="clothing-product-card theme-clothing new-arrival-card animate-fade-in-up"
-                        onClick={() => handleProductClick(product)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <div className="clothing-img-wrapper" onClick={(e) => { e.stopPropagation(); handleProductClick(product); }}>
-                          {/* Badge Logic */}
-                          {(() => {
-                            const badgeInfo = getProductBadge(product, discountPercentage);
-                            if (!badgeInfo) return null;
-                            if (badgeInfo.type === 'NEW') {
-                              return <div className="clothing-new-badge">NEW</div>;
-                            } else if (badgeInfo.type === 'DISCOUNT') {
-                              return <div className="clothing-discount-badge">{badgeInfo.text}</div>;
-                            }
-                            return null;
-                          })()}
-                          
-                          {/* Wishlist float button (top-right of image) */}
-                          <button 
-                            className={`clothing-wishlist-float-btn ${isWishlisted ? 'active' : ''}`}
-                            onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
-                            aria-label="Add to Wishlist"
-                          >
-                            <Heart size={15} fill={isWishlisted ? "currentColor" : "none"} />
-                          </button>
-
-                          <img src={product.image} alt={product.title} className="clothing-img" />
-
-                          {/* Image Hover Overlay */}
-                          <div className="clothing-hover-overlay">
-                            <button 
-                              className={`clothing-hover-action-btn hover-wishlist-btn ${isWishlisted ? 'active' : ''}`}
-                              onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
-                              title="Add to Wishlist"
-                            >
-                              <Heart size={16} fill={isWishlisted ? "currentColor" : "none"} />
-                            </button>
-                            <button 
-                              className="clothing-hover-action-btn hover-quickview-btn"
-                              onClick={(e) => { e.stopPropagation(); handleQuickViewClick(product); }}
-                              title="Quick View"
-                            >
-                              <Eye size={16} />
-                            </button>
-                            <button 
-                              className={`clothing-hover-action-btn hover-cart-btn ${isInCart ? 'in-cart' : ''}`}
-                              onClick={(e) => { e.stopPropagation(); toggleCart(product.id, product.title); }}
-                              title="Add to Cart"
-                            >
-                              <ShoppingCart size={16} />
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="clothing-info-section">
-                          <div className="clothing-brand-row">
-                            <span className="clothing-brand-name">{brandName}</span>
-                            <div className="clothing-stock-badge">
-                              {inStock ? (
-                                <span className="stock-status-in">In Stock</span>
-                              ) : (
-                                <span className="stock-status-out">Out of Stock</span>
-                              )}
-                            </div>
-                          </div>
-
-                          <h4 className="clothing-product-title" onClick={() => handleProductClick(product)}>
-                            {product.title}
-                          </h4>
-
-                          <div className="clothing-rating-badge-container">
-                            <div className="clothing-rating-pill-green">
-                              <span>{(product.rating || 5).toFixed(1)}</span>
-                              <span className="rating-star-icon">★</span>
-                              <span className="rating-divider">|</span>
-                              <span className="rating-count">{product.reviews || 0}</span>
-                            </div>
-                          </div>
-
-                          <div className="clothing-price-and-action">
-                            <div className="clothing-price-box">
-                              <span className="clothing-selling-price">
-                                {String(product.price).startsWith('₹') ? product.price : `₹${product.price}`}
-                              </span>
-                              {product.originalPrice && (
-                                <span className="clothing-original-price">
-                                  {String(product.originalPrice).startsWith('₹') ? product.originalPrice : `₹${product.originalPrice}`}
-                                </span>
-                              )}
-                            </div>
-                            <button 
-                              className={`clothing-card-add-cart-btn ${isInCart ? 'in-cart' : ''}`}
-                              onClick={(e) => { e.stopPropagation(); toggleCart(product.id, product.title); }}
-                            >
-                              {isInCart ? "IN CART" : "ADD TO CART"}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-            </div>
-          </div>
-
-          <div className="section-footer-btn">
-            <button 
-              className="view-all-btn flex-center"
-              onClick={() => handleNavigation('/NewArrivals')}
-            >
-              View All Products
-            </button>
-          </div>
 
       {quickViewProduct && (() => {
         const images = getAllProductImages(quickViewProduct, modalColor);
@@ -1612,7 +1636,7 @@ export default function ProductsSection({ authUser, setAuthUser }) {
                         toggleCart(quickViewProduct.id, quickViewProduct.title, modalSize, modalColor);
                       }}
                     >
-                      {isOutOfStock ? "OUT OF STOCK" : (cart.includes(quickViewProduct.id) ? "Remove from Cart" : "Add to Cart")}
+                      {isOutOfStock ? "OUT OF STOCK" : (cart.some(cId => String(cId) === String(quickViewProduct.id) || String(cId) === String(quickViewProduct._id)) ? "Remove from Cart" : "Add to Cart")}
                     </button>
                     <button 
                       className="modal-secondary-action-btn"
@@ -1628,13 +1652,18 @@ export default function ProductsSection({ authUser, setAuthUser }) {
 
                   {/* Wishlist Link */}
                   <div className="modal-extra-links-row">
-                    <button 
-                      className={`modal-extra-link-btn ${wishlist.includes(quickViewProduct.id) ? 'active' : ''}`}
-                      onClick={() => toggleWishlist(quickViewProduct.id)}
-                    >
-                      <Heart size={16} fill={wishlist.includes(quickViewProduct.id) ? "currentColor" : "none"} style={{ marginRight: '6px' }} />
-                      <span>{wishlist.includes(quickViewProduct.id) ? "Added to Wishlist" : "Add to Wishlist"}</span>
-                    </button>
+                    {(() => {
+                      const isQuickWishlisted = wishlist.some(wId => String(wId) === String(quickViewProduct.id) || String(wId) === String(quickViewProduct._id));
+                      return (
+                        <button 
+                          className={`modal-extra-link-btn ${isQuickWishlisted ? 'active' : ''}`}
+                          onClick={() => toggleWishlist(quickViewProduct.id)}
+                        >
+                          <Heart size={16} fill={isQuickWishlisted ? "currentColor" : "none"} style={{ marginRight: '6px' }} />
+                          <span>{isQuickWishlisted ? "Added to Wishlist" : "Add to Wishlist"}</span>
+                        </button>
+                      );
+                    })()}
                   </div>
 
                 </div>
@@ -1644,9 +1673,6 @@ export default function ProductsSection({ authUser, setAuthUser }) {
           </div>
         );
       })()}
-
-        </div>
-      </section>
 
     </div>
   );

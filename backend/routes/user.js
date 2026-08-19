@@ -196,13 +196,14 @@ router.post('/cart', authenticate, async (req, res) => {
     if (cart && !Array.isArray(cart)) return res.status(400).json({ success: false, message: 'Cart list must be an array.' });
 
     const updateObj = {};
-    if (cart !== undefined) updateObj.cart = cart;
+    if (cart !== undefined) updateObj.cart = cart.map(String);
     if (cartItems !== undefined) updateObj.cartItems = cartItems;
 
     await User.updateOne({ id: req.user.id }, { $set: updateObj });
     const user = await User.findOne({ id: req.user.id }).lean();
     res.json({ success: true, message: 'Cart synchronized.', cart: user.cart || [], cartItems: user.cartItems || [] });
   } catch (err) {
+    console.error('Cart sync error:', err);
     res.status(500).json({ success: false, message: 'Failed to sync cart.' });
   }
 });
@@ -222,9 +223,11 @@ router.post('/wishlist', authenticate, async (req, res) => {
     const { wishlist } = req.body;
     if (!Array.isArray(wishlist)) return res.status(400).json({ success: false, message: 'Wishlist must be an array.' });
 
-    await User.updateOne({ id: req.user.id }, { $set: { wishlist } });
-    res.json({ success: true, message: 'Wishlist synchronized.', wishlist });
+    const normalizedWishlist = wishlist.map(String);
+    await User.updateOne({ id: req.user.id }, { $set: { wishlist: normalizedWishlist } });
+    res.json({ success: true, message: 'Wishlist synchronized.', wishlist: normalizedWishlist });
   } catch (err) {
+    console.error('Wishlist sync error:', err);
     res.status(500).json({ success: false, message: 'Failed to sync wishlist.' });
   }
 });

@@ -32,18 +32,22 @@ checkBackendStatus();
 // Re-check periodically without exhausting browser sockets
 setInterval(checkBackendStatus, 45000);
 
-// Base fetch wrapper
-async function apiRequest(endpoint, method = 'GET', body = null) {
+// Base fetch wrapper with 6-second timeout
+async function apiRequest(endpoint, method = 'GET', body = null, timeoutMs = 6000) {
   const token = getStoredToken();
   const headers = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {})
   };
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
   const options = {
     method,
     headers,
     cache: 'no-store',
+    signal: controller.signal,
     ...(body ? { body: JSON.stringify(body) } : {})
   };
 
@@ -56,10 +60,12 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
     }
     return data;
   } catch (err) {
-    if (err.name === 'TypeError') {
+    if (err.name === 'TypeError' || err.name === 'AbortError') {
       isBackendReachable = false;
     }
     throw err;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -69,10 +75,56 @@ export const apiService = {
     return isBackendReachable;
   },
 
-  // ─── Products ───
-  async getProducts() {
-    const res = await apiRequest('/api/products');
-    return res.products;
+  // ─── Products Caching for Instant Loading (Stale-While-Revalidate) ───
+  _productsCache: (() => {
+    try {
+      const stored = sessionStorage.getItem('mithira_cached_products');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  })(),
+  _productsCacheTimestamp: 0,
+
+  async getProducts(forceRefresh = false) {
+    const now = Date.now();
+    
+    // If we have cached products in memory/sessionStorage, return them immediately
+    if (!forceRefresh && this._productsCache && this._productsCache.length > 0) {
+      // Revalidate in background if older than 30s
+      if (now - this._productsCacheTimestamp > 30000) {
+        this._productsCacheTimestamp = now;
+        apiRequest('/api/products').then(res => {
+          if (res && res.products && res.products.length > 0) {
+            this._productsCache = res.products;
+            try { sessionStorage.setItem('mithira_cached_products', JSON.stringify(res.products)); } catch (_) {}
+          }
+        }).catch(() => {});
+      }
+      return this._productsCache;
+    }
+
+    try {
+      const res = await apiRequest('/api/products');
+      if (res && res.products) {
+        this._productsCache = res.products;
+        this._productsCacheTimestamp = Date.now();
+        try {
+          sessionStorage.setItem('mithira_cached_products', JSON.stringify(res.products));
+        } catch (_) {}
+        return res.products;
+      }
+    } catch (err) {
+      if (this._productsCache) return this._productsCache;
+      try {
+        const stored = sessionStorage.getItem('mithira_cached_products');
+        if (stored) {
+          this._productsCache = JSON.parse(stored);
+          return this._productsCache;
+        }
+      } catch (_) {}
+      throw err;
+    }
   },
 
   async getProduct(id) {

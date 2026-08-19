@@ -456,44 +456,23 @@ export default function CelebrityView() {
                     </div>
 
                     <div className="clothing-info-section">
-                      <div className="clothing-brand-row">
-                        <span className="clothing-brand-name">{brandName}</span>
-                        <div className="clothing-stock-badge">
-                          {inStock ? (
-                            <span className="stock-status-in">In Stock</span>
-                          ) : (
-                            <span className="stock-status-out">Out of Stock</span>
-                          )}
-                        </div>
-                      </div>
-
                       <h4 className="clothing-product-title">
                         {prod.title}
                       </h4>
+
+                      <div className="clothing-price-box">
+                        <span className="clothing-selling-price">₹{priceNum.toLocaleString()}</span>
+                        {originalPriceNum > priceNum && (
+                          <span className="clothing-original-price">₹{originalPriceNum.toLocaleString()}</span>
+                        )}
+                      </div>
 
                       <div className="clothing-rating-badge-container">
                         <div className="clothing-rating-pill-green">
                           <span>{(prod.rating || 5).toFixed(1)}</span>
                           <span className="rating-star-icon">★</span>
-                          <span className="rating-divider">|</span>
-                          <span className="rating-count">{prod.reviews || 0}</span>
                         </div>
-                      </div>
-
-                      <div className="clothing-price-and-action">
-                        <div className="clothing-price-box">
-                          <span className="clothing-selling-price">₹{priceNum.toLocaleString()}</span>
-                          {originalPriceNum > priceNum && (
-                            <span className="clothing-original-price">₹{originalPriceNum.toLocaleString()}</span>
-                          )}
-                        </div>
-                        <button 
-                          className="clothing-card-add-cart-btn"
-                          onClick={(e) => { e.stopPropagation(); handleShopNavigation(prod); }}
-                          style={{ minWidth: '90px' }}
-                        >
-                          GET LOOK
-                        </button>
+                        <span className="rating-count-text">{prod.reviews || 5} Reviews</span>
                       </div>
                     </div>
                   </div>

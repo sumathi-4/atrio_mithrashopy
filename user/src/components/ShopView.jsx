@@ -70,7 +70,7 @@ import clothingUser5 from '../assets/clothing_user_5.jpg';
 
 
 
-const kidsImages = import.meta.glob('../assets/kids_tq_*.jpg', { eager: true });
+const kidsImages = import.meta.glob('../assets/kids_tq_*.jpg', { query: '?url', eager: true });
 
 const getProductImages = (modelNo, defaultImage) => {
   if (!modelNo) return [defaultImage];
@@ -79,24 +79,30 @@ const getProductImages = (modelNo, defaultImage) => {
   
   const fullKey = `../assets/kids_${modelKey}_full.jpg`;
   if (kidsImages[fullKey]) {
-    matchedImages.push(kidsImages[fullKey].default || kidsImages[fullKey]);
+    const val = kidsImages[fullKey];
+    const url = typeof val === 'string' ? val : (val && val.default);
+    if (url) matchedImages.push(url);
   }
   
   const mainKey = `../assets/kids_${modelKey}.jpg`;
   if (kidsImages[mainKey]) {
-    matchedImages.push(kidsImages[mainKey].default || kidsImages[mainKey]);
-  } else {
+    const val = kidsImages[mainKey];
+    const url = typeof val === 'string' ? val : (val && val.default);
+    if (url) matchedImages.push(url);
+  } else if (defaultImage) {
     matchedImages.push(defaultImage);
   }
   
   for (let i = 1; i <= 10; i++) {
     const swatchKey = `../assets/kids_${modelKey}_g${i}.jpg`;
     if (kidsImages[swatchKey]) {
-      matchedImages.push(kidsImages[swatchKey].default || kidsImages[swatchKey]);
+      const val = kidsImages[swatchKey];
+      const url = typeof val === 'string' ? val : (val && val.default);
+      if (url) matchedImages.push(url);
     }
   }
   
-  return matchedImages;
+  return matchedImages.length > 0 ? matchedImages : [defaultImage];
 };
 
 // Resolve all gallery images for a product
@@ -1373,14 +1379,6 @@ export default function ShopView({ authUser, setAuthUser }) {
     
     return (
       <div className="flat-category-checklist-container">
-        <input 
-          type="text"
-          className="category-list-search"
-          placeholder="Search categories..."
-          value={categorySearchQuery}
-          onChange={(e) => setCategorySearchQuery(e.target.value)}
-        />
-        
         <div className="filter-category-list-m3">
           {displayed.length > 0 ? (
             displayed.map(catName => {
@@ -1689,7 +1687,7 @@ export default function ShopView({ authUser, setAuthUser }) {
 
       let loaded = null;
       if (!hasUrlFilters) {
-        loaded = loadPersistentFilters();
+        clearPersistentFilters();
       }
 
       if (loaded) {
@@ -1858,8 +1856,9 @@ export default function ShopView({ authUser, setAuthUser }) {
     let updated;
     const prod = allProducts.find(p => p.id === id || p._id === id || String(p.id) === String(id) || String(p._id) === String(id));
     const prodName = prod ? (prod.title || prod.name) : 'Item';
-    if (wishlist.includes(id)) {
-      updated = wishlist.filter(item => item !== id);
+    const isWishlisted = wishlist.some(item => String(item) === String(id));
+    if (isWishlisted) {
+      updated = wishlist.filter(item => String(item) !== String(id));
       addToast({ message: `Removed from wishlist`, type: 'wishlist' });
     } else {
       updated = [...wishlist, id];
@@ -1886,8 +1885,9 @@ export default function ShopView({ authUser, setAuthUser }) {
   const toggleCart = (id, title, size = null, color = null) => {
     let updated;
     let updatedItems = [];
-    if (cart.includes(id)) {
-      updated = cart.filter(item => item !== id);
+    const isInCart = cart.some(item => String(item) === String(id));
+    if (isInCart) {
+      updated = cart.filter(item => String(item) !== String(id));
       addToast({ message: `Removed from cart`, type: 'cart' });
     } else {
       updated = [...cart, id];
@@ -1896,10 +1896,10 @@ export default function ShopView({ authUser, setAuthUser }) {
     setCart(updated);
 
     const prevItems = authUser ? (authUser.cartItems || []) : (JSON.parse(localStorage.getItem('mithira_guest_cart_items') || '[]'));
-    const isRemoving = !updated.includes(id);
+    const isRemoving = isInCart;
 
     if (isRemoving) {
-      updatedItems = prevItems.filter(item => item.productId !== id);
+      updatedItems = prevItems.filter(item => String(item.productId) !== String(id));
     } else {
       const prod = allProducts.find(p => p.id === id || p._id === id || String(p.id) === String(id) || String(p._id) === String(id));
       const selectedVariant = getSelectedVariant(prod, color, size);
@@ -1907,7 +1907,7 @@ export default function ShopView({ authUser, setAuthUser }) {
       const rawSku = selectedVariant ? selectedVariant.sku : null;
       const sku = rawSku && rawSku.includes('||') ? rawSku.split('||')[0] : rawSku;
 
-      updatedItems = [...prevItems.filter(item => item.productId !== id), {
+      updatedItems = [...prevItems.filter(item => String(item.productId) !== String(id)), {
         productId: id,
         quantity: 1,
         variant: { size, color, variantId, sku }
@@ -3276,8 +3276,8 @@ export default function ShopView({ authUser, setAuthUser }) {
               {getSimilarProducts(fullDetailProduct, allProducts)
                 .slice(0, 6)
                 .map((simProd) => {
-                  const isWishlisted = wishlist.includes(simProd.id);
-                  const isInCart = cart.includes(simProd.id);
+                  const isWishlisted = wishlist.some(wId => String(wId) === String(simProd.id) || String(wId) === String(simProd._id));
+                  const isInCart = cart.some(cId => String(cId) === String(simProd.id) || String(cId) === String(simProd._id));
                   const inStock = isProductInStock(simProd);
 
                   const originalPriceNum = simProd.originalPrice ? parseFloat(String(simProd.originalPrice).replace(/[^0-9.]/g, '')) : 0;
@@ -3357,43 +3357,23 @@ export default function ShopView({ authUser, setAuthUser }) {
                       </div>
 
                       <div className="clothing-info-section">
-                        <div className="clothing-brand-row">
-                          <span className="clothing-brand-name">{brandName}</span>
-                          <div className="clothing-stock-badge">
-                            {inStock ? (
-                              <span className="stock-status-in">In Stock</span>
-                            ) : (
-                              <span className="stock-status-out">Out of Stock</span>
-                            )}
-                          </div>
-                        </div>
-
                         <h4 className="clothing-product-title">
                           {simProd.title}
                         </h4>
+
+                        <div className="clothing-price-box">
+                          <span className="clothing-selling-price">₹{priceNum.toLocaleString()}</span>
+                          {originalPriceNum > priceNum && (
+                            <span className="clothing-original-price">₹{originalPriceNum.toLocaleString()}</span>
+                          )}
+                        </div>
 
                         <div className="clothing-rating-badge-container">
                           <div className="clothing-rating-pill-green">
                             <span>{(simProd.rating || 5).toFixed(1)}</span>
                             <span className="rating-star-icon">★</span>
-                            <span className="rating-divider">|</span>
-                            <span className="rating-count">{simProd.reviews || 0}</span>
                           </div>
-                        </div>
-
-                        <div className="clothing-price-and-action">
-                          <div className="clothing-price-box">
-                            <span className="clothing-selling-price">₹{priceNum.toLocaleString()}</span>
-                            {originalPriceNum > priceNum && (
-                              <span className="clothing-original-price">₹{originalPriceNum.toLocaleString()}</span>
-                            )}
-                          </div>
-                          <button 
-                            className={`clothing-card-add-cart-btn ${isInCart ? 'in-cart' : ''}`}
-                            onClick={(e) => { e.stopPropagation(); toggleCart(simProd.id, simProd.title); }}
-                          >
-                            {isInCart ? "IN CART" : "ADD TO CART"}
-                          </button>
+                          <span className="rating-count-text">{simProd.reviews || 5} Reviews</span>
                         </div>
                       </div>
                     </div>
@@ -3673,20 +3653,6 @@ export default function ShopView({ authUser, setAuthUser }) {
         </button>
       </div>
 
-      {/* Search Block */}
-      <div className="filter-block-m3">
-        <span className="filter-label-m3">SEARCH</span>
-        <div className="filter-search-box-m3">
-          <span className="search-icon-m3">🔍</span>
-          <input
-            type="text"
-            className="filter-search-input-m3"
-            placeholder="Search products..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </div>
 
       <div className="unified-filters-card">
         {/* 1. Category Accordion (default open) */}
@@ -3953,8 +3919,8 @@ export default function ShopView({ authUser, setAuthUser }) {
               <>
                 <div className="shop-products-grid animate-fade-in-up">
                   {currentProducts.map((product) => {
-                    const isWishlisted = wishlist.includes(product.id);
-                    const isInCart = cart.includes(product.id);
+                    const isWishlisted = wishlist.some(wId => String(wId) === String(product.id) || String(wId) === String(product._id));
+                    const isInCart = cart.some(cId => String(cId) === String(product.id) || String(cId) === String(product._id));
                     
                     const originalPriceNum = product.originalPrice ? parseFloat(String(product.originalPrice).replace(/[^0-9.]/g, '')) : 0;
                     const priceNum = typeof product.price === 'number' ? product.price : parseFloat(String(product.price).replace(/[^0-9.]/g, '')) || 0;
@@ -4033,47 +3999,27 @@ export default function ShopView({ authUser, setAuthUser }) {
                         </div>
 
                         <div className="clothing-info-section">
-                          <div className="clothing-brand-row">
-                            <span className="clothing-brand-name">{brandName}</span>
-                            <div className="clothing-stock-badge">
-                              {inStock ? (
-                                <span className="stock-status-in">In Stock</span>
-                              ) : (
-                                <span className="stock-status-out">Out of Stock</span>
-                              )}
-                            </div>
-                          </div>
-
                           <h4 className="clothing-product-title" onClick={() => openProductDetail(product)}>
                             {product.title}
                           </h4>
+
+                          <div className="clothing-price-box">
+                            <span className="clothing-selling-price">
+                              {typeof product.price === 'number' ? `₹${product.price.toLocaleString()}` : (String(product.price).startsWith('₹') ? product.price : `₹${product.price}`)}
+                            </span>
+                            {product.originalPrice && (
+                              <span className="clothing-original-price">
+                                {typeof product.originalPrice === 'number' ? `₹${product.originalPrice.toLocaleString()}` : (String(product.originalPrice).startsWith('₹') ? product.originalPrice : `₹${product.originalPrice}`)}
+                              </span>
+                            )}
+                          </div>
 
                           <div className="clothing-rating-badge-container">
                             <div className="clothing-rating-pill-green">
                               <span>{(product.rating || 5).toFixed(1)}</span>
                               <span className="rating-star-icon">★</span>
-                              <span className="rating-divider">|</span>
-                              <span className="rating-count">{product.reviews || 0}</span>
                             </div>
-                          </div>
-
-                          <div className="clothing-price-and-action">
-                            <div className="clothing-price-box">
-                              <span className="clothing-selling-price">
-                                {typeof product.price === 'number' ? `₹${product.price.toLocaleString()}` : (String(product.price).startsWith('₹') ? product.price : `₹${product.price}`)}
-                              </span>
-                              {product.originalPrice && (
-                                <span className="clothing-original-price">
-                                  {typeof product.originalPrice === 'number' ? `₹${product.originalPrice.toLocaleString()}` : (String(product.originalPrice).startsWith('₹') ? product.originalPrice : `₹${product.originalPrice}`)}
-                                </span>
-                              )}
-                            </div>
-                            <button 
-                              className={`clothing-card-add-cart-btn ${isInCart ? 'in-cart' : ''}`}
-                              onClick={(e) => { e.stopPropagation(); toggleCart(product.id, product.title); }}
-                            >
-                              {isInCart ? "IN CART" : "ADD TO CART"}
-                            </button>
+                            <span className="rating-count-text">{product.reviews || 5} Reviews</span>
                           </div>
                         </div>
                       </div>
