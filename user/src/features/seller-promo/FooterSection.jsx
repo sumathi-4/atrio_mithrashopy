@@ -18,9 +18,9 @@ export default function FooterSection({ sellerPortalUrl, userStorefrontUrl }) {
           {/* Column 1: Brand Info */}
           <div className="seller-promo-footer-col-brand">
             <div className="seller-promo-footer-brand-logo-row">
-              <img src={MEDIA.BRAND_LOGO} alt="MithraShoppy Logo" loading="lazy" className="seller-promo-footer-brand-img" />
+              <img src={MEDIA.BRAND_LOGO} alt="MithraShopy Logo" loading="lazy" className="seller-promo-footer-brand-img" />
               <span className="seller-promo-footer-brand-title">
-                Mithra<span className="seller-promo-footer-brand-gold">Shoppy</span>
+                Mithra<span className="seller-promo-footer-brand-gold">Shopy</span>
               </span>
             </div>
             <p className="seller-promo-footer-brand-desc">
@@ -61,7 +61,7 @@ export default function FooterSection({ sellerPortalUrl, userStorefrontUrl }) {
           <div className="seller-promo-footer-col space-y-4 sm:space-y-6">
             <div>
               <h3 className="seller-promo-footer-col-title">
-                MITHRASHOPPY STOREFRONT
+                MITHRASHOPY STOREFRONT
               </h3>
               <ul className="seller-promo-footer-link-list">
                 <li>

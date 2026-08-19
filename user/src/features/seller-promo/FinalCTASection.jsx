@@ -96,7 +96,7 @@ export default function FinalCTASection({ sellerPortalUrl }) {
             <div className="final-cta-left-col">
               <img
                 src={MEDIA.FINAL_CTA_STOREFRONT}
-                alt="3D MithraShoppy Seller Storefront & Giftboxes"
+                alt="3D MithraShopy Seller Storefront & Giftboxes"
                 className="final-cta-store-img"
               />
             </div>
@@ -119,7 +119,7 @@ export default function FinalCTASection({ sellerPortalUrl }) {
                 <a
                   href={registerUrl}
                   onClick={handleRegisterClick}
-                  aria-label="Start Selling Free on MithraShoppy"
+                  aria-label="Start Selling Free on MithraShopy"
                   className="final-cta-btn"
                 >
                   <span>Start Selling — Free</span>

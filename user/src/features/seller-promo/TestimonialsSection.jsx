@@ -9,7 +9,7 @@ const testimonials = [
     storeName: 'Jaipur Crafts & Ethnic Hub',
     location: 'Jaipur, Rajasthan',
     photo: MEDIA.TESTIMONIAL_SELLER_1,
-    quote: '"MithraShoppy transformed our boutique into a nationwide brand with 7-day payouts and zero listing fees!"',
+    quote: '"MithraShopy transformed our boutique into a nationwide brand with 7-day payouts and zero listing fees!"',
     salesGrowth: '3.4x Revenue Growth',
   },
   {

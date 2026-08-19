@@ -57,14 +57,14 @@ import logoImg from '../assets/logo.png'
 // FAQ items matching Image 1 icon design colors
 const faqs = [
   {
-    q: 'How to become a seller on MithraShoppy?',
+    q: 'How to become a seller on MithraShopy?',
     a: 'Simply click "Become a Seller" or "Start Selling", fill out our quick registration form with your business details, and upload your verification documents (PAN and GSTIN / Cancelled Cheque). Our seller onboarding team will review and approve your seller account within 24 hours.',
     icon: HiOutlineUserGroup,
     badgeBg: 'bg-[#2563EB]',
   },
   {
     q: 'Is there any fee or hidden charge to sell?',
-    a: 'Registration on MithraShoppy is 100% FREE! We charge zero listing fees and zero subscription fees. You enjoy a 0% commission structure on your sales, allowing you to maximize your profit margins.',
+    a: 'Registration on MithraShopy is 100% FREE! We charge zero listing fees and zero subscription fees. You enjoy a 0% commission structure on your sales, allowing you to maximize your profit margins.',
     icon: HiOutlineCurrencyRupee,
     badgeBg: 'bg-[#F59E0B]',
   },
@@ -88,14 +88,14 @@ const faqs = [
   },
 ]
 
-// Testimonials data for Clothing E-commerce Sellers matching Image 2 vertical layout & MithraShoppy branding
+// Testimonials data for Clothing E-commerce Sellers matching Image 2 vertical layout & MithraShopy branding
 const testimonials = [
   {
     name: 'Anjali Verma',
     role: 'Founder, Verma Ethnic & Couture',
     business: 'VERMA ETHNIC & COUTURE',
-    headline: 'From 5 orders a day to 180+ daily parcels, MithraShoppy transformed our fashion label.',
-    text: 'Switching our boutique clothing brand to MithraShoppy was our best business decision. The seller dashboard analytics helped us manage size variants, optimize inventory, and scale nationwide sales by 180%!',
+    headline: 'From 5 orders a day to 180+ daily parcels, MithraShopy transformed our fashion label.',
+    text: 'Switching our boutique clothing brand to MithraShopy was our best business decision. The seller dashboard analytics helped us manage size variants, optimize inventory, and scale nationwide sales by 180%!',
     rating: 5,
     location: 'New Delhi, Delhi',
     image: sellerFemaleFashion,
@@ -112,7 +112,7 @@ const testimonials = [
     role: 'Owner, Shah Menswear & Formals',
     business: 'SHAH MENSWEAR & FORMALS',
     headline: 'We went from local store sales to ₹5 Lakh weekly apparel payouts in just two years.',
-    text: 'Listing catalog sizes and fits is effortless, and automated weekly payouts are always on time. MithraShoppy’s 0% commission structure allows us to offer premium shirts and suits at unbeatable prices.',
+    text: 'Listing catalog sizes and fits is effortless, and automated weekly payouts are always on time. MithraShopy’s 0% commission structure allows us to offer premium shirts and suits at unbeatable prices.',
     rating: 5,
     location: 'Ahmedabad, Gujarat',
     image: sellerMaleElectronics,
@@ -128,7 +128,7 @@ const testimonials = [
     name: 'Priya Sharma',
     role: 'Founder, Jaipur Designer Sarees',
     business: 'JAIPUR DESIGNER SAREES',
-    headline: 'From 5 tailors to 30 weavers, MithraShoppy delivered orders to 28,000+ pincodes.',
+    headline: 'From 5 tailors to 30 weavers, MithraShopy delivered orders to 28,000+ pincodes.',
     text: 'Our handcrafted sarees and ethnic dresses now reach fashion enthusiasts across India. Reliable shipping partners and instant payout tracking make online fashion retailing completely stress-free.',
     rating: 5,
     location: 'Jaipur, Rajasthan',
@@ -252,12 +252,12 @@ export default function LandingPage() {
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <img
             src={logoImg}
-            alt="MithraShoppy Logo"
+            alt="MithraShopy Logo"
             className="w-8 h-8 sm:w-10 sm:h-10 object-contain hover:scale-105 transition-transform shrink-0"
           />
           <div className="flex flex-col">
             <span className="text-[#08214D] font-black text-base sm:text-lg tracking-tight leading-none whitespace-nowrap">
-              Mithra<span className="text-[#DFB743]">Shoppy</span>
+              Mithra<span className="text-[#DFB743]">Shopy</span>
             </span>
             <span className="text-[#08214D]/60 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase mt-0.5 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
@@ -390,7 +390,7 @@ export default function LandingPage() {
                 Start Selling & Growing <br />
                 Your Business on <br />
                 <span className="text-[#08214D]">Mithra</span>
-                <span className="text-[#DFB743]">Shoppy</span>
+                <span className="text-[#DFB743]">Shopy</span>
               </motion.h1>
 
               {/* Subtext */}
@@ -509,7 +509,7 @@ export default function LandingPage() {
               >
                 <img
                   src={heroIllustration}
-                  alt="MithraShoppy Seller Hub E-Commerce Platform"
+                  alt="MithraShopy Seller Hub E-Commerce Platform"
                   className="w-full h-auto max-w-lg lg:max-w-xl object-contain rounded-2xl drop-shadow-md"
                 />
 
@@ -625,14 +625,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Why Sell on MithraShoppy? (Benefits) Section */}
+      {/* Why Sell on MithraShopy? (Benefits) Section */}
       {/* Benefits Section */}
       <section id="benefits" className="py-20 px-4 md:px-12 bg-gradient-to-b from-[#F5F7FF] via-[#FAFCFF] to-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto text-center space-y-16">
           {/* Header */}
           <div className="space-y-2 max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-5xl font-black text-[#0B1A40] tracking-tight">
-              Why Sell on MithraShoppy?
+              Why Sell on MithraShopy?
             </h2>
             <div className="w-12 h-1 bg-gradient-to-r from-amber-400 to-amber-500 mx-auto rounded-full mt-2"></div>
           </div>
@@ -916,7 +916,7 @@ export default function LandingPage() {
               Here's What <span className="text-[#DFB743]">Our Apparel Sellers</span> Are Saying
             </h2>
             <p className="text-slate-500 text-sm md:text-base font-medium">
-              Real success stories from boutique owners, apparel brands, and weavers growing nationwide on MithraShoppy.
+              Real success stories from boutique owners, apparel brands, and weavers growing nationwide on MithraShopy.
             </p>
             <div className="w-16 h-1.5 bg-gradient-to-r from-[#08214D] via-[#DFB743] to-[#E5C058] mx-auto rounded-full mt-2"></div>
           </div>
@@ -1046,7 +1046,7 @@ export default function LandingPage() {
               Got Questions? We Have Answers.
             </h2>
             <p className="text-slate-500 text-sm md:text-base font-medium">
-              Everything you need to know about selling on MithraShoppy.
+              Everything you need to know about selling on MithraShopy.
             </p>
             <div className="w-12 h-1 bg-gradient-to-r from-amber-400 to-amber-500 mx-auto rounded-full mt-2"></div>
           </div>
@@ -1098,7 +1098,7 @@ export default function LandingPage() {
               </h2>
 
               <p className="text-slate-300 text-sm sm:text-base font-medium leading-relaxed max-w-lg mx-auto lg:mx-0">
-                Join MithraShoppy today and start your journey towards success. It's quick, easy and 100% free!
+                Join MithraShopy today and start your journey towards success. It's quick, easy and 100% free!
               </p>
 
               <div className="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-4">
@@ -1122,7 +1122,7 @@ export default function LandingPage() {
               <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-md flex justify-center items-center">
                 <img
                   src={cta3dSellerTransparent}
-                  alt="Ready to Grow Your Business with MithraShoppy"
+                  alt="Ready to Grow Your Business with MithraShopy"
                   className="w-full h-auto object-contain mix-blend-multiply filter contrast-105 drop-shadow-xl hover:scale-105 transition-transform duration-300"
                 />
               </div>
@@ -1139,11 +1139,11 @@ export default function LandingPage() {
               M
             </div>
             <span className="text-white font-bold text-sm">
-              MithraShoppy Seller Portal
+              MithraShopy Seller Portal
             </span>
           </div>
           <p>
-            © {new Date().getFullYear()} MithraShoppy Marketplace. All rights reserved.
+            © {new Date().getFullYear()} MithraShopy Marketplace. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-slate-400 font-semibold">
             <button

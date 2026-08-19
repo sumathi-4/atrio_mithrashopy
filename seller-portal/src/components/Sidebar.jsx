@@ -60,10 +60,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           {/* Logo Header */}
           <div className="px-5 pt-6 pb-5 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <img src={logoImg} alt="MithraShoppy Logo" className="w-9 h-9 object-contain drop-shadow-xs" />
+              <img src={logoImg} alt="MithraShopy Logo" className="w-9 h-9 object-contain drop-shadow-xs" />
               <div className="flex flex-col">
                 <span className="text-white font-bold text-lg tracking-tight leading-none">
-                  Mithra<span className="text-[#DFB743]">Shoppy</span>
+                  Mithra<span className="text-[#DFB743]">Shopy</span>
                 </span>
                 <span className="text-[#DFB743]/90 text-[10px] font-semibold tracking-widest uppercase mt-0.5">
                   SELLER PORTAL
@@ -83,7 +83,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center p-1 shadow-md flex-shrink-0 border border-[#DFB743]/40">
                   <img
                     src={logoImg}
-                    alt="MithraShoppy Logo"
+                    alt="MithraShopy Logo"
                     className="w-full h-full object-contain"
                   />
                 </div>

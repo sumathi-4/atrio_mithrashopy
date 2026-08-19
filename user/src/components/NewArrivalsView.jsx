@@ -2118,11 +2118,6 @@ export default function NewArrivalsView() {
     <div className="new-arrivals-view-page">
       <div className="arrivals-container">
         
-        {/* Header Section */}
-        <div className="arrivals-header-section">
-          <h1 className="arrivals-main-title">The Fresh Edit</h1>
-          <p className="arrivals-subtitle">Explore our newly launched, premium additions crafted for this season</p>
-        </div>
 
         {/* Dynamic Category Tabs */}
         {rootCategoryTabs.length > 1 && (

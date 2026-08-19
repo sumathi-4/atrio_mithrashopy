@@ -50,7 +50,7 @@ export default function CategoriesSection({ categoriesData = defaultCategories, 
               <div className="category-image-wrap">
                 <img
                   src={cat.image}
-                  alt={`${cat.name} products category showcase on MithraShoppy`}
+                  alt={`${cat.name} products category showcase on MithraShopy`}
                   loading="lazy"
                   className="category-image"
                 />

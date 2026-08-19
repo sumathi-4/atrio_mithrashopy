@@ -71,7 +71,7 @@ export default function SettingsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div>
             <span className="text-xs font-extrabold uppercase tracking-wider text-[#B48B1E] block mb-1">LOGIN EMAIL</span>
-            <p className="font-bold text-[#0B1A40] lowercase text-sm sm:text-base">{vendor.email || 'seller@mithrashoppy.com'}</p>
+            <p className="font-bold text-[#0B1A40] lowercase text-sm sm:text-base">{vendor.email || 'seller@mithrashopy.com'}</p>
           </div>
           <div>
             <span className="text-xs font-extrabold uppercase tracking-wider text-[#B48B1E] block mb-1">ACCOUNT STATUS</span>

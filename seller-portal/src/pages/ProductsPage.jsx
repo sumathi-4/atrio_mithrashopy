@@ -103,7 +103,7 @@ export default function ProductsPage() {
         <div className="text-center py-16 bg-white/95 backdrop-blur-md rounded-[28px] border border-slate-100 shadow-xl shadow-slate-200/50">
           <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#DFB743] flex items-center justify-center text-3xl mx-auto mb-3 border border-amber-200/80 shadow-xs">📦</div>
           <h3 className="text-lg font-extrabold text-[#0B1A40] mb-1">No products found</h3>
-          <p className="text-xs font-normal text-slate-500 mb-5 max-w-xs mx-auto">Add your first product listing to display your products on the MithraShoppy store</p>
+          <p className="text-xs font-normal text-slate-500 mb-5 max-w-xs mx-auto">Add your first product listing to display your products on the MithraShopy store</p>
           <Link
             to="/products/add"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl text-xs font-semibold text-[#051838] bg-gradient-to-r from-[#DFB743] via-[#F5D98B] to-[#E5C058] shadow-lg shadow-[#DFB743]/25 hover:scale-[1.02] transition-all cursor-pointer"

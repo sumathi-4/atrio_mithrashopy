@@ -4,14 +4,14 @@ import SectionReveal from './SectionReveal'
 
 const faqData = [
   {
-    question: 'What documents are needed to register as a seller on MithraShoppy?',
+    question: 'What documents are needed to register as a seller on MithraShopy?',
     answer:
       'To start selling, you need a valid GSTIN (GST Number), your PAN card, an active Indian Bank Account with IFSC code for settlements, and business address proof.',
   },
   {
     question: 'Are there any hidden listing fees or registration charges?',
     answer:
-      'No! Registering your store on MithraShoppy is 100% free. There are zero upfront listing fees for uploading catalog SKUs, and you enjoy 0% platform commission for your first 30 days.',
+      'No! Registering your store on MithraShopy is 100% free. There are zero upfront listing fees for uploading catalog SKUs, and you enjoy 0% platform commission for your first 30 days.',
   },
   {
     question: 'How and when do I receive payouts for my delivered orders?',
@@ -26,7 +26,7 @@ const faqData = [
   {
     question: 'Are there any product category restrictions?',
     answer:
-      'MithraShoppy focuses on high-demand categories including Ethnic Wear, Kids Clothing, Jewellery, Handcrafted Gifts, and School/Office Stationery. Illegal, unsafe, or counterfeit items are strictly prohibited.',
+      'MithraShopy focuses on high-demand categories including Ethnic Wear, Kids Clothing, Jewellery, Handcrafted Gifts, and School/Office Stationery. Illegal, unsafe, or counterfeit items are strictly prohibited.',
   },
 ]
 

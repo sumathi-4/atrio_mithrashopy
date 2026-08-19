@@ -119,7 +119,7 @@ export default function EarningsCalculatorSection({ sellerPortalUrl }) {
           </h2>
 
           <p className="calculator-subtitle">
-            Estimate your net monthly earnings and see why thousands of Indian sellers switch to<br className="hidden sm:inline" /> MithraShoppy.
+            Estimate your net monthly earnings and see why thousands of Indian sellers switch to<br className="hidden sm:inline" /> MithraShopy.
           </p>
         </div>
 
@@ -238,7 +238,7 @@ export default function EarningsCalculatorSection({ sellerPortalUrl }) {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: MithraShoppy vs. Typical Marketplace Comparison Table */}
+          {/* RIGHT COLUMN: MithraShopy vs. Typical Marketplace Comparison Table */}
           <div className="lg:col-span-6 flex flex-col">
             <div className="calculator-card-right">
               
@@ -250,8 +250,8 @@ export default function EarningsCalculatorSection({ sellerPortalUrl }) {
                   </div>
                   <div className="calc-th-mid">
                     <span className="calc-mithra-header-badge">
-                      <img src={MEDIA.BRAND_LOGO} alt="MithraShoppy Logo Badge" className="w-3.5 h-3.5 object-contain" />
-                      <span>MithraShoppy</span>
+                      <img src={MEDIA.BRAND_LOGO} alt="MithraShopy Logo Badge" className="w-3.5 h-3.5 object-contain" />
+                      <span>MithraShopy</span>
                     </span>
                   </div>
                   <div className="calc-th-right">
@@ -273,7 +273,7 @@ export default function EarningsCalculatorSection({ sellerPortalUrl }) {
                         {row.feature}
                       </div>
 
-                      {/* MithraShoppy Column (Glowing Gold Pill Outline matching img2 & img3) */}
+                      {/* MithraShopy Column (Glowing Gold Pill Outline matching img2 & img3) */}
                       <div className="calc-td-mid">
                         <div className="calc-mithra-cell-pill">
                           <span className="calc-check-green">✓</span>
@@ -298,7 +298,7 @@ export default function EarningsCalculatorSection({ sellerPortalUrl }) {
                   rel="noopener noreferrer"
                   className="calc-switch-btn"
                 >
-                  <span>Switch To MithraShoppy Today</span>
+                  <span>Switch To MithraShopy Today</span>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>

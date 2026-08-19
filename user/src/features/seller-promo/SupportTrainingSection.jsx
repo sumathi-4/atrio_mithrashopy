@@ -4,7 +4,7 @@ import SectionReveal from './SectionReveal'
 
 export default function SupportTrainingSection() {
   const whatsappUrl =
-    'https://wa.me/918825948859?text=Hi%20MithraShoppy%20Seller%20Team%2C%20I%20want%20to%20know%20more%20about%20selling%20on%20your%20platform.'
+    'https://wa.me/918825948859?text=Hi%20MithraShopy%20Seller%20Team%2C%20I%20want%20to%20know%20more%20about%20selling%20on%20your%20platform.'
 
   const approvalSteps = [
     {
@@ -119,7 +119,7 @@ export default function SupportTrainingSection() {
             {/* Support Advisor Photo matching img2 & img3 */}
             <img
               src={MEDIA.SUPPORT_ADVISOR_CUTOUT}
-              alt="MithraShoppy Seller Support Advisor"
+              alt="MithraShopy Seller Support Advisor"
               className="support-agent-img"
             />
           </div>

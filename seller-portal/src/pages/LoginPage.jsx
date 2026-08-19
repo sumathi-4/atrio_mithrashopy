@@ -77,7 +77,7 @@ const LoginPage = () => {
         {/* High-Resolution Image 1 Left Banner Artwork */}
         <img
           src={loginLeftBanner}
-          alt="MithraShoppy Seller Portal Marketplace Illustration"
+          alt="MithraShopy Seller Portal Marketplace Illustration"
           className="w-full h-full object-cover object-left max-h-screen"
         />
 
@@ -114,11 +114,11 @@ const LoginPage = () => {
           <div className="flex flex-col items-center mb-6">
             <img
               src={logoImg}
-              alt="MithraShoppy Logo"
+              alt="MithraShopy Logo"
               className="w-12 h-12 object-contain mb-1.5 drop-shadow-xs"
             />
             <span className="text-[#0B1A40] font-black text-xl tracking-tight leading-none">
-              Mithra<span className="text-[#DFB743]">Shoppy</span>
+              Mithra<span className="text-[#DFB743]">Shopy</span>
             </span>
             <span className="text-slate-400 text-[10px] font-black tracking-widest uppercase mt-1">
               SELLER PORTAL

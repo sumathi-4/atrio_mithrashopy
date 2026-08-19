@@ -27,10 +27,10 @@ export default function SectionReveal({
   return (
     <motion.section
       id={id}
-      initial={{ opacity: 0, y: 35 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.7, ease: 'easeOut', delay }}
+      viewport={{ once: true, margin: '0px' }}
+      transition={{ duration: 0.5, ease: 'easeOut', delay }}
       className={`relative overflow-hidden ${className}`}
     >
       <div className="relative z-10">{children}</div>

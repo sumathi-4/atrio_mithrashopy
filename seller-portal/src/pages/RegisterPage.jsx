@@ -157,7 +157,7 @@ const RegisterPage = () => {
             Application Submitted!
           </h2>
           <p className="text-slate-500 text-sm leading-relaxed mb-8 font-medium">
-            Thank you for registering with MithraShoppy! Our team will review your application within
+            Thank you for registering with MithraShopy! Our team will review your application within
             <strong className="text-[#0B1A40] font-extrabold"> 24-48 hours</strong>. You'll receive an email
             notification once your account is approved.
           </p>
@@ -206,10 +206,10 @@ const RegisterPage = () => {
         >
           {/* Logo Header */}
           <Link to="/" className="inline-flex items-center gap-3">
-            <img src={logoImg} alt="MithraShoppy Logo" className="w-10 h-10 object-contain drop-shadow-xs" />
+            <img src={logoImg} alt="MithraShopy Logo" className="w-10 h-10 object-contain drop-shadow-xs" />
             <div className="flex flex-col text-left">
               <span className="text-[#0B1A40] font-black text-xl tracking-tight leading-none">
-                Mithra<span className="text-[#DFB743]">Shoppy</span>
+                Mithra<span className="text-[#DFB743]">Shopy</span>
               </span>
               <span className="text-slate-400 text-[10px] font-black tracking-widest uppercase mt-0.5">
                 SELLER PORTAL
@@ -724,7 +724,7 @@ const RegisterPage = () => {
             <div className="relative w-full max-w-lg flex items-center justify-center">
               <img
                 src={register3dTransparent}
-                alt="MithraShoppy 3D Seller Marketplace Illustration"
+                alt="MithraShopy 3D Seller Marketplace Illustration"
                 className="w-full h-auto object-contain drop-shadow-2xl hover:scale-[1.02] transition-transform duration-300 pointer-events-none"
               />
             </div>

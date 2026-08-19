@@ -97,13 +97,13 @@ export default function WhyUsSection({ sellerPortalUrl }) {
     >
       <div className="why-us-container">
         
-        {/* Top Part: 2-Column Why Choose MithraShoppy Grid */}
+        {/* Top Part: 2-Column Why Choose MithraShopy Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
           {/* Left Column: Heading, Subtitle & Action Button (Cols 4) */}
           <div className="lg:col-span-4 space-y-4 text-left">
             <span className="why-us-tag">
-              WHY SELL ON MITHRASHOPPY?
+              WHY SELL ON MITHRASHOPY?
             </span>
 
             <h2 className="why-us-heading">
@@ -193,7 +193,7 @@ export default function WhyUsSection({ sellerPortalUrl }) {
               </span>
 
               <h3 className="offer-banner-headline">
-                0% <br />
+                ZERO <br />
                 COMMISSION
               </h3>
 

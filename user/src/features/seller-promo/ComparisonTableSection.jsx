@@ -58,10 +58,10 @@ export default function ComparisonTableSection({ sellerPortalUrl }) {
           </div>
 
           <h2 className="font-serif text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
-            MithraShoppy vs. <span className="gold-gradient-text">Typical Marketplace</span>
+            MithraShopy vs. <span className="gold-gradient-text">Typical Marketplace</span>
           </h2>
           <p className="font-sans text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
-            See why thousands of Indian sellers switch to MithraShoppy for higher margins, faster payouts, and dedicated growth.
+            See why thousands of Indian sellers switch to MithraShopy for higher margins, faster payouts, and dedicated growth.
           </p>
         </div>
 
@@ -72,10 +72,10 @@ export default function ComparisonTableSection({ sellerPortalUrl }) {
               Feature / Benefit
             </div>
             <div className="col-span-4 text-center">
-              {/* Highlighted MithraShoppy Column Header with Continuous Gold Glow Pulse */}
+              {/* Highlighted MithraShopy Column Header with Continuous Gold Glow Pulse */}
               <span className="inline-flex items-center gap-2 bg-[#DFB743] text-[#051838] font-extrabold font-sans text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-full shadow-lg animate-gold-pulse">
-                <img src={MEDIA.COMPARISON_TABLE_BADGE} alt="MithraShoppy Logo Badge" className="w-4 h-4 object-contain" />
-                <span className="truncate">MithraShoppy</span>
+                <img src={MEDIA.COMPARISON_TABLE_BADGE} alt="MithraShopy Logo Badge" className="w-4 h-4 object-contain" />
+                <span className="truncate">MithraShopy</span>
               </span>
             </div>
             {/* Static Neutral "Other Platforms" Column Header */}
@@ -98,7 +98,7 @@ export default function ComparisonTableSection({ sellerPortalUrl }) {
                   {row.feature}
                 </div>
 
-                {/* MithraShoppy Column (Visually Emphasized with Continuous Gold Glow Pulse ~3s cycle) */}
+                {/* MithraShopy Column (Visually Emphasized with Continuous Gold Glow Pulse ~3s cycle) */}
                 <div className="col-span-4 text-center px-2">
                   <div className="inline-block bg-[#0B1A40] border-2 border-[#DFB743] text-[#DFB743] font-bold text-[11px] sm:text-sm px-3 sm:px-4 py-2 rounded-2xl shadow-md animate-gold-pulse">
                     <span className="text-emerald-400 font-extrabold mr-1">✓</span>
@@ -121,7 +121,7 @@ export default function ComparisonTableSection({ sellerPortalUrl }) {
             href={registerUrl}
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#DFB743] hover:bg-[#f5d98b] text-[#051838] font-black text-sm sm:text-base rounded-2xl transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer focus-visible:outline-2 focus-visible:outline-white"
           >
-            <span>Switch To MithraShoppy Today</span>
+            <span>Switch To MithraShopy Today</span>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>

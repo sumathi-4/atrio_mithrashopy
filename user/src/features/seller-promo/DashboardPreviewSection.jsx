@@ -120,7 +120,7 @@ export default function DashboardPreviewSection() {
               <img
                 key={currentTab.id}
                 src={currentTab.image}
-                alt={`MithraShoppy Seller Portal - ${currentTab.label} interface preview`}
+                alt={`MithraShopy Seller Portal - ${currentTab.label} interface preview`}
                 loading="lazy"
                 className="w-full h-full object-cover object-top transition-opacity duration-500 animate-fade-in"
               />

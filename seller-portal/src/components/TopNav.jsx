@@ -30,7 +30,7 @@ const TopNav = ({ sidebarOpen, setSidebarOpen }) => {
   const getTitle = () => {
     const path = location.pathname
     if (path.startsWith('/products/edit/')) return 'Edit Product'
-    return pageTitles[path] || 'MithraShoppy'
+    return pageTitles[path] || 'MithraShopy'
   }
 
   const getInitials = (name) => {
@@ -118,7 +118,7 @@ const TopNav = ({ sidebarOpen, setSidebarOpen }) => {
               <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center p-1 shadow-xs flex-shrink-0 border border-slate-200">
                 <img
                   src={logoImg}
-                  alt="MithraShoppy Logo"
+                  alt="MithraShopy Logo"
                   className="w-full h-full object-contain"
                 />
               </div>

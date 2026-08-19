@@ -17,16 +17,16 @@ export default function SellerPromoHeader({ sellerPortalUrl }) {
     <header className="seller-promo-header-bar relative">
       {/* Brand Logo & Title */}
       <div
-        onClick={() => handleNavClick('hero')}
+        onClick={() => handleNavClick('why-us')}
         className="flex items-center gap-3 cursor-pointer group shrink-0"
       >
         <img
           src={MEDIA.BRAND_LOGO}
-          alt="MithraShoppy Logo"
+          alt="MithraShopy Logo"
           className="seller-promo-brand-logo group-hover:scale-105 transition-transform duration-200"
         />
         <span className="seller-promo-brand-title">
-          Mithra<span className="seller-promo-brand-title-gold">Shoppy</span>
+          Mithra<span className="seller-promo-brand-title-gold">Shopy</span>
         </span>
       </div>
 
