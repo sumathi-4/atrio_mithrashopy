@@ -49,6 +49,11 @@
   html {
     scroll-behavior: smooth;
   }
+  body.seller-promo-active,
+  body:has(.seller-promo-page) {
+    padding-top: 0 !important;
+    background-color: #06122E !important;
+  }
   .seller-promo-page {
     font-family: var(--font-sans);
     background-color: var(--blue-dark);
@@ -131,11 +136,9 @@
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.55) 70%, rgba(0, 0, 0, 0) 100%) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  background: #06122E !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
   box-sizing: border-box !important;
   margin: 0 !important;
 }

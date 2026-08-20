@@ -14,7 +14,7 @@ export default function SellerPromoHeader({ sellerPortalUrl }) {
   }
 
   return (
-    <header className="seller-promo-header-bar relative">
+    <header className="seller-promo-header-bar fixed top-0 left-0 right-0 z-[9999]">
       {/* Brand Logo & Title */}
       <div
         onClick={() => handleNavClick('why-us')}

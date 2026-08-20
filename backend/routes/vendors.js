@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 const { Vendor, Product, Order, VendorNotification } = require('../db/database');
 const { authenticateVendor } = require('../middleware/authMiddleware');
 
@@ -36,8 +37,8 @@ router.post('/register', async (req, res) => {
   try {
     const {
       businessName, ownerName, email, phone, password,
-      gstin, pan, businessCategory, businessDescription,
-      logo, panDocument, cancelledCheque
+      gstin, pan, panNumber, businessCategory, businessDescription,
+      logo, businessLogo, panDocument, cancelledCheque
     } = req.body;
 
     if (!businessName || !ownerName || !email || !phone || !password) {
@@ -56,14 +57,16 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Phone number must be between 10 and 15 digits.' });
     }
 
-    // Strong password validation: min 8 chars, 1 uppercase, 1 lowercase, 1 digit, 1 special char
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
-    if (!passwordRegex.test(password)) {
+    // Password validation: at least 6 characters
+    if (!password || password.length < 6) {
       return res.status(400).json({
         success: false,
-        message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
+        message: 'Password must be at least 6 characters long.'
       });
     }
+
+    const panVal = pan || panNumber || '';
+    const logoVal = logo || businessLogo || '';
 
     // GSTIN format validation (optional)
     if (gstin) {
@@ -74,9 +77,9 @@ router.post('/register', async (req, res) => {
     }
 
     // PAN format validation (optional)
-    if (pan) {
+    if (panVal) {
       const panRegex = /^[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}$/;
-      if (!panRegex.test(pan)) {
+      if (!panRegex.test(panVal)) {
         return res.status(400).json({ success: false, message: 'Invalid PAN format.' });
       }
     }
@@ -95,10 +98,10 @@ router.post('/register', async (req, res) => {
       phone: phone.trim(),
       password: hashed,
       gstin: gstin || '',
-      pan: pan || '',
+      pan: panVal,
       businessCategory: businessCategory || '',
       businessDescription: businessDescription || '',
-      logo: logo || '',
+      logo: logoVal,
       panDocument: panDocument || '',
       cancelledCheque: cancelledCheque || '',
       status: 'Pending'

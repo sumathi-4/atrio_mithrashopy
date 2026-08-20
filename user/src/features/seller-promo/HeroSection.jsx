@@ -4,7 +4,7 @@ export default function HeroSection({ sellerPortalUrl }) {
   const registerUrl = `${sellerPortalUrl.replace(/\/$/, '')}/register`
 
   return (
-    <section id="hero" className="relative w-full overflow-hidden bg-[#06122E] m-0 p-0">
+    <section id="hero" className="relative w-full overflow-hidden bg-[#06122E] m-0 p-0 pt-[68px] max-sm:pt-[60px]">
       <a href={registerUrl} className="block w-full relative cursor-pointer m-0 p-0">
         <img
           src="/seller-header-banner.png"

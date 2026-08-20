@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './seller-promo.css'
 import { getSellerPortalUrl } from './utils/navigation'
 import SellerPromoHeader from './SellerPromoHeader'
@@ -17,8 +17,15 @@ import FooterSection from './FooterSection'
 export default function SellerPromoPage() {
   const sellerPortalUrl = getSellerPortalUrl()
 
+  useEffect(() => {
+    document.body.classList.add('seller-promo-active')
+    return () => {
+      document.body.classList.remove('seller-promo-active')
+    }
+  }, [])
+
   return (
-    <div className="min-h-screen bg-[#06122E] text-white selection:bg-[#DFB743] selection:text-[#051838]">
+    <div className="seller-promo-page min-h-screen bg-[#06122E] text-white selection:bg-[#DFB743] selection:text-[#051838]">
       <SellerPromoHeader sellerPortalUrl={sellerPortalUrl} />
       <HeroSection sellerPortalUrl={sellerPortalUrl} />
       <TrustStripSection />
