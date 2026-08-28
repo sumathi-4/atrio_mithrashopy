@@ -1655,6 +1655,7 @@ export default function ShopView({ authUser, setAuthUser }) {
   // Parse category/subcategory/search/filters from URL (both path slugs and query params)
   useEffect(() => {
     const parseUrl = () => {
+      try { localStorage.removeItem('mithira_persistent_filters'); } catch (e) {}
       const path = window.location.pathname.toLowerCase();
       const segments = path.split('/').filter(Boolean); // e.g. ["shop", "clothing", "kids-wear"]
       
@@ -1707,11 +1708,11 @@ export default function ShopView({ authUser, setAuthUser }) {
         if (loaded.showOutOfStock !== undefined) setShowOutOfStock(loaded.showOutOfStock);
         if (loaded.selectedRatings !== undefined) setSelectedRatings(loaded.selectedRatings);
         if (loaded.selectedDiscounts !== undefined) setSelectedDiscounts(loaded.selectedDiscounts);
-        if (loaded.selectedSubcategories !== undefined) setSelectedSubcategories(loaded.selectedSubcategories);
+        setSelectedSubcategories([]);
+        setActiveFilters({});
         if (loaded.filterNewArrivals !== undefined) setFilterNewArrivals(loaded.filterNewArrivals);
         if (loaded.filterBestSellers !== undefined) setFilterBestSellers(loaded.filterBestSellers);
         if (loaded.filterOffers !== undefined) setFilterOffers(loaded.filterOffers);
-        if (loaded.activeFilters !== undefined) setActiveFilters(loaded.activeFilters);
         if (loaded.catalogue !== undefined) setCatalogue(loaded.catalogue);
         
         if (loaded.filterNewArrivals || loaded.filterBestSellers || loaded.filterOffers) {
