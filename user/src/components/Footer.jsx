@@ -330,7 +330,12 @@ export default function Footer({ authUser, onNavigate }) {
               </li>
               <li>
                 <a
-                  href={import.meta.env.VITE_SELLER_PORTAL_URL || 'http://localhost:5176'}
+                  href={
+                    import.meta.env.VITE_SELLER_PORTAL_URL ||
+                    (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                      ? 'http://localhost:5176'
+                      : 'https://mithrashopy-seller.netlify.app')
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer-nav-link"

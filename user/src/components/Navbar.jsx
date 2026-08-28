@@ -666,7 +666,7 @@ export default function Navbar({ authUser: propAuthUser, setAuthUser: propSetAut
                 import.meta.env.VITE_SELLER_PORTAL_URL ||
                 (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
                   ? 'http://localhost:5176'
-                  : 'https://seller.mithrashopy.com')
+                  : 'https://mithrashopy-seller.netlify.app')
               }
               target="_blank"
               rel="noopener noreferrer"
@@ -945,7 +945,7 @@ export default function Navbar({ authUser: propAuthUser, setAuthUser: propSetAut
                 href={
                   window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
                     ? 'http://localhost:5176'
-                    : 'https://seller.mithrashopy.com'
+                    : 'https://mithrashopy-seller.netlify.app'
                 }
                 target="_blank"
                 rel="noopener noreferrer"
