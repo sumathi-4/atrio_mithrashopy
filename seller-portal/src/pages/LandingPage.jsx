@@ -1171,7 +1171,12 @@ export default function LandingPage() {
               FAQ
             </button>
             <a
-              href={import.meta.env.VITE_SELLER_PROMO_URL || `${import.meta.env.VITE_USER_STOREFRONT_URL || 'http://localhost:5173'}/seller-promo`}
+              href={
+                import.meta.env.VITE_SELLER_PROMO_URL ||
+                `${(typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+                    ? 'http://localhost:5173'
+                    : 'https://mithrashopy-website.netlify.app'}/seller-promo`
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#DFB743] hover:text-white font-bold transition-colors cursor-pointer"

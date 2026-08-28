@@ -27,7 +27,10 @@ const ProtectedRoute = ({ children }) => {
 // Redirect Component for /seller-promo route
 function SellerPromoRedirect() {
   useEffect(() => {
-    const userStorefrontUrl = import.meta.env.VITE_USER_STOREFRONT_URL || 'http://localhost:5173'
+    const userStorefrontUrl = import.meta.env.VITE_USER_STOREFRONT_URL ||
+      (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost:5173'
+        : 'https://mithrashopy-website.netlify.app');
     window.location.href = `${userStorefrontUrl}/seller-promo`
   }, [])
   return null
