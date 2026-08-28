@@ -1584,6 +1584,17 @@ export default function ShopView({ authUser, setAuthUser }) {
     setSelectedMaterials([]);
     setSelectedGiftThemes([]);
     
+    clearPersistentFilters();
+
+    // Re-fetch products from backend API
+    setLoading(true);
+    apiService.getProducts().then((data) => {
+      if (data && data.length > 0) {
+        setAllProducts(mapProductsData(data));
+      }
+      setLoading(false);
+    }).catch(() => setLoading(false));
+    
     // Clear URL state
     window.history.replaceState(null, '', '/shop');
   };
