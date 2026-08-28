@@ -2176,6 +2176,16 @@ async function seedAdmin() {
 				created_at: new Date()
 			});
 			console.log(`✅ Admin account seeded: ${adminEmail}`);
+		} else {
+			const isMatch = bcrypt.compareSync(adminPassword, existing.password);
+			if (!isMatch) {
+				const hashed = bcrypt.hashSync(adminPassword, 12);
+				await User.updateOne(
+					{ _id: existing._id },
+					{ $set: { password: hashed } }
+				);
+				console.log(`✅ Admin password updated to match .env for: ${adminEmail}`);
+			}
 		}
 	} catch (err) {
 		console.error("Error seeding admin:", err);

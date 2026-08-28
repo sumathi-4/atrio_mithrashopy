@@ -20,7 +20,7 @@ function authenticate(req, res, next) {
       return res.status(401).json({ success: false, message: 'No token provided. Please log in.' });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || JWT_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
@@ -59,7 +59,7 @@ async function authenticateVendor(req, res, next) {
       return res.status(401).json({ success: false, message: 'No token provided. Please log in.' });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || JWT_SECRET);
     if (decoded.role !== 'vendor') {
       return res.status(403).json({ success: false, message: 'Vendor access required.' });
     }

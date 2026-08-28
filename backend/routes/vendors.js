@@ -14,8 +14,8 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 function generateVendorToken(vendor) {
   return jwt.sign(
     { id: vendor.id, email: vendor.email, businessName: vendor.businessName, role: 'vendor' },
-    JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN }
+    process.env.JWT_SECRET || JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN || JWT_EXPIRES_IN || '7d' }
   );
 }
 
