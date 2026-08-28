@@ -46,9 +46,12 @@ app.use(cors({
     if (!origin) return callback(null, true);
     // Allow matching origins in allowedOrigins list, any localhost/127.0.0.1 ports, or any mithrashopy.com domains
     if (
+      process.env.FRONTEND_ORIGIN === '*' ||
       allowedOrigins.includes(origin) || 
       /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin) ||
-      /^https?:\/\/(.*\.)?mithrashopy\.com$/.test(origin)
+      /^https?:\/\/(.*\.)?mithrashopy\.com$/.test(origin) ||
+      /^https?:\/\/(.*\.)?vercel\.app$/.test(origin) ||
+      /^https?:\/\/(.*\.)?onrender\.com$/.test(origin)
     ) {
       return callback(null, true);
     }
