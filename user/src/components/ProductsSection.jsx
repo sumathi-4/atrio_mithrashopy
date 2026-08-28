@@ -444,14 +444,7 @@ export default function ProductsSection({ authUser, setAuthUser }) {
             };
           });
           
-          // Filter to display first 12 products and all new products (ID > 116)
-          const exclusiveOnly = mapped.filter((p, index) => {
-            const pid = Number(p.id);
-            if (index < 12) return true;
-            if (pid > 116) return true;
-            return false;
-          });
-          setProductsList(exclusiveOnly);
+          setProductsList(mapped);
         } else {
           setProductsList(trendingProductsFallback);
         }
