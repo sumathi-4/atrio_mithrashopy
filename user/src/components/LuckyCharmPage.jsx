@@ -1900,7 +1900,7 @@ export default function LuckyCharmPage({ authUser, setAuthUser, onNavigate }) {
                           src={(() => {
                             if (!wonReward.image) return '';
                             if (wonReward.image.startsWith('http')) return wonReward.image;
-                            const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                            const BASE_URL = import.meta.env.VITE_API_URL || 'https://mithrashopy-backend.onrender.com';
                             if (wonReward.image.startsWith('/uploads/') || wonReward.image.startsWith('uploads/')) {
                               const cleanPath = wonReward.image.startsWith('/') ? wonReward.image : `/${wonReward.image}`;
                               return `${BASE_URL}${cleanPath}`;

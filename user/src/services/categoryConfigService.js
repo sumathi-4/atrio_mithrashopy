@@ -3,7 +3,7 @@
 // DEFAULT_CONFIGS are used ONLY as a seed on first startup if the backend has no data.
 // No component should access localStorage directly for category configuration data.
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://mithrashopy-backend.onrender.com';
 
 const DEFAULT_CATEGORIES = [
   { name: 'Clothing', parent: '—', status: 'Active' },

@@ -1,7 +1,7 @@
 // ─── API Base URL ──────────────────────────────────────────────────────────────
 // In development, Vite proxies /api → http://localhost:5000
 // In production, set VITE_API_URL in your .env
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://mithrashopy-backend.onrender.com';
 
 // ─── Token Management ──────────────────────────────────────────────────────────
 const TOKEN_KEY = 'mithira_auth_token';

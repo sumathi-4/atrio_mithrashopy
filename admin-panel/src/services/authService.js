@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://mithrashopy-backend.onrender.com';
 
 const TOKEN_KEY = 'mithira_auth_token';
 const USER_KEY  = 'mithira_auth_user';

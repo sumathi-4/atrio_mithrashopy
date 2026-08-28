@@ -2743,7 +2743,7 @@ export default function AdminDashboard({ authUser, setAuthUser, onNavigate }) {
     if (!cOrType) return null;
     if (typeof cOrType === 'object') {
       if (cOrType.profileImage) {
-        const base = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const base = import.meta.env.VITE_API_URL || 'https://mithrashopy-backend.onrender.com';
         return cOrType.profileImage.startsWith('http') || cOrType.profileImage.startsWith('data:')
           ? cOrType.profileImage 
           : `${base}${cOrType.profileImage}`;
